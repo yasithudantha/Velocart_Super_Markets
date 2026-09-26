@@ -29,7 +29,13 @@ namespace velocart_system.API.Services
 
         public async Task<string> UploadImageAsync(IFormFile file)
         {
-            // BUG: No null check on 'file' — will throw NullReferenceException if file is null
+            // FIX: Null and empty check before processing (resolves NullReferenceException)
+            if (file == null || file.Length == 0)
+                throw new ArgumentException("Image file cannot be null or empty.");
+
+            // FIX: Size validation restored
+            if (file.Length > 5 * 1024 * 1024) throw new Exception("Image exceeds 5MB limit.");
+
             var extension = Path.GetExtension(file.FileName).ToLower();
             if (extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".webp")
                 throw new Exception("Invalid file type. Only JPG, PNG, and WebP are allowed.");
