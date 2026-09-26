@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+/* 1. Import Premium Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap');
+
+/* 2. Define the Futuristic Theme for Tailwind v4 */
+@theme {
+  --color-background: #050505;
+  --color-surface: #121212;
+  --color-primary: #D4AF37;
+  --color-secondary: #2A2A2A;
+  --color-accent: #ffffff;
+  
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Playfair Display", serif;
+  
+  --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* 3. Base Styles */
+@layer base {
+  body {
+    @apply bg-background text-gray-200 antialiased;
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  ::selection {
+    @apply bg-primary text-black;
+  }
+}
+
+/* 4. Custom Glassmorphism Utilities */
+@layer utilities {
+  .glass-panel {
+    @apply bg-surface/40 backdrop-blur-xl border border-white/5 shadow-glass;
+  }
+  
+  .glass-input {
+    @apply bg-black/50 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300 backdrop-blur-sm;
+  }
+}
