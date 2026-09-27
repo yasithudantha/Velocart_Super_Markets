@@ -4,7 +4,7 @@ using velocart_system.API.Models;
 
 namespace velocart_system.API.Features.Inventory.Models
 {
-    public enum TransactionType { Received, Sold, Adjusted_Up, Adjusted_Down, Expired, Damaged, Returned }
+    public enum TransactionType { Received,Sold,Adjusted_Up,Adjusted_Down,Expired,Damaged,Returned }
 
     public class InventoryTransaction
     {
@@ -13,7 +13,7 @@ namespace velocart_system.API.Features.Inventory.Models
 
         [Required]
         public int ProductVariantId { get; set; }
-        public ProductVariant ProductVariant { get; set; } = null!;
+        public ProductVariant ProductVariant { get; set; }=null!;
 
         public int? ProductBatchId { get; set; } // Nullable if transaction isn't batch-specific
 
@@ -29,12 +29,12 @@ namespace velocart_system.API.Features.Inventory.Models
         [Required]
         public int QuantityAfter { get; set; }
 
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        public DateTime Timestamp { get; set; }=DateTime.UtcNow;
 
         [MaxLength(255)]
-        public string ReferenceDocument { get; set; } = string.Empty; // e.g., "PO-1002", "ORDER-409", "MANUAL-ADJ"
+        public string ReferenceDocument { get; set; }=string.Empty; // e.g.,"PO-1002","ORDER-409","MANUAL-ADJ"
         
         [MaxLength(500)]
-        public string Reason { get; set; } = string.Empty;
+        public string Reason { get; set; }=string.Empty;
     }
 }
