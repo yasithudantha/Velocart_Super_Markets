@@ -12,10 +12,10 @@ namespace velocart_system.API.Features.Promotions.Models
         [ForeignKey("PromotionId")]
         public Promotion? Promotion { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName="decimal(18,2)")]
         public decimal MinimumSpendAmount { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName="decimal(18,2)")]
         public decimal DiscountValue { get; set; } // The percentage or fixed amount for this specific tier
     }
 }
