@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User,Mail,Lock,Phone,ArrowRight,ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -101,7 +101,7 @@ export default function Register() {
         }
     };
 
-    const containerVariants={
+    const containerVariants: any={
         hidden: { opacity: 0,scale: 0.95 },
         show: { opacity: 1,scale: 1,transition: { duration: 0.5,ease: "easeOut" } }
     };

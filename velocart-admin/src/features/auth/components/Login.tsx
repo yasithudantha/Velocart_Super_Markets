@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail,Lock,ArrowRight } from 'lucide-react';
 import { Link,useNavigate } from 'react-router-dom';
@@ -78,12 +78,12 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         }
     };
 
-    const containerVariants={
+    const containerVariants: any={
         hidden: { opacity: 0,scale: 0.95 },
         show: { opacity: 1,scale: 1,transition: { duration: 0.5,ease: "easeOut" } }
     };
 
-    const itemVariants={
+    const itemVariants: any={
         hidden: { opacity: 0,y: 15 },
         show: { opacity: 1,y: 0,transition: { type: "spring",stiffness: 300,damping: 24 } }
     };

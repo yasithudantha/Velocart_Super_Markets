@@ -1,13 +1,13 @@
-import React,{ useEffect,useState } from 'react';
+import { useEffect,useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion,AnimatePresence } from 'framer-motion';
-import { User,Mail,Phone,ShieldCheck,LogOut,Edit2,Save,X,Loader2,Bell,Lock,AlertTriangle,Award,Package,Check,CheckCircle2 } from 'lucide-react';
+import { User,Mail,Phone,ShieldCheck,LogOut,Edit2,Save,X,Loader2,Bell,Lock,AlertTriangle,Award,Package,CheckCircle2 } from 'lucide-react';
 import { getUserProfile,updateUserProfile,changePassword,requestEmailChange,deleteAccount,getMyNotifications,markNotificationAsRead,markAllNotificationsAsRead } from '../api/userApi';
 import { logoutUser } from '../api/authApi';
 import AddressManager from './AddressManager';
 
 import LoyaltyDashboard from "../../Loyalty/component/LoyaltyDashboard";
-import OrderHistory from "../../catalog/components/OrderHistory";
+import OrderHistory from "../../orders/components/OrderHistory";
 
 export default function Profile() {
     const navigate=useNavigate();
@@ -125,7 +125,7 @@ export default function Profile() {
         finally { setIsSecuritySaving(false); }
     };
 
-    const containerVariants={ hidden: { opacity: 0,y: 20 },show: { opacity: 1,y: 0,transition: { duration: 0.6,ease: "easeOut" } } };
+    const containerVariants: any={ hidden: { opacity: 0,y: 20 },show: { opacity: 1,y: 0,transition: { duration: 0.6,ease: "easeOut" } } };
 
     if(isLoading && !profile) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-12 h-12 text-primary animate-spin" /></div>;
 
