@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Mail,ArrowRight,ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { requestPasswordReset } from '../api/authApi';
 
 export default function ForgotPassword() {
-    const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+    const [email,setEmail]=useState('');
+    const [message,setMessage]=useState('');
+    const [error,setError]=useState('');
+    const [isLoading,setIsLoading]=useState(false);
+    const navigate=useNavigate();
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit=async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setMessage('');
         setError('');
         setIsLoading(true);
 
         try {
-            const result = await requestPasswordReset(email);
+            const result=await requestPasswordReset(email);
             setMessage(result.message);
             setEmail('');
         } catch (err: any) {
@@ -28,9 +28,9 @@ export default function ForgotPassword() {
         }
     };
 
-    const containerVariants = {
-        hidden: { opacity: 0, scale: 0.95 },
-        show: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
+    const containerVariants={
+        hidden: { opacity: 0,scale: 0.95 },
+        show: { opacity: 1,scale: 1,transition: { duration: 0.5 } }
     };
 
     return (

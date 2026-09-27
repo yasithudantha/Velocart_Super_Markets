@@ -92,7 +92,7 @@ namespace velocart_system.API.Migrations
                 table: "Promotions",
                 type: "timestamp with time zone",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValue: new DateTime(1,1,1,0,0,0,0,DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<string>(
                 name: "Status",
@@ -114,7 +114,7 @@ namespace velocart_system.API.Migrations
                 table: "Promotions",
                 type: "timestamp with time zone",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValue: new DateTime(1,1,1,0,0,0,0,DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<decimal>(
                 name: "OriginalUnitPrice",
@@ -190,19 +190,19 @@ namespace velocart_system.API.Migrations
                 name: "LoyaltyPointLots",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    LoyaltyAccountId = table.Column<int>(type: "integer", nullable: false),
-                    SourceTransactionId = table.Column<int>(type: "integer", nullable: false),
-                    OriginalPoints = table.Column<int>(type: "integer", nullable: false),
-                    RemainingPoints = table.Column<int>(type: "integer", nullable: false),
-                    IsExpired = table.Column<bool>(type: "boolean", nullable: false),
-                    EarnedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LoyaltyAccountId=table.Column<int>(type: "integer",nullable: false),
+                    SourceTransactionId=table.Column<int>(type: "integer",nullable: false),
+                    OriginalPoints=table.Column<int>(type: "integer",nullable: false),
+                    RemainingPoints=table.Column<int>(type: "integer",nullable: false),
+                    IsExpired=table.Column<bool>(type: "boolean",nullable: false),
+                    EarnedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false),
+                    ExpiresAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LoyaltyPointLots", x => x.Id);
+                    table.PrimaryKey("PK_LoyaltyPointLots",x => x.Id);
                     table.ForeignKey(
                         name: "FK_LoyaltyPointLots_LoyaltyAccounts_LoyaltyAccountId",
                         column: x => x.LoyaltyAccountId,
@@ -221,41 +221,41 @@ namespace velocart_system.API.Migrations
                 name: "LoyaltyRules",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TierName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    MinimumPoints = table.Column<int>(type: "integer", nullable: false),
-                    MaximumPoints = table.Column<int>(type: "integer", nullable: true),
-                    CurrencyAmountPerPoint = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    MaxRedeemablePointsPerOrder = table.Column<int>(type: "integer", nullable: false),
-                    MaxDiscountPercentage = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
-                    EligibleCategoryIds = table.Column<string>(type: "text", nullable: false),
-                    PointExpiryDays = table.Column<int>(type: "integer", nullable: false),
-                    TierEvaluationPeriodDays = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TierName=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
+                    MinimumPoints=table.Column<int>(type: "integer",nullable: false),
+                    MaximumPoints=table.Column<int>(type: "integer",nullable: true),
+                    CurrencyAmountPerPoint=table.Column<decimal>(type: "numeric(18,2)",nullable: false),
+                    MaxRedeemablePointsPerOrder=table.Column<int>(type: "integer",nullable: false),
+                    MaxDiscountPercentage=table.Column<decimal>(type: "numeric(5,2)",nullable: false),
+                    EligibleCategoryIds=table.Column<string>(type: "text",nullable: false),
+                    PointExpiryDays=table.Column<int>(type: "integer",nullable: false),
+                    TierEvaluationPeriodDays=table.Column<int>(type: "integer",nullable: false),
+                    IsActive=table.Column<bool>(type: "boolean",nullable: false),
+                    CreatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false),
+                    UpdatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LoyaltyRules", x => x.Id);
+                    table.PrimaryKey("PK_LoyaltyRules",x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "LoyaltyTierHistories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    LoyaltyAccountId = table.Column<int>(type: "integer", nullable: false),
-                    PreviousTierName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    NewTierName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Reason = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    ChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LoyaltyAccountId=table.Column<int>(type: "integer",nullable: false),
+                    PreviousTierName=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
+                    NewTierName=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
+                    Reason=table.Column<string>(type: "character varying(255)",maxLength: 255,nullable: false),
+                    ChangedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LoyaltyTierHistories", x => x.Id);
+                    table.PrimaryKey("PK_LoyaltyTierHistories",x => x.Id);
                     table.ForeignKey(
                         name: "FK_LoyaltyTierHistories_LoyaltyAccounts_LoyaltyAccountId",
                         column: x => x.LoyaltyAccountId,
@@ -268,18 +268,18 @@ namespace velocart_system.API.Migrations
                 name: "OrderPromotions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OrderId = table.Column<int>(type: "integer", nullable: false),
-                    OriginalPromotionId = table.Column<int>(type: "integer", nullable: true),
-                    PromotionNameSnapshot = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
-                    PromotionTypeSnapshot = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    DiscountApplied = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OrderId=table.Column<int>(type: "integer",nullable: false),
+                    OriginalPromotionId=table.Column<int>(type: "integer",nullable: true),
+                    PromotionNameSnapshot=table.Column<string>(type: "character varying(150)",maxLength: 150,nullable: false),
+                    PromotionTypeSnapshot=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
+                    DiscountApplied=table.Column<decimal>(type: "numeric(18,2)",nullable: false),
+                    CreatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderPromotions", x => x.Id);
+                    table.PrimaryKey("PK_OrderPromotions",x => x.Id);
                     table.ForeignKey(
                         name: "FK_OrderPromotions_Orders_OrderId",
                         column: x => x.OrderId,
@@ -292,29 +292,29 @@ namespace velocart_system.API.Migrations
                 name: "ProductCharges",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    ChargeType = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    AmountOrPercentage = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name=table.Column<string>(type: "character varying(100)",maxLength: 100,nullable: false),
+                    ChargeType=table.Column<string>(type: "character varying(20)",maxLength: 20,nullable: false),
+                    AmountOrPercentage=table.Column<decimal>(type: "numeric(18,2)",nullable: false),
+                    IsActive=table.Column<bool>(type: "boolean",nullable: false),
+                    CreatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductCharges", x => x.Id);
+                    table.PrimaryKey("PK_ProductCharges",x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "PromotionCategories",
                 columns: table => new
                 {
-                    PromotionId = table.Column<int>(type: "integer", nullable: false),
-                    CategoryId = table.Column<int>(type: "integer", nullable: false)
+                    PromotionId=table.Column<int>(type: "integer",nullable: false),
+                    CategoryId=table.Column<int>(type: "integer",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PromotionCategories", x => new { x.PromotionId, x.CategoryId });
+                    table.PrimaryKey("PK_PromotionCategories",x => new { x.PromotionId,x.CategoryId });
                     table.ForeignKey(
                         name: "FK_PromotionCategories_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -333,13 +333,13 @@ namespace velocart_system.API.Migrations
                 name: "PromotionCustomers",
                 columns: table => new
                 {
-                    PromotionId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    AssignedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    PromotionId=table.Column<int>(type: "integer",nullable: false),
+                    UserId=table.Column<int>(type: "integer",nullable: false),
+                    AssignedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PromotionCustomers", x => new { x.PromotionId, x.UserId });
+                    table.PrimaryKey("PK_PromotionCustomers",x => new { x.PromotionId,x.UserId });
                     table.ForeignKey(
                         name: "FK_PromotionCustomers_Promotions_PromotionId",
                         column: x => x.PromotionId,
@@ -358,12 +358,12 @@ namespace velocart_system.API.Migrations
                 name: "PromotionProducts",
                 columns: table => new
                 {
-                    PromotionId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                    PromotionId=table.Column<int>(type: "integer",nullable: false),
+                    ProductId=table.Column<int>(type: "integer",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PromotionProducts", x => new { x.PromotionId, x.ProductId });
+                    table.PrimaryKey("PK_PromotionProducts",x => new { x.PromotionId,x.ProductId });
                     table.ForeignKey(
                         name: "FK_PromotionProducts_Products_ProductId",
                         column: x => x.ProductId,
@@ -382,15 +382,15 @@ namespace velocart_system.API.Migrations
                 name: "PromotionTiers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PromotionId = table.Column<int>(type: "integer", nullable: false),
-                    MinimumSpendAmount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    DiscountValue = table.Column<decimal>(type: "numeric(18,2)", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PromotionId=table.Column<int>(type: "integer",nullable: false),
+                    MinimumSpendAmount=table.Column<decimal>(type: "numeric(18,2)",nullable: false),
+                    DiscountValue=table.Column<decimal>(type: "numeric(18,2)",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PromotionTiers", x => x.Id);
+                    table.PrimaryKey("PK_PromotionTiers",x => x.Id);
                     table.ForeignKey(
                         name: "FK_PromotionTiers_Promotions_PromotionId",
                         column: x => x.PromotionId,
@@ -403,30 +403,30 @@ namespace velocart_system.API.Migrations
                 name: "TaxRules",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    RatePercentage = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name=table.Column<string>(type: "character varying(100)",maxLength: 100,nullable: false),
+                    RatePercentage=table.Column<decimal>(type: "numeric(5,2)",nullable: false),
+                    StartDate=table.Column<DateTime>(type: "timestamp with time zone",nullable: false),
+                    EndDate=table.Column<DateTime>(type: "timestamp with time zone",nullable: true),
+                    IsActive=table.Column<bool>(type: "boolean",nullable: false),
+                    CreatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaxRules", x => x.Id);
+                    table.PrimaryKey("PK_TaxRules",x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "PromotionLoyaltyRules",
                 columns: table => new
                 {
-                    PromotionId = table.Column<int>(type: "integer", nullable: false),
-                    LoyaltyRuleId = table.Column<int>(type: "integer", nullable: false)
+                    PromotionId=table.Column<int>(type: "integer",nullable: false),
+                    LoyaltyRuleId=table.Column<int>(type: "integer",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PromotionLoyaltyRules", x => new { x.PromotionId, x.LoyaltyRuleId });
+                    table.PrimaryKey("PK_PromotionLoyaltyRules",x => new { x.PromotionId,x.LoyaltyRuleId });
                     table.ForeignKey(
                         name: "FK_PromotionLoyaltyRules_LoyaltyRules_LoyaltyRuleId",
                         column: x => x.LoyaltyRuleId,
@@ -445,12 +445,12 @@ namespace velocart_system.API.Migrations
                 name: "ProductChargeCategories",
                 columns: table => new
                 {
-                    ProductChargeId = table.Column<int>(type: "integer", nullable: false),
-                    CategoryId = table.Column<int>(type: "integer", nullable: false)
+                    ProductChargeId=table.Column<int>(type: "integer",nullable: false),
+                    CategoryId=table.Column<int>(type: "integer",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductChargeCategories", x => new { x.ProductChargeId, x.CategoryId });
+                    table.PrimaryKey("PK_ProductChargeCategories",x => new { x.ProductChargeId,x.CategoryId });
                     table.ForeignKey(
                         name: "FK_ProductChargeCategories_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -469,12 +469,12 @@ namespace velocart_system.API.Migrations
                 name: "ProductChargeProducts",
                 columns: table => new
                 {
-                    ProductChargeId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                    ProductChargeId=table.Column<int>(type: "integer",nullable: false),
+                    ProductId=table.Column<int>(type: "integer",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductChargeProducts", x => new { x.ProductChargeId, x.ProductId });
+                    table.PrimaryKey("PK_ProductChargeProducts",x => new { x.ProductChargeId,x.ProductId });
                     table.ForeignKey(
                         name: "FK_ProductChargeProducts_ProductCharges_ProductChargeId",
                         column: x => x.ProductChargeId,
@@ -493,12 +493,12 @@ namespace velocart_system.API.Migrations
                 name: "TaxRuleCategories",
                 columns: table => new
                 {
-                    TaxRuleId = table.Column<int>(type: "integer", nullable: false),
-                    CategoryId = table.Column<int>(type: "integer", nullable: false)
+                    TaxRuleId=table.Column<int>(type: "integer",nullable: false),
+                    CategoryId=table.Column<int>(type: "integer",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaxRuleCategories", x => new { x.TaxRuleId, x.CategoryId });
+                    table.PrimaryKey("PK_TaxRuleCategories",x => new { x.TaxRuleId,x.CategoryId });
                     table.ForeignKey(
                         name: "FK_TaxRuleCategories_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -517,12 +517,12 @@ namespace velocart_system.API.Migrations
                 name: "TaxRuleProducts",
                 columns: table => new
                 {
-                    TaxRuleId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                    TaxRuleId=table.Column<int>(type: "integer",nullable: false),
+                    ProductId=table.Column<int>(type: "integer",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaxRuleProducts", x => new { x.TaxRuleId, x.ProductId });
+                    table.PrimaryKey("PK_TaxRuleProducts",x => new { x.TaxRuleId,x.ProductId });
                     table.ForeignKey(
                         name: "FK_TaxRuleProducts_Products_ProductId",
                         column: x => x.ProductId,

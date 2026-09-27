@@ -16,14 +16,14 @@ namespace velocart_system.API.Migrations
                 name: "ShoppingCarts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId=table.Column<int>(type: "integer",nullable: false),
+                    LastUpdated=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShoppingCarts", x => x.Id);
+                    table.PrimaryKey("PK_ShoppingCarts",x => x.Id);
                     table.ForeignKey(
                         name: "FK_ShoppingCarts_Users_UserId",
                         column: x => x.UserId,
@@ -36,16 +36,16 @@ namespace velocart_system.API.Migrations
                 name: "ShoppingCartItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ShoppingCartId = table.Column<int>(type: "integer", nullable: false),
-                    ProductVariantId = table.Column<int>(type: "integer", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false),
-                    AddedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ShoppingCartId=table.Column<int>(type: "integer",nullable: false),
+                    ProductVariantId=table.Column<int>(type: "integer",nullable: false),
+                    Quantity=table.Column<int>(type: "integer",nullable: false),
+                    AddedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShoppingCartItems", x => x.Id);
+                    table.PrimaryKey("PK_ShoppingCartItems",x => x.Id);
                     table.ForeignKey(
                         name: "FK_ShoppingCartItems_ProductVariants_ProductVariantId",
                         column: x => x.ProductVariantId,

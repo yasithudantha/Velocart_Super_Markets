@@ -1,39 +1,39 @@
-import React, { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useSearchParams,useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lock, ShieldCheck, ArrowRight, CheckCircle } from 'lucide-react';
+import { Lock,ShieldCheck,ArrowRight,CheckCircle } from 'lucide-react';
 import { resetPassword } from '../api/authApi';
 
 export default function ResetPassword() {
-    const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
-    const token = searchParams.get('token');
+    const [searchParams]=useSearchParams();
+    const navigate=useNavigate();
+    const token=searchParams.get('token');
 
-    const [formData, setFormData] = useState({ newPassword: '', confirmNewPassword: '' });
-    const [error, setError] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [formData,setFormData]=useState({ newPassword: '',confirmNewPassword: '' });
+    const [error,setError]=useState('');
+    const [isSuccess,setIsSuccess]=useState(false);
+    const [isLoading,setIsLoading]=useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange=(e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData,[e.target.name]: e.target.value });
         setError('');
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit=async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
 
-        if (!token) {
+        if(!token) {
             setError("Invalid reset link. Token is missing.");
             return;
         }
 
-        if (formData.newPassword.length < 8) {
+        if(formData.newPassword.length < 8) {
             setError("Password must be at least 8 characters long.");
             return;
         }
 
-        if (formData.newPassword !== formData.confirmNewPassword) {
+        if(formData.newPassword !== formData.confirmNewPassword) {
             setError("Passwords do not match.");
             return;
         }
@@ -53,9 +53,9 @@ export default function ResetPassword() {
         }
     };
 
-    const containerVariants = {
-        hidden: { opacity: 0, scale: 0.95 },
-        show: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
+    const containerVariants={
+        hidden: { opacity: 0,scale: 0.95 },
+        show: { opacity: 1,scale: 1,transition: { duration: 0.5 } }
     };
 
     return (

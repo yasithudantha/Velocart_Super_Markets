@@ -1,56 +1,56 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Mail,Lock,ArrowRight } from 'lucide-react';
+import { Link,useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import { loginUser, googleAuth } from '../api/authApi';
+import { loginUser,googleAuth } from '../api/authApi';
 
 interface LoginProps {
     onSwitchToRegister: () => void;
 }
 
 export default function Login({ onSwitchToRegister }: LoginProps) {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({ email: '', password: '' });
-    const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const navigate=useNavigate();
+    const [formData,setFormData]=useState({ email: '',password: '' });
+    const [error,setError]=useState('');
+    const [successMessage,setSuccessMessage]=useState('');
+    const [isLoading,setIsLoading]=useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange=(e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData,[e.target.name]: e.target.value });
         setError('');
     };
 
-    const routeUser = (user: any) => {
-        const userRole = String(user.role || user.Role || '').toUpperCase();
-        if (userRole == 'DELIVERYMANAGER') {
+    const routeUser=(user: any) => {
+        const userRole=String(user.role || user.Role || '').toUpperCase();
+        if(userRole === 'DELIVERYMANAGER') {
             navigate('/admin/delivery-management');
-        } else if (userRole == 'PROMOTIONMANAGER') {
+        } else if(userRole === 'PROMOTIONMANAGER') {
             navigate('/admin/promotions'); // <-- NEW: Routes Manager to their dashboard!
-        } else if (userRole == 'ADMIN' || userRole == 'PRODUCTMANAGER') {
+        } else if(userRole === 'ADMIN' || userRole === 'PRODUCTMANAGER') {
             navigate('/admin/products/new'); 
-        } else if (userRole == 'MAINADMIN') {
+        } else if(userRole === 'MAINADMIN') {
             navigate('/admin/main-admin');    
         } else {
             navigate('/catalog'); // Regular customers
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit=async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
         setIsLoading(true);
 
         try {
-            const result = await loginUser(formData);
+            const result=await loginUser(formData);
             
             // THE CRITICAL FIX: Storing the new secure Session Tokens!
-            localStorage.setItem('token', result.token);
-            localStorage.setItem('refreshToken', result.refreshToken);
-            localStorage.setItem('user', JSON.stringify(result.user));
+            localStorage.setItem('token',result.token);
+            localStorage.setItem('refreshToken',result.refreshToken);
+            localStorage.setItem('user',JSON.stringify(result.user));
 
             setSuccessMessage("Authentication successful. Redirecting...");
-            setTimeout(() => routeUser(result.user), 1000); 
+            setTimeout(() => routeUser(result.user),1000); 
         } catch (err: any) {
             setError(err.toString());
         } finally {
@@ -58,19 +58,19 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         }
     };
 
-   const handleGoogleSuccess = async (credentialResponse: any) => {
+   const handleGoogleSuccess=async (credentialResponse: any) => {
         setError('');
         setIsLoading(true);
         try {
-            const result = await googleAuth(credentialResponse.credential);
+            const result=await googleAuth(credentialResponse.credential);
 
             // THE CRITICAL FIX: Storing the new secure Session Tokens!
-            localStorage.setItem('token', result.token);
-            localStorage.setItem('refreshToken', result.refreshToken);
-            localStorage.setItem('user', JSON.stringify(result.user));
+            localStorage.setItem('token',result.token);
+            localStorage.setItem('refreshToken',result.refreshToken);
+            localStorage.setItem('user',JSON.stringify(result.user));
 
             setSuccessMessage("Google Authentication successful. Redirecting...");
-            setTimeout(() => routeUser(result.user), 1000);
+            setTimeout(() => routeUser(result.user),1000);
         } catch (err: any) {
             setError(err.toString());
         } finally {
@@ -78,14 +78,14 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         }
     };
 
-    const containerVariants = {
-        hidden: { opacity: 0, scale: 0.95 },
-        show: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } }
+    const containerVariants: any={
+        hidden: { opacity: 0,scale: 0.95 },
+        show: { opacity: 1,scale: 1,transition: { duration: 0.5,ease: "easeOut" } }
     };
 
-    const itemVariants = {
-        hidden: { opacity: 0, y: 15 },
-        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    const itemVariants: any={
+        hidden: { opacity: 0,y: 15 },
+        show: { opacity: 1,y: 0,transition: { type: "spring",stiffness: 300,damping: 24 } }
     };
 
     return (

@@ -19,38 +19,35 @@ namespace velocart_system.API.Services
 
         public ImageService(IConfiguration config)
         {
-            var acc = new Account(
+            var acc=new Account(
                 config["Cloudinary:CloudName"],
                 config["Cloudinary:ApiKey"],
                 config["Cloudinary:ApiSecret"]
             );
-            _cloudinary = new Cloudinary(acc);
+            _cloudinary=new Cloudinary(acc);
         }
 
         public async Task<string> UploadImageAsync(IFormFile file)
         {
-            // FIX: Null and empty check before processing (resolves NullReferenceException)
-            if (file == null || file.Length == 0)
-                throw new ArgumentException("Image file cannot be null or empty.");
+            // SECTION 2.2: Image Validation (Size and Type)
+            if(file.Length > 5 * 1024 * 1024) throw new Exception("Image exceeds 5MB limit.");
+            
+            var extension=Path.GetExtension(file.FileName).ToLower();
+            if(extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".webp")
+                throw new Exception("Invalid file type. Only JPG,PNG,and WebP are allowed.");
 
-            // FIX: Size validation restored
-            if (file.Length > 5 * 1024 * 1024) throw new Exception("Image exceeds 5MB limit.");
-
-            var extension = Path.GetExtension(file.FileName).ToLower();
-            if (extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".webp")
-                throw new Exception("Invalid file type. Only JPG, PNG, and WebP are allowed.");
-
-            using var stream = file.OpenReadStream();
-            var uploadParams = new ImageUploadParams
+            using var stream=file.OpenReadStream();
+            var uploadParams=new ImageUploadParams
             {
-                File = new FileDescription(file.FileName, stream),
-                Folder = "velocart_products",
-                Transformation = new Transformation().Width(1000).Height(1000).Crop("limit").Quality("auto").FetchFormat("auto")
+                File=new FileDescription(file.FileName,stream),
+                Folder="velocart_products",
+                // SECTION 2.2: Image Optimization (Auto format and compress via CDN)
+                Transformation=new Transformation().Width(1000).Height(1000).Crop("limit").Quality("auto").FetchFormat("auto")
             };
 
-            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            var uploadResult=await _cloudinary.UploadAsync(uploadParams);
 
-            if (uploadResult.Error != null)
+            if(uploadResult.Error != null)
                 throw new Exception(uploadResult.Error.Message);
 
             return uploadResult.SecureUrl.ToString();

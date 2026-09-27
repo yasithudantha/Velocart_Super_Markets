@@ -35,6 +35,7 @@ namespace velocart_system.API.Data
         public DbSet<OrderPromotion> OrderPromotions { get; set; }
         public DbSet<DeliveryDetail> DeliveryDetails { get; set; }
         public DbSet<DeliveryComplaint> DeliveryComplaints { get; set; }
+        public DbSet<OrderLocation> OrderLocations { get; set; }
         public DbSet<Review> Reviews { get; set; }
 
         public DbSet<Supplier> Suppliers { get; set; }
@@ -85,19 +86,19 @@ namespace velocart_system.API.Data
         }
 
         // Value Converters for Npgsql UTC handling
-        public class UtcDateTimeConverter : Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<DateTime, DateTime>
+        public class UtcDateTimeConverter : Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<DateTime,DateTime>
         {
             public UtcDateTimeConverter() : base(
-                v => v.Kind == DateTimeKind.Utc ? v : DateTime.SpecifyKind(v, DateTimeKind.Utc),
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
+                v => v.Kind==DateTimeKind.Utc ? v : DateTime.SpecifyKind(v,DateTimeKind.Utc),
+                v => DateTime.SpecifyKind(v,DateTimeKind.Utc))
             { }
         }
 
-        public class NullableUtcDateTimeConverter : Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<DateTime?, DateTime?>
+        public class NullableUtcDateTimeConverter : Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<DateTime?,DateTime?>
         {
             public NullableUtcDateTimeConverter() : base(
-                v => !v.HasValue ? v : (v.Value.Kind == DateTimeKind.Utc ? v : DateTime.SpecifyKind(v.Value, DateTimeKind.Utc)),
-                v => !v.HasValue ? v : DateTime.SpecifyKind(v.Value, DateTimeKind.Utc))
+                v => !v.HasValue ? v : (v.Value.Kind==DateTimeKind.Utc ? v : DateTime.SpecifyKind(v.Value,DateTimeKind.Utc)),
+                v => !v.HasValue ? v : DateTime.SpecifyKind(v.Value,DateTimeKind.Utc))
             { }
         }
         
@@ -115,17 +116,23 @@ namespace velocart_system.API.Data
                 .HasForeignKey<LoyaltyAccount>(l => l.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<PromotionProduct>().HasKey(x => new { x.PromotionId, x.ProductId });
-            modelBuilder.Entity<PromotionCategory>().HasKey(x => new { x.PromotionId, x.CategoryId });
-            modelBuilder.Entity<PromotionLoyaltyRule>().HasKey(x => new { x.PromotionId, x.LoyaltyRuleId });
-            modelBuilder.Entity<PromotionCustomer>().HasKey(x => new { x.PromotionId, x.UserId });
+            modelBuilder.Entity<PromotionProduct>().HasKey(x => new { x.PromotionId,x.ProductId });
+            modelBuilder.Entity<PromotionCategory>().HasKey(x => new { x.PromotionId,x.CategoryId });
+            modelBuilder.Entity<PromotionLoyaltyRule>().HasKey(x => new { x.PromotionId,x.LoyaltyRuleId });
+            modelBuilder.Entity<PromotionCustomer>().HasKey(x => new { x.PromotionId,x.UserId });
             
-            modelBuilder.Entity<TaxRuleProduct>().HasKey(x => new { x.TaxRuleId, x.ProductId });
-            modelBuilder.Entity<TaxRuleCategory>().HasKey(x => new { x.TaxRuleId, x.CategoryId });
+            modelBuilder.Entity<TaxRuleProduct>().HasKey(x => new { x.TaxRuleId,x.ProductId });
+            modelBuilder.Entity<TaxRuleCategory>().HasKey(x => new { x.TaxRuleId,x.CategoryId });
 
             modelBuilder.Entity<Address>()
                 .HasOne(a => a.User).WithMany(u => u.Addresses)
                 .HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<OrderLocation>()
+                .HasOne(ol => ol.Order)
+                .WithMany(o => o.Locations)
+                .HasForeignKey(ol => ol.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Category>()
                 .HasOne(c => c.ParentCategory).WithMany(c => c.SubCategories)
@@ -139,7 +146,7 @@ namespace velocart_system.API.Data
                 .HasMany(p => p.Images).WithOne(i => i.Product)
                 .HasForeignKey(i => i.ProductId).OnDelete(DeleteBehavior.Cascade); 
 
-            modelBuilder.Entity<SupplierProduct>().HasKey(sp => new { sp.SupplierId, sp.ProductVariantId });
+            modelBuilder.Entity<SupplierProduct>().HasKey(sp => new { sp.SupplierId,sp.ProductVariantId });
 
             modelBuilder.Entity<SupplierProduct>()
                 .HasOne(sp => sp.Supplier)
@@ -200,7 +207,7 @@ namespace velocart_system.API.Data
             return base.SaveChanges();
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken=default)
         {
             UpdateTimestamps();
             return base.SaveChangesAsync(cancellationToken);
@@ -208,23 +215,23 @@ namespace velocart_system.API.Data
 
         private void UpdateTimestamps()
         {
-            var entries = ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+            var entries=ChangeTracker.Entries()
+                .Where(e => e.State==EntityState.Added || e.State==EntityState.Modified);
 
             foreach (var entry in entries)
             {
-                var updatedAtProp = entry.Metadata.FindProperty("UpdatedAt");
-                if (updatedAtProp != null)
+                var updatedAtProp=entry.Metadata.FindProperty("UpdatedAt");
+                if(updatedAtProp != null)
                 {
-                    entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+                    entry.Property("UpdatedAt").CurrentValue=DateTime.UtcNow;
                 }
 
-                if (entry.State == EntityState.Added)
+                if(entry.State==EntityState.Added)
                 {
-                    var createdAtProp = entry.Metadata.FindProperty("CreatedAt");
-                    if (createdAtProp != null)
+                    var createdAtProp=entry.Metadata.FindProperty("CreatedAt");
+                    if(createdAtProp != null)
                     {
-                        entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
+                        entry.Property("CreatedAt").CurrentValue=DateTime.UtcNow;
                     }
                 }
             }

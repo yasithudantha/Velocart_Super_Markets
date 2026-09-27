@@ -234,7 +234,7 @@ export default function PromotionManagerDashboard() {
     finally { setIsSubmitting(false); }
 };
 
-    const handleCheckboxArray=(formState: any,setFormState: any,field: string,id: number) => {
+    const handleCheckboxArray=(_formState: any,setFormState: any,field: string,id: number) => {
         setFormState((prev: any) => { const arr=prev[field]; if(arr.includes(id)) return { ...prev,[field]: arr.filter((x: number) => x !== id) }; return { ...prev,[field]: [...arr,id] }; });
     };
 
