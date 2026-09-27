@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, ShoppingCart, Loader2, Bot, User, CheckCircle2 } from 'lucide-react';
+import React,{ useState,useRef,useEffect } from 'react';
+import { motion,AnimatePresence } from 'framer-motion';
+import { MessageSquare,X,Send,ShoppingCart,Loader2,Bot,User,CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5176/api';
+const API_URL='http://localhost:5176/api';
 
 interface ProposedItem {
     ProductVariantId: number;
@@ -20,44 +20,44 @@ interface ChatMessage {
 }
 
 export default function StorefrontAssistant() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<ChatMessage[]>([{
+    const [isOpen,setIsOpen]=useState(false);
+    const [messages,setMessages]=useState<ChatMessage[]>([{
         id: 'welcome',
         sender: 'AI',
-        text: "Hi! I'm your VeloCart AI Assistant. I can help you find products, check your points, or build a cart to fit your budget. What are you looking for today?"
+        text: "Hi! I'm your VeloCart AI Assistant. I can help you find products,check your points,or build a cart to fit your budget. What are you looking for today?"
     }]);
-    const [inputText, setInputText] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [actionLoading, setActionLoading] = useState<string | null>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [inputText,setInputText]=useState('');
+    const [isLoading,setIsLoading]=useState(false);
+    const [actionLoading,setActionLoading]=useState<string | null>(null);
+    const messagesEndRef=useRef<HTMLDivElement>(null);
 
-    const scrollToBottom = () => {
+    const scrollToBottom=() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, isOpen]);
+    },[messages,isOpen]);
 
-    const getAuthHeader = () => ({
+    const getAuthHeader=() => ({
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     });
 
-    const handleSendMessage = async (e?: React.FormEvent) => {
+    const handleSendMessage=async (e?: React.FormEvent) => {
         e?.preventDefault();
-        if (!inputText.trim()) return;
+        if(!inputText.trim()) return;
 
-        const userMsg: ChatMessage = { id: Date.now().toString(), sender: 'USER', text: inputText };
-        setMessages(prev => [...prev, userMsg]);
+        const userMsg: ChatMessage={ id: Date.now().toString(),sender: 'USER',text: inputText };
+        setMessages(prev => [...prev,userMsg]);
         setInputText('');
         setIsLoading(true);
 
         try {
-            const response = await axios.post(`${API_URL}/CustomerAgent/chat`, {
+            const response=await axios.post(`${API_URL}/CustomerAgent/chat`,{
                 message: userMsg.text
-            }, getAuthHeader());
+            },getAuthHeader());
 
-            const aiMsg: ChatMessage = {
+            const aiMsg: ChatMessage={
                 id: (Date.now() + 1).toString(),
                 sender: 'AI',
                 text: response.data.reply || "I couldn't process that request.",
@@ -65,34 +65,34 @@ export default function StorefrontAssistant() {
                 isApproved: false
             };
             
-            setMessages(prev => [...prev, aiMsg]);
+            setMessages(prev => [...prev,aiMsg]);
         } catch (error: any) {
-            setMessages(prev => [...prev, {
+            setMessages(prev => [...prev,{
                 id: Date.now().toString(),
                 sender: 'AI',
-                text: "Sorry, I'm having trouble connecting to the VeloCart systems right now. Please try again."
+                text: "Sorry,I'm having trouble connecting to the VeloCart systems right now. Please try again."
             }]);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleApproveCart = async (messageId: string, items: ProposedItem[]) => {
+    const handleApproveCart=async (messageId: string,items: ProposedItem[]) => {
         setActionLoading(messageId);
         try {
             // Add each proposed item to the cart using the existing CartController endpoint
-            const addPromises = items.map(item => 
-                axios.post(`${API_URL}/Cart/add`, {
+            const addPromises=items.map(item => 
+                axios.post(`${API_URL}/Cart/add`,{
                     productVariantId: item.ProductVariantId,
                     quantity: item.Quantity
-                }, getAuthHeader())
+                },getAuthHeader())
             );
             
             await Promise.all(addPromises);
             
             // Mark this specific proposal as approved in the chat history
             setMessages(prev => prev.map(msg => 
-                msg.id === messageId ? { ...msg, isApproved: true } : msg
+                msg.id === messageId ? { ...msg,isApproved: true } : msg
             ));
             
             // Dispatch a custom event to force the CartDrawer/Header to refresh cart count
@@ -110,9 +110,9 @@ export default function StorefrontAssistant() {
             <AnimatePresence>
                 {isOpen ? (
                     <motion.div 
-                        initial={{ opacity: 0, y: 20, scale: 0.95 }} 
-                        animate={{ opacity: 1, y: 0, scale: 1 }} 
-                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        initial={{ opacity: 0,y: 20,scale: 0.95 }} 
+                        animate={{ opacity: 1,y: 0,scale: 1 }} 
+                        exit={{ opacity: 0,y: 20,scale: 0.95 }}
                         className="bg-[#121212] border border-[#D4AF37]/30 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl w-[380px] h-[600px] flex flex-col overflow-hidden"
                     >
                         {/* Header */}
@@ -143,9 +143,9 @@ export default function StorefrontAssistant() {
                                                 <span className="text-xs font-bold text-white uppercase tracking-wider">AI Proposed Cart</span>
                                             </div>
                                             <div className="space-y-2 mb-3">
-                                                {msg.proposedCart.map((item, idx) => (
+                                                {msg.proposedCart.map((item,idx) => (
                                                     <div key={idx} className="flex justify-between items-center text-xs text-gray-300 bg-white/5 p-2 rounded-lg">
-                                                        {/* Render the Product Name, fallback to ID if missing */}
+                                                        {/* Render the Product Name,fallback to ID if missing */}
                                                         <span className="font-bold text-white truncate pr-2">
                                                             {item.ProductName || `Product ID: ${item.ProductVariantId}`}
                                                         </span>
@@ -161,7 +161,7 @@ export default function StorefrontAssistant() {
                                                 </div>
                                             ) : (
                                                 <button 
-                                                    onClick={() => handleApproveCart(msg.id, msg.proposedCart!)}
+                                                    onClick={() => handleApproveCart(msg.id,msg.proposedCart!)}
                                                     disabled={actionLoading === msg.id}
                                                     className="w-full py-2 bg-[#D4AF37] text-black hover:bg-yellow-500 transition-colors rounded-lg text-xs font-bold flex items-center justify-center gap-2 disabled:opacity-50"
                                                 >

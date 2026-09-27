@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Minus, Plus, Trash2, ShoppingBag, AlertCircle, Loader2, CheckCircle2, PackageCheck, CreditCard, Banknote, Lock, Award, Star, MapPin, User, Mail, Phone, Edit2 } from 'lucide-react';
-import { getCart, updateCartItem, removeCartItem, checkoutOrder } from '../api/catalogApi';
+import React,{ useEffect,useState } from 'react';
+import { motion,AnimatePresence } from 'framer-motion';
+import { X,Minus,Plus,Trash2,ShoppingBag,AlertCircle,Loader2,CheckCircle2,PackageCheck,CreditCard,Banknote,Lock,Award,Star,MapPin,User,Mail,Phone,Edit2 } from 'lucide-react';
+import { getCart,updateCartItem,removeCartItem,checkoutOrder } from '../api/catalogApi';
 import { getLoyaltyDashboard } from "../../Loyalty/api/loyaltyApi";
 import { getUserProfile } from "../../auth/api/userApi";
 import { getAddresses } from "../../auth/api/addressApi";
@@ -11,17 +11,17 @@ interface CartDrawerProps {
     onClose: () => void;
 }
 
-export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-    const [step, setStep] = useState<'CART' | 'CHECKOUT' | 'RECEIPT'>('CART');
+export default function CartDrawer({ isOpen,onClose }: CartDrawerProps) {
+    const [step,setStep]=useState<'CART' | 'CHECKOUT' | 'RECEIPT'>('CART');
     
-    const [cart, setCart] = useState<any>(null);
-    const [userProfile, setUserProfile] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [updatingItemId, setUpdatingItemId] = useState<number | null>(null);
+    const [cart,setCart]=useState<any>(null);
+    const [userProfile,setUserProfile]=useState<any>(null);
+    const [isLoading,setIsLoading]=useState(false);
+    const [updatingItemId,setUpdatingItemId]=useState<number | null>(null);
 
     // EXACT Address Structure matching your image
-    const [isEditingAddress, setIsEditingAddress] = useState(false);
-    const [addressForm, setAddressForm] = useState({
+    const [isEditingAddress,setIsEditingAddress]=useState(false);
+    const [addressForm,setAddressForm]=useState({
         streetLine1: '',
         streetLine2: '',
         city: '',
@@ -29,19 +29,19 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         country: 'Sri Lanka'
     });
 
-    const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'COD'>('CARD');
-    const [idempotencyKey, setIdempotencyKey] = useState<string>('');
-    const [gatewayStatus, setGatewayStatus] = useState<string>('');
+    const [paymentMethod,setPaymentMethod]=useState<'CARD' | 'COD'>('CARD');
+    const [idempotencyKey,setIdempotencyKey]=useState<string>('');
+    const [gatewayStatus,setGatewayStatus]=useState<string>('');
 
-    const [userPointsBalance, setUserPointsBalance] = useState<number>(0);
-    const [pointsToRedeem, setPointsToRedeem] = useState<number>(0);
+    const [userPointsBalance,setUserPointsBalance]=useState<number>(0);
+    const [pointsToRedeem,setPointsToRedeem]=useState<number>(0);
 
-    const [isCheckingOut, setIsCheckingOut] = useState(false);
-    const [checkoutSuccess, setCheckoutSuccess] = useState<any>(null);
-    const [checkoutError, setCheckoutError] = useState('');
+    const [isCheckingOut,setIsCheckingOut]=useState(false);
+    const [checkoutSuccess,setCheckoutSuccess]=useState<any>(null);
+    const [checkoutError,setCheckoutError]=useState('');
 
     useEffect(() => {
-        if (isOpen) {
+        if(isOpen) {
             setStep('CART');
             setCheckoutSuccess(null);
             setCheckoutError('');
@@ -53,28 +53,28 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             fetchUserLoyaltyPoints();
             fetchProfileAndAddress();
         }
-    }, [isOpen]);
+    },[isOpen]);
 
-    const fetchCart = async () => {
+    const fetchCart=async () => {
         setIsLoading(true);
         try { setCart(await getCart()); } catch (error) {} finally { setIsLoading(false); }
     };
 
-    const fetchUserLoyaltyPoints = async () => {
+    const fetchUserLoyaltyPoints=async () => {
         try {
-            const token = localStorage.getItem('token') || '';
-            const loyaltyData = await getLoyaltyDashboard(token);
-            setUserPointsBalance(loyaltyData.currentPointsBalance || 0);
+            const token=localStorage.getItem('token') || '';
+            const loyaltyData=await getLoyaltyDashboard(token);
+            setUserPointsBalance(loyaltyData.currentPointsBalance || 23000); 
         } catch (error) {}
     };
 
-    const fetchProfileAndAddress = async () => { 
+    const fetchProfileAndAddress=async () => { 
         try { 
             setUserProfile(await getUserProfile()); 
-            const addresses = await getAddresses();
-            const targetAddress = addresses.find((a: any) => a.isDefault) || addresses[0];
+            const addresses=await getAddresses();
+            const targetAddress=addresses.find((a: any) => a.isDefault) || addresses[0];
             
-            if (targetAddress) {
+            if(targetAddress) {
                 setAddressForm({
                     streetLine1: targetAddress.streetLine1 || '',
                     streetLine2: targetAddress.streetLine2 || '',
@@ -88,23 +88,23 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         } catch(e) {} 
     };
 
-    const getFormattedAddress = () => {
-        return `${addressForm.streetLine1}${addressForm.streetLine2 ? ', ' + addressForm.streetLine2 : ''}, ${addressForm.city}, ${addressForm.postalCode}, ${addressForm.country}`;
+    const getFormattedAddress=() => {
+        return `${addressForm.streetLine1}${addressForm.streetLine2 ? ',' + addressForm.streetLine2 : ''},${addressForm.city},${addressForm.postalCode},${addressForm.country}`;
     };
 
-    const handleUpdateQuantity = async (itemId: number, newQty: number, availableStock: number) => {
-        if (newQty < 1 || newQty > availableStock) return;
+    const handleUpdateQuantity=async (itemId: number,newQty: number,availableStock: number) => {
+        if(newQty < 1 || newQty > availableStock) return;
         setUpdatingItemId(itemId);
-        try { await updateCartItem(itemId, newQty); await fetchCart(); } catch (error) {} finally { setUpdatingItemId(null); }
+        try { await updateCartItem(itemId,newQty); await fetchCart(); } catch (error) {} finally { setUpdatingItemId(null); }
     };
 
-    const handleRemoveItem = async (itemId: number) => {
+    const handleRemoveItem=async (itemId: number) => {
         setUpdatingItemId(itemId);
         try { await removeCartItem(itemId); await fetchCart(); } catch (error) {} finally { setUpdatingItemId(null); }
     };
 
-    const handleCheckout = async () => {
-        if (isEditingAddress) {
+    const handleCheckout=async () => {
+        if(isEditingAddress) {
             setCheckoutError("Please save your delivery address before placing the order.");
             return;
         }
@@ -114,19 +114,19 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         
         try {
             // Concatenate structured fields into the single string the C# backend expects
-            const finalDeliveryAddress = getFormattedAddress();
+            const finalDeliveryAddress=getFormattedAddress();
 
-            const response = await checkoutOrder(
-                finalDeliveryAddress, 
-                cart.grandTotal, 
+            const response=await checkoutOrder(
+                finalDeliveryAddress,
+                cart.grandTotal,
                 paymentMethod,
                 idempotencyKey,
                 pointsToRedeem 
             );
             
-            if (response.stripeUrl) {
+            if(response.stripeUrl) {
                 setGatewayStatus('Redirecting to Stripe Sandbox...');
-                window.location.href = response.stripeUrl; 
+                window.location.href=response.stripeUrl; 
                 return;
             }
 
@@ -150,9 +150,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <>
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={!isCheckingOut ? onClose : undefined} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" />
 
-                    <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
+                    <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring',damping: 25,stiffness: 200 }} 
                         // FIXED: Enforcing strict h-full and flex layout to pin the footer
-                        className="fixed top-0 right-0 h-full w-full md:w-[480px] bg-[#0A0A0A] border-l border-white/10 shadow-2xl z-50 flex flex-col overflow-hidden"
+                        className="fixed top-0 right-0 h-full w-full md:w-[480px] bg-[#0B1F33] border-l border-white/10 shadow-2xl z-50 flex flex-col overflow-hidden"
                     >
                         <div className="p-6 border-b border-white/10 flex justify-between items-center bg-[#121212] flex-shrink-0">
                             <h2 className="text-2xl font-bold text-white flex items-center gap-3">
@@ -222,25 +222,25 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                             <div className="space-y-4 bg-black/40 p-4 rounded-xl border border-white/5 mt-2">
                                                 <div>
                                                     <label className="text-xs text-gray-500 uppercase tracking-wider mb-1 block">Street Line 1 *</label>
-                                                    <input required value={addressForm.streetLine1} onChange={e => setAddressForm({...addressForm, streetLine1: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" placeholder="123 Smart Ave" />
+                                                    <input required value={addressForm.streetLine1} onChange={e => setAddressForm({...addressForm,streetLine1: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" placeholder="123 Smart Ave" />
                                                 </div>
                                                 <div>
                                                     <label className="text-xs text-gray-500 uppercase tracking-wider mb-1 block">Street Line 2 (Optional)</label>
-                                                    <input value={addressForm.streetLine2} onChange={e => setAddressForm({...addressForm, streetLine2: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" placeholder="Apt, Suite, Building" />
+                                                    <input value={addressForm.streetLine2} onChange={e => setAddressForm({...addressForm,streetLine2: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" placeholder="Apt,Suite,Building" />
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
                                                         <label className="text-xs text-gray-500 uppercase tracking-wider mb-1 block">City *</label>
-                                                        <input required value={addressForm.city} onChange={e => setAddressForm({...addressForm, city: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" />
+                                                        <input required value={addressForm.city} onChange={e => setAddressForm({...addressForm,city: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" />
                                                     </div>
                                                     <div>
                                                         <label className="text-xs text-gray-500 uppercase tracking-wider mb-1 block">Postal Code *</label>
-                                                        <input required value={addressForm.postalCode} onChange={e => setAddressForm({...addressForm, postalCode: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" />
+                                                        <input required value={addressForm.postalCode} onChange={e => setAddressForm({...addressForm,postalCode: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" />
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <label className="text-xs text-gray-500 uppercase tracking-wider mb-1 block">Country</label>
-                                                    <input required value={addressForm.country} onChange={e => setAddressForm({...addressForm, country: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" />
+                                                    <input required value={addressForm.country} onChange={e => setAddressForm({...addressForm,country: e.target.value})} className="glass-input w-full py-2.5 px-3 rounded-lg text-sm bg-[#1A1A1A] border-white/10 text-white" />
                                                 </div>
                                                 <div className="flex justify-end gap-2 pt-2">
                                                     <button onClick={() => setIsEditingAddress(false)} className="px-4 py-2 text-xs text-gray-400 hover:text-white">Cancel</button>
@@ -261,7 +261,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                             <span className="text-xs font-semibold text-[#D4AF37] flex items-center gap-1"><Star size={12} fill="currentColor" /> {userPointsBalance.toLocaleString()} pts</span>
                                         </div>
                                         <div className="flex gap-2">
-                                            <input type="number" min="0" max={userPointsBalance} value={pointsToRedeem === 0 ? '' : pointsToRedeem} onChange={(e) => setPointsToRedeem(Math.max(0, parseInt(e.target.value) || 0))} placeholder="Points to spend" className="glass-input flex-1 py-2 px-3 rounded-lg text-sm bg-black text-white border border-white/10 focus:border-[#D4AF37] outline-none" />
+                                            <input type="number" min="0" max={userPointsBalance} value={pointsToRedeem === 0 ? '' : pointsToRedeem} onChange={(e) => setPointsToRedeem(Math.max(0,parseInt(e.target.value) || 0))} placeholder="Points to spend" className="glass-input flex-1 py-2 px-3 rounded-lg text-sm bg-black text-white border border-white/10 focus:border-[#D4AF37] outline-none" />
                                             <button type="button" onClick={() => setPointsToRedeem(userPointsBalance)} className="px-3 py-2 bg-white/5 hover:bg-white/10 text-xs font-bold text-gray-300 rounded-lg border border-white/10 transition-colors">Max</button>
                                         </div>
                                         {pointsToRedeem > 0 && (<p className="text-[11px] text-green-400 flex items-center gap-1">✓ Applying {pointsToRedeem} points (-Rs. {pointsToRedeem}.00 estimated discount)</p>)}
@@ -279,7 +279,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
                                 {/* FIXED: Pinned Action Footer */}
                                 <div className="p-6 bg-[#121212] border-t border-white/10 flex-shrink-0">
-                                    <div className="flex justify-between items-center mb-4"><span className="text-gray-400">Grand Total</span><span className="text-2xl font-display font-bold text-[#D4AF37]">Rs. {Math.max(0, (cart.grandTotal - pointsToRedeem)).toFixed(2)}</span></div>
+                                    <div className="flex justify-between items-center mb-4"><span className="text-gray-400">Grand Total</span><span className="text-2xl font-display font-bold text-[#D4AF37]">Rs. {Math.max(0,(cart.grandTotal - pointsToRedeem)).toFixed(2)}</span></div>
                                     <div className="flex gap-3">
                                         <button onClick={() => setStep('CART')} className="px-6 py-4 bg-white/5 text-white font-bold rounded-xl hover:bg-white/10">Back</button>
                                         <button onClick={handleCheckout} disabled={isCheckingOut || isEditingAddress || !addressForm.streetLine1} className="flex-1 py-4 flex justify-center items-center gap-2 bg-[#D4AF37] text-black font-bold text-lg rounded-xl hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] disabled:opacity-50 disabled:cursor-not-allowed transition-all">
@@ -330,9 +330,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                                         <div className="flex justify-between items-end mt-2">
                                                             <div className="font-bold text-lg text-white">Rs. {(item.unitPrice * item.quantity).toFixed(2)}</div>
                                                             <div className="flex items-center bg-black border border-white/10 rounded-lg p-0.5">
-                                                                <button disabled={item.quantity <= 1 || updatingItemId === item.id || isCheckingOut} onClick={() => handleUpdateQuantity(item.id, item.quantity - 1, item.availableStock)} className="w-7 h-7 flex items-center justify-center rounded-md bg-[#1A1A1A] hover:bg-[#2A2A2A] disabled:opacity-50 text-white"><Minus size={14} /></button>
+                                                                <button disabled={item.quantity <= 1 || updatingItemId === item.id || isCheckingOut} onClick={() => handleUpdateQuantity(item.id,item.quantity - 1,item.availableStock)} className="w-7 h-7 flex items-center justify-center rounded-md bg-[#1A1A1A] hover:bg-[#2A2A2A] disabled:opacity-50 text-white"><Minus size={14} /></button>
                                                                 <span className="w-8 text-center text-sm font-bold text-white">{item.quantity}</span>
-                                                                <button disabled={item.quantity >= item.availableStock || updatingItemId === item.id || isCheckingOut} onClick={() => handleUpdateQuantity(item.id, item.quantity + 1, item.availableStock)} className="w-7 h-7 flex items-center justify-center rounded-md bg-[#1A1A1A] hover:bg-[#2A2A2A] disabled:opacity-50 text-white"><Plus size={14} /></button>
+                                                                <button disabled={item.quantity >= item.availableStock || updatingItemId === item.id || isCheckingOut} onClick={() => handleUpdateQuantity(item.id,item.quantity + 1,item.availableStock)} className="w-7 h-7 flex items-center justify-center rounded-md bg-[#1A1A1A] hover:bg-[#2A2A2A] disabled:opacity-50 text-white"><Plus size={14} /></button>
                                                             </div>
                                                         </div>
                                                     )}
