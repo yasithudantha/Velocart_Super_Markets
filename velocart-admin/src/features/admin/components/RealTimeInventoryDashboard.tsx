@@ -1,34 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React,{ useState,useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { LayoutDashboard, History, AlertTriangle, DollarSign, Package, AlertOctagon, ArrowUpRight, ArrowDownRight, Loader2 } from 'lucide-react';
+import { LayoutDashboard,History,AlertTriangle,DollarSign,Package,AlertOctagon,ArrowUpRight,ArrowDownRight,Loader2 } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5176/api';
+const API_URL='http://localhost:5176/api';
 
-const getAuthHeader = () => ({
+const getAuthHeader=() => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 });
 
 export default function RealTimeInventoryDashboard() {
-    const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'LEDGER'>('OVERVIEW');
-    const [dashboardData, setDashboardData] = useState<any>(null);
-    const [ledgerData, setLedgerData] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState('');
+    const [activeTab,setActiveTab]=useState<'OVERVIEW' | 'LEDGER'>('OVERVIEW');
+    const [dashboardData,setDashboardData]=useState<any>(null);
+    const [ledgerData,setLedgerData]=useState<any[]>([]);
+    const [isLoading,setIsLoading]=useState(true);
+    const [error,setError]=useState('');
 
     useEffect(() => {
         fetchData();
-    }, [activeTab]);
+    },[activeTab]);
 
-    const fetchData = async () => {
+    const fetchData=async () => {
         setIsLoading(true);
         setError('');
         try {
-            if (activeTab === 'OVERVIEW') {
-                const response = await axios.get(`${API_URL}/inventory/dashboard`, getAuthHeader());
+            if(activeTab === 'OVERVIEW') {
+                const response=await axios.get(`${API_URL}/inventory/dashboard`,getAuthHeader());
                 setDashboardData(response.data);
             } else {
-                const response = await axios.get(`${API_URL}/inventory/audit-ledger`, getAuthHeader());
+                const response=await axios.get(`${API_URL}/inventory/audit-ledger`,getAuthHeader());
                 setLedgerData(response.data);
             }
         } catch (err: any) {
@@ -38,7 +38,7 @@ export default function RealTimeInventoryDashboard() {
         }
     };
 
-    const getTransactionColor = (type: string) => {
+    const getTransactionColor=(type: string) => {
         switch (type) {
             case 'Received': return 'text-green-400 bg-green-500/10 border-green-500/20';
             case 'Sold': return 'text-blue-400 bg-blue-500/10 border-blue-500/20';
@@ -52,7 +52,7 @@ export default function RealTimeInventoryDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white p-8">
+        <div className="min-h-screen bg-[#0B1F33] text-white p-8">
             <div className="max-w-7xl mx-auto">
                 
                 {/* Header */}
@@ -61,7 +61,7 @@ export default function RealTimeInventoryDashboard() {
                         <h1 className="font-display text-4xl font-bold tracking-wide flex items-center gap-3">
                             <LayoutDashboard className="text-[#D4AF37]" size={36} /> Inventory Hub
                         </h1>
-                        <p className="text-gray-400 mt-2">Real-time stock monitoring, valuations, and immutable audit trails.</p>
+                        <p className="text-gray-400 mt-2">Real-time stock monitoring,valuations,and immutable audit trails.</p>
                     </div>
                 </div>
 
@@ -86,13 +86,13 @@ export default function RealTimeInventoryDashboard() {
                 {isLoading ? (
                     <div className="flex justify-center items-center h-64"><Loader2 className="w-12 h-12 text-[#D4AF37] animate-spin" /></div>
                 ) : activeTab === 'OVERVIEW' && dashboardData ? (
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+                    <motion.div initial={{ opacity: 0,y: 20 }} animate={{ opacity: 1,y: 0 }} className="space-y-8">
                         
                         {/* KPI Metrics Summary */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div className="bg-[#121212] border border-white/5 rounded-2xl p-6">
                                 <div className="flex items-center gap-3 text-gray-400 mb-2"><DollarSign size={18} className="text-[#D4AF37]" /> Inventory Valuation</div>
-                                <div className="text-3xl font-bold text-white">Rs. {dashboardData.summary.totalValuation.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                                <div className="text-3xl font-bold text-white">Rs. {dashboardData.summary.totalValuation.toLocaleString(undefined,{ minimumFractionDigits: 2 })}</div>
                             </div>
                             <div className="bg-[#121212] border border-white/5 rounded-2xl p-6">
                                 <div className="flex items-center gap-3 text-gray-400 mb-2"><Package size={18} className="text-blue-400" /> Active Products</div>
@@ -145,10 +145,10 @@ export default function RealTimeInventoryDashboard() {
                     </motion.div>
 
                 ) : activeTab === 'LEDGER' ? (
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#121212] border border-white/5 rounded-2xl overflow-hidden">
+                    <motion.div initial={{ opacity: 0,y: 20 }} animate={{ opacity: 1,y: 0 }} className="bg-[#121212] border border-white/5 rounded-2xl overflow-hidden">
                         <div className="p-6 border-b border-white/5 bg-black/30">
                             <h3 className="font-bold text-xl flex items-center gap-2"><History className="text-[#D4AF37]" size={20} /> Immutable Audit Ledger</h3>
-                            <p className="text-gray-400 text-sm mt-1">A strict, permanent record of all physical inventory movements.</p>
+                            <p className="text-gray-400 text-sm mt-1">A strict,permanent record of all physical inventory movements.</p>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
@@ -172,7 +172,7 @@ export default function RealTimeInventoryDashboard() {
                                             </td>
                                             <td className="p-4">
                                                 <span className={`px-2 py-1 rounded text-xs font-bold border ${getTransactionColor(t.type)}`}>
-                                                    {t.type.replace('_', ' ').toUpperCase()}
+                                                    {t.type.replace('_',' ').toUpperCase()}
                                                 </span>
                                             </td>
                                             <td className="p-4 text-center font-bold">
