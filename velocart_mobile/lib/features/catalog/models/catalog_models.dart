@@ -2,9 +2,9 @@ class Category {
   final int id;
   final String name;
 
-  Category({required this.id, required this.name});
+  Category({required this.id,required this.name});
 
-  factory Category.fromJson(Map<String, dynamic> json) {
+  factory Category.fromJson(Map<String,dynamic> json) {
     return Category(
       id: json['id'],
       name: json['name'],
@@ -27,12 +27,12 @@ class ProductVariant {
   final bool isActive;
 
   ProductVariant({
-    required this.id, required this.sku, required this.weightOrSize, 
-    required this.originalPrice, this.discountedPrice, this.discountLabel,
-    required this.stockQuantity, this.expiryDate, required this.isActive
+    required this.id,required this.sku,required this.weightOrSize,
+    required this.originalPrice,this.discountedPrice,this.discountLabel,
+    required this.stockQuantity,this.expiryDate,required this.isActive
   });
 
-  factory ProductVariant.fromJson(Map<String, dynamic> json) {
+  factory ProductVariant.fromJson(Map<String,dynamic> json) {
     return ProductVariant(
       id: json['id'],
       sku: json['sku'],
@@ -52,9 +52,9 @@ class ProductImage {
   final String imageUrl;
   final bool isPrimary;
 
-  ProductImage({required this.id, required this.imageUrl, required this.isPrimary});
+  ProductImage({required this.id,required this.imageUrl,required this.isPrimary});
 
-  factory ProductImage.fromJson(Map<String, dynamic> json) {
+  factory ProductImage.fromJson(Map<String,dynamic> json) {
     return ProductImage(
       id: json['id'],
       imageUrl: json['imageUrl'],
@@ -74,11 +74,11 @@ class Product {
   final List<ProductImage> images;
 
   Product({
-    required this.id, required this.name, required this.brand, required this.description,
-    required this.categoryName, required this.isActive, required this.variants, required this.images
+    required this.id,required this.name,required this.brand,required this.description,
+    required this.categoryName,required this.isActive,required this.variants,required this.images
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) {
+  factory Product.fromJson(Map<String,dynamic> json) {
     return Product(
       id: json['id'],
       name: json['name'],

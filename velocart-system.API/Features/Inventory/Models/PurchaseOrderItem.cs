@@ -10,17 +10,17 @@ namespace velocart_system.API.Features.Inventory.Models
 
         [Required]
         public int PurchaseOrderId { get; set; }
-        public PurchaseOrder PurchaseOrder { get; set; } = null!;
+        public PurchaseOrder PurchaseOrder { get; set; }=null!;
 
         [Required]
         public int ProductVariantId { get; set; }
-        public ProductVariant ProductVariant { get; set; } = null!;
+        public ProductVariant ProductVariant { get; set; }=null!;
 
-        [Required, Range(1, int.MaxValue)]
+        [Required,Range(1,int.MaxValue)]
         public int OrderedQuantity { get; set; }
 
-        [Required, Range(0, int.MaxValue)]
-        public int ReceivedQuantity { get; set; } = 0; // Enables Partial Receiving
+        [Required,Range(0,int.MaxValue)]
+        public int ReceivedQuantity { get; set; }=0; // Enables Partial Receiving
 
         [Required]
         public decimal PurchasePrice { get; set; } // Supplier Price
