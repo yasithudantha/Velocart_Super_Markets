@@ -14,6 +14,6 @@ namespace velocart_system.API.Features.Promotions.Models
         [ForeignKey("UserId")]
         public User? User { get; set; }
 
-        public DateTime AssignedAt { get; set; } = DateTime.UtcNow;
+        public DateTime AssignedAt { get; set; }=DateTime.UtcNow;
     }
 }
