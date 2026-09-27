@@ -1,6 +1,6 @@
 import { useEffect,useState } from 'react';
 import { motion,AnimatePresence } from 'framer-motion';
-import { Package,Calendar,MapPin,CreditCard,Star,ArrowLeft,Loader2,X,CheckCircle2,RotateCcw,Truck,AlertTriangle,CheckCircle,FileText,Download,Banknote,Award } from 'lucide-react';
+import { Package,Calendar,MapPin,CreditCard,Star,ArrowLeft,Loader2,X,CheckCircle2,RotateCcw,Truck,AlertTriangle,CheckCircle,FileText,Download,Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getOrderHistory,submitReview,reorderItems,cancelOrder,chooseRefundMethod,submitComplaint } from '../../catalog/api/catalogApi';
