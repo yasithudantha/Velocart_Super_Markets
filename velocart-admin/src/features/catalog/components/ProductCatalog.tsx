@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState,useEffect } from 'react';
+import { motion,AnimatePresence } from 'framer-motion';
 // MERGED: All icons are now in this single import line
-import { Search, Package, Tag, X, SlidersHorizontal, ArrowUpDown, ShoppingBag, History, User, LogOut, Settings, Truck, LayoutDashboard } from 'lucide-react';
+import { Search,Package,Tag,X,SlidersHorizontal,ArrowUpDown,ShoppingBag,History,User,LogOut,Settings,Truck,LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getProducts, getCategories } from '../api/catalogApi';
+import { getProducts,getCategories } from '../api/catalogApi';
 import type { ProductFilters } from '../api/catalogApi';
 import CartDrawer from './CartDrawer';
 import { logoutUser } from '../../auth/api/authApi';
-import StorefrontAssistant from './StorefrontAssistant';
+
 
 // Interfaces
 interface ProductVariant { 
@@ -28,18 +28,18 @@ interface Product {
 }
 
 export default function ProductCatalog() {
-    const navigate = useNavigate();
-    const [products, setProducts] = useState<Product[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState('');
+    const navigate=useNavigate();
+    const [products,setProducts]=useState<Product[]>([]);
+    const [categories,setCategories]=useState<Category[]>([]);
+    const [isLoading,setIsLoading]=useState(true);
+    const [error,setError]=useState('');
     
     // Cart Drawer State
-    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isCartOpen,setIsCartOpen]=useState(false);
     
     // Core Filter States
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filters, setFilters] = useState<ProductFilters>({
+    const [searchTerm,setSearchTerm]=useState('');
+    const [filters,setFilters]=useState<ProductFilters>({
         categoryId: undefined,
         minPrice: '',
         maxPrice: '',
@@ -49,30 +49,30 @@ export default function ProductCatalog() {
     });
     
     // Debouncer states
-    const [debouncedSearch, setDebouncedSearch] = useState('');
-    const [debouncedFilters, setDebouncedFilters] = useState<ProductFilters>(filters);
-    const [showAutocomplete, setShowAutocomplete] = useState(false);
+    const [debouncedSearch,setDebouncedSearch]=useState('');
+    const [debouncedFilters,setDebouncedFilters]=useState<ProductFilters>(filters);
+    const [showAutocomplete,setShowAutocomplete]=useState(false);
 
     // Debounce the text inputs
     useEffect(() => {
-        const timer = setTimeout(() => {
+        const timer=setTimeout(() => {
             setDebouncedSearch(searchTerm);
             setDebouncedFilters(filters);
-        }, 500);
+        },500);
         return () => clearTimeout(timer);
-    }, [searchTerm, filters]);
+    },[searchTerm,filters]);
 
     // Fetch data when debounced states change
     useEffect(() => {
         loadData();
-    }, [debouncedSearch, debouncedFilters]);
+    },[debouncedSearch,debouncedFilters]);
 
-    const loadData = async () => {
+    const loadData=async () => {
         setIsLoading(true);
         setError('');
         try {
-            const [fetchedProducts, fetchedCategories] = await Promise.all([
-                getProducts({ ...debouncedFilters, search: debouncedSearch }),
+            const [fetchedProducts,fetchedCategories]=await Promise.all([
+                getProducts({ ...debouncedFilters,search: debouncedSearch }),
                 getCategories()
             ]);
             setProducts(fetchedProducts);
@@ -84,20 +84,20 @@ export default function ProductCatalog() {
         }
     };
 
-    const handleFilterChange = (key: keyof ProductFilters, value: any) => {
-        setFilters(prev => ({ ...prev, [key]: value }));
+    const handleFilterChange=(key: keyof ProductFilters,value: any) => {
+        setFilters(prev => ({ ...prev,[key]: value }));
     };
 
     return (
-        <div className="min-h-screen bg-[#46543A] p-8 text-white relative" onClick={() => setShowAutocomplete(false)}>
+        <div className="min-h-screen bg-[#0B1F33] p-8 text-white relative" onClick={() => setShowAutocomplete(false)}>
             
-            {/* Header with Cart, History, and Profile Buttons */}
+            {/* Header with Cart,History,and Profile Buttons */}
             <div className="mb-8 flex justify-between items-start relative z-50">
                 <div>
                     <h1 className="font-display text-4xl font-bold tracking-wide flex items-center gap-3">
                         <Package className="text-[#D4AF37]" size={36} /> Product Catalog
                     </h1>
-                    <p className="text-gray-400 mt-2">Advanced search, filtering, and inventory browsing.</p>
+                    <p className="text-gray-400 mt-2">Advanced search,filtering,and inventory browsing.</p>
                 </div>
 
                 {/* NEW: Action Buttons with Profile Dropdown */}
@@ -118,8 +118,8 @@ export default function ProductCatalog() {
                             <div className="p-2">
                                 {/* DYNAMIC ROLE CHECKING */}
                                 {(() => {
-                                    const user = JSON.parse(localStorage.getItem('user') || '{}');
-                                    const userRole = String(user.role).toUpperCase();
+                                    const user=JSON.parse(localStorage.getItem('user') || '{}');
+                                    const userRole=String(user.role).toUpperCase();
 
                                     return (
                                         <>
@@ -160,7 +160,7 @@ export default function ProductCatalog() {
                             </div>
                             <div className="p-2 border-t border-white/5">
                                 <button onClick={async () => {
-                                    const user = JSON.parse(localStorage.getItem('user') || '{}');
+                                    const user=JSON.parse(localStorage.getItem('user') || '{}');
                                     if(user.id) {
                                         await logoutUser(user.id);
                                     } else {
@@ -205,7 +205,7 @@ export default function ProductCatalog() {
                             <label className="text-sm text-gray-400 mb-2 block font-semibold">Category</label>
                             <select 
                                 value={filters.categoryId || ''}
-                                onChange={(e) => handleFilterChange('categoryId', e.target.value ? Number(e.target.value) : undefined)}
+                                onChange={(e) => handleFilterChange('categoryId',e.target.value ? Number(e.target.value) : undefined)}
                                 className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-4 focus:outline-none focus:border-[#D4AF37] transition-colors cursor-pointer appearance-none"
                             >
                                 <option value="">All Categories</option>
@@ -220,9 +220,9 @@ export default function ProductCatalog() {
                             <label className="text-sm text-gray-400 mb-2 block font-semibold">Brand</label>
                             <input 
                                 type="text"
-                                placeholder="e.g. Nestlé, CIC"
+                                placeholder="e.g. Nestlé,CIC"
                                 value={filters.brand || ''}
-                                onChange={(e) => handleFilterChange('brand', e.target.value)}
+                                onChange={(e) => handleFilterChange('brand',e.target.value)}
                                 className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-4 focus:outline-none focus:border-[#D4AF37] transition-colors"
                             />
                         </div>
@@ -237,11 +237,11 @@ export default function ProductCatalog() {
                                     min="0"
                                     value={filters.minPrice}
                                     onKeyDown={(e) => { 
-                                        if (e.key === '-' || e.key === 'e' || e.key === '+') e.preventDefault(); 
+                                        if(e.key === '-' || e.key === 'e' || e.key === '+') e.preventDefault(); 
                                     }}
                                     onChange={(e) => {
-                                        const val = e.target.value;
-                                        if (Number(val) >= 0 || val === '') handleFilterChange('minPrice', val);
+                                        const val=e.target.value;
+                                        if(Number(val) >= 0 || val === '') handleFilterChange('minPrice',val);
                                     }}
                                     className={`w-1/2 bg-black/50 border rounded-xl py-2 px-3 focus:outline-none transition-colors ${
                                         filters.minPrice && filters.maxPrice && Number(filters.minPrice) > Number(filters.maxPrice) 
@@ -256,11 +256,11 @@ export default function ProductCatalog() {
                                     min="0"
                                     value={filters.maxPrice}
                                     onKeyDown={(e) => { 
-                                        if (e.key === '-' || e.key === 'e' || e.key === '+') e.preventDefault(); 
+                                        if(e.key === '-' || e.key === 'e' || e.key === '+') e.preventDefault(); 
                                     }}
                                     onChange={(e) => {
-                                        const val = e.target.value;
-                                        if (Number(val) >= 0 || val === '') handleFilterChange('maxPrice', val);
+                                        const val=e.target.value;
+                                        if(Number(val) >= 0 || val === '') handleFilterChange('maxPrice',val);
                                     }}
                                     className={`w-1/2 bg-black/50 border rounded-xl py-2 px-3 focus:outline-none transition-colors ${
                                         filters.minPrice && filters.maxPrice && Number(filters.minPrice) > Number(filters.maxPrice) 
@@ -284,7 +284,7 @@ export default function ProductCatalog() {
                                 <input 
                                     type="checkbox"
                                     checked={filters.inStockOnly}
-                                    onChange={(e) => handleFilterChange('inStockOnly', e.target.checked)}
+                                    onChange={(e) => handleFilterChange('inStockOnly',e.target.checked)}
                                     className="w-5 h-5 rounded bg-black/50 border border-white/20 accent-[#D4AF37]"
                                 />
                                 <span className="text-sm text-gray-300 group-hover:text-white transition-colors">In Stock Only</span>
@@ -293,7 +293,7 @@ export default function ProductCatalog() {
                     </div>
                 </div>
 
-                {/* RIGHT SIDE: Search, Sort, and Grid */}
+                {/* RIGHT SIDE: Search,Sort,and Grid */}
                 <div className="flex-grow flex flex-col">
                     
                     {/* Top Bar: Search and Sort */}
@@ -305,7 +305,7 @@ export default function ProductCatalog() {
                                 type="text" value={searchTerm}
                                 onChange={(e) => { setSearchTerm(e.target.value); setShowAutocomplete(true); }}
                                 onFocus={() => setShowAutocomplete(true)}
-                                placeholder="Search by name, brand, or SKU..." 
+                                placeholder="Search by name,brand,or SKU..." 
                                 className="w-full bg-[#121212] border border-white/10 rounded-xl py-3 pl-12 pr-10 focus:outline-none focus:border-[#D4AF37] transition-colors"
                             />
                             {searchTerm && (
@@ -318,10 +318,10 @@ export default function ProductCatalog() {
                             <AnimatePresence>
                                 {showAutocomplete && searchTerm && products.length > 0 && (
                                     <motion.div 
-                                        initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                                        initial={{ opacity: 0,y: -10 }} animate={{ opacity: 1,y: 0 }} exit={{ opacity: 0,y: -10 }}
                                         className="absolute top-full left-0 right-0 mt-2 bg-[#1A1A1A] border border-white/10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] overflow-hidden max-h-64 overflow-y-auto z-50"
                                     >
-                                        {products.slice(0, 5).map(prod => (
+                                        {products.slice(0,5).map(prod => (
                                             <div 
                                                 key={prod.id} onClick={() => { navigate(`/product/${prod.id}`); setShowAutocomplete(false); }}
                                                 className="px-5 py-3 hover:bg-white/5 cursor-pointer flex justify-between items-center border-b border-white/5 last:border-0"
@@ -342,7 +342,7 @@ export default function ProductCatalog() {
                             <ArrowUpDown className="absolute left-4 top-3.5 text-gray-400" size={18} />
                             <select 
                                 value={filters.sortBy}
-                                onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                                onChange={(e) => handleFilterChange('sortBy',e.target.value)}
                                 className="w-full appearance-none bg-[#121212] border border-white/10 rounded-xl py-3 pl-12 pr-10 focus:outline-none focus:border-[#D4AF37] transition-colors cursor-pointer"
                             >
                                 <option value="relevance">Sort by: Relevance</option>
@@ -369,16 +369,16 @@ export default function ProductCatalog() {
                                 </div>
                             ) : (
                                 products.map((product) => {
-                                    const primaryImage = product.images.find(img => img.isPrimary)?.imageUrl || product.images[0]?.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image';
-                                    const startingPrice = product.variants.length > 0 ? Math.min(...product.variants.map(v => v.discountedPrice ?? v.originalPrice)) : 0;
+                                    const primaryImage=product.images.find(img => img.isPrimary)?.imageUrl || product.images[0]?.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image';
+                                    const startingPrice=product.variants.length > 0 ? Math.min(...product.variants.map(v => v.discountedPrice ?? v.originalPrice)) : 0;
 
-                                    const cheapestVariant = product.variants.find(v => (v.discountedPrice ?? v.originalPrice) === startingPrice);
-                                    const hasDiscount = cheapestVariant?.discountedPrice != null;
-                                    const totalStock = product.variants.reduce((sum, variant) => sum + variant.stockQuantity, 0);
+                                    const cheapestVariant=product.variants.find(v => (v.discountedPrice ?? v.originalPrice) === startingPrice);
+                                    const hasDiscount=cheapestVariant?.discountedPrice != null;
+                                    const totalStock=product.variants.reduce((sum,variant) => sum + variant.stockQuantity,0);
 
                                     return (
                                         <motion.div 
-                                            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} key={product.id} 
+                                            initial={{ opacity: 0,scale: 0.95 }} animate={{ opacity: 1,scale: 1 }} key={product.id} 
                                             onClick={() => navigate(`/product/${product.id}`)}
                                             className={`bg-[#121212] border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer flex flex-col h-full ${totalStock === 0 ? 'opacity-70 grayscale-[0.5]' : 'hover:border-[#D4AF37]/50 hover:shadow-[0_0_20px_rgba(212,175,55,0.1)]'}`}
                                         >
@@ -429,7 +429,7 @@ export default function ProductCatalog() {
 
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
                 
-            <StorefrontAssistant />
+            {/* AI Assistant Pending */}
 
         </div>
     );

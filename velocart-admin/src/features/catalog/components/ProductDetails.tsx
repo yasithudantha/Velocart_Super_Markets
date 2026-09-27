@@ -1,37 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ShoppingCart, AlertCircle, CheckCircle2, Minus, Plus, Loader2, Star, MessageSquare } from 'lucide-react';
-import { getProductById, addToCart, getCart, getProductReviews } from '../api/catalogApi';
+import { useState,useEffect } from 'react';
+import { useParams,useNavigate } from 'react-router-dom';
+import { motion,AnimatePresence } from 'framer-motion';
+import { ArrowLeft,ShoppingCart,AlertCircle,CheckCircle2,Minus,Plus,Loader2,Star,MessageSquare } from 'lucide-react';
+import { getProductById,addToCart,getCart,getProductReviews } from '../api/catalogApi';
 
 export default function ProductDetails() {
-    const { id } = useParams();
-    const navigate = useNavigate();
+    const { id }=useParams();
+    const navigate=useNavigate();
     
-    const [product, setProduct] = useState<any>(null);
-    const [selectedVariant, setSelectedVariant] = useState<any>(null);
-    const [selectedImage, setSelectedImage] = useState<string>('');
-    const [reviews, setReviews] = useState<any[]>([]); 
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState('');
+    const [product,setProduct]=useState<any>(null);
+    const [selectedVariant,setSelectedVariant]=useState<any>(null);
+    const [selectedImage,setSelectedImage]=useState<string>('');
+    const [reviews,setReviews]=useState<any[]>([]); 
+    const [isLoading,setIsLoading]=useState(true);
+    const [error,setError]=useState('');
 
     // Cart States
-    const [cart, setCart] = useState<any>(null);
-    const [quantity, setQuantity] = useState(1);
-    const [isAdding, setIsAdding] = useState(false);
-    const [addSuccess, setAddSuccess] = useState(false);
+    const [cart,setCart]=useState<any>(null);
+    const [quantity,setQuantity]=useState(1);
+    const [isAdding,setIsAdding]=useState(false);
+    const [addSuccess,setAddSuccess]=useState(false);
 
     useEffect(() => {
-        if (id) fetchData(Number(id));
-    }, [id]);
+        if(id) fetchData(Number(id));
+    },[id]);
 
-    const fetchData = async (productId: number) => {
+    const fetchData=async (productId: number) => {
         setIsLoading(true);
         try {
-            // Fetch product, cart, AND reviews simultaneously for speed
-            const [productData, cartData, reviewsData] = await Promise.all([
+            // Fetch product,cart,AND reviews simultaneously for speed
+            const [productData,cartData,reviewsData]=await Promise.all([
                 getProductById(productId),
-                getCart(), // Removed userId parameter
+                getCart(),// Removed userId parameter
                 getProductReviews(productId)
             ]);
             
@@ -39,8 +39,8 @@ export default function ProductDetails() {
             setCart(cartData);
             setReviews(reviewsData);
             
-            if (productData.variants && productData.variants.length > 0) setSelectedVariant(productData.variants[0]);
-            const primaryImg = productData.images.find((img: any) => img.isPrimary)?.imageUrl || productData.images[0]?.imageUrl;
+            if(productData.variants && productData.variants.length > 0) setSelectedVariant(productData.variants[0]);
+            const primaryImg=productData.images.find((img: any) => img.isPrimary)?.imageUrl || productData.images[0]?.imageUrl;
             setSelectedImage(primaryImg || 'https://via.placeholder.com/600x600?text=No+Image');
         } catch (err: any) {
             setError(err.toString());
@@ -49,33 +49,33 @@ export default function ProductDetails() {
         }
     };
 
-    const inCartQty = cart?.items?.find((i: any) => i.productVariantId === selectedVariant?.id)?.quantity || 0;
-    const realAvailableStock = Math.max(0, (selectedVariant?.stockQuantity || 0) - inCartQty);
+    const inCartQty=cart?.items?.find((i: any) => i.productVariantId === selectedVariant?.id)?.quantity || 0;
+    const realAvailableStock=Math.max(0,(selectedVariant?.stockQuantity || 0) - inCartQty);
 
     useEffect(() => {
         setQuantity(realAvailableStock > 0 ? 1 : 0);
-    }, [selectedVariant, cart]);
+    },[selectedVariant,cart]);
 
-    const handleQuantityChange = (newQty: number) => {
-        if (!selectedVariant) return;
-        if (newQty < 1) newQty = 1;
-        if (newQty > realAvailableStock) newQty = realAvailableStock; 
+    const handleQuantityChange=(newQty: number) => {
+        if(!selectedVariant) return;
+        if(newQty < 1) newQty=1;
+        if(newQty > realAvailableStock) newQty=realAvailableStock; 
         setQuantity(newQty);
     };
 
-    const handleAddToCart = async () => {
-        if (!selectedVariant || quantity < 1 || quantity > realAvailableStock) return;
+    const handleAddToCart=async () => {
+        if(!selectedVariant || quantity < 1 || quantity > realAvailableStock) return;
         
         setIsAdding(true);
         setError('');
         try {
-            await addToCart(selectedVariant.id, quantity); // Removed userId parameter
+            await addToCart(selectedVariant.id,quantity); // Removed userId parameter
             
-            const updatedCart = await getCart(); // Removed userId parameter
+            const updatedCart=await getCart(); // Removed userId parameter
             setCart(updatedCart);
 
             setAddSuccess(true);
-            setTimeout(() => setAddSuccess(false), 2000);
+            setTimeout(() => setAddSuccess(false),2000);
         } catch (err: any) {
             setError(err.toString());
         } finally {
@@ -83,13 +83,13 @@ export default function ProductDetails() {
         }
     };
 
-    if (isLoading) return <div className="min-h-screen bg-[#050505] flex justify-center items-center"><Loader2 className="animate-spin text-[#D4AF37]" size={48} /></div>;
-    if (error && !product) return <div className="min-h-screen bg-[#050505] text-red-400 p-10">{error}</div>;
+    if(isLoading) return <div className="min-h-screen bg-[#050505] flex justify-center items-center"><Loader2 className="animate-spin text-[#D4AF37]" size={48} /></div>;
+    if(error && !product) return <div className="min-h-screen bg-[#050505] text-red-400 p-10">{error}</div>;
 
-    const displayPrice = selectedVariant?.discountedPrice ?? selectedVariant?.originalPrice ?? 0;
+    const displayPrice=selectedVariant?.discountedPrice ?? selectedVariant?.originalPrice ?? 0;
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white p-8">
+        <div className="min-h-screen bg-[#0B1F33] text-white p-8">
             <button onClick={() => navigate('/catalog')} className="flex items-center gap-2 text-gray-400 hover:text-[#D4AF37] transition-colors mb-8">
                 <ArrowLeft size={20} /> Back to Catalog
             </button>
@@ -97,7 +97,7 @@ export default function ProductDetails() {
             {/* PRODUCT HERO SECTION */}
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div className="space-y-4">
-                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#121212] rounded-3xl overflow-hidden border border-white/5 aspect-square flex items-center justify-center p-4">
+                    <motion.div initial={{ opacity: 0,scale: 0.95 }} animate={{ opacity: 1,scale: 1 }} className="bg-[#121212] rounded-3xl overflow-hidden border border-white/5 aspect-square flex items-center justify-center p-4">
                         <motion.img 
                             key={selectedImage} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}
                             src={selectedImage} alt={product.name} className="max-w-full max-h-full object-contain drop-shadow-2xl" 
@@ -114,7 +114,7 @@ export default function ProductDetails() {
                     </div>
                 </div>
 
-                <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="flex flex-col justify-center">
+                <motion.div initial={{ x: 20,opacity: 0 }} animate={{ x: 0,opacity: 1 }} className="flex flex-col justify-center">
                     <div className="text-sm text-[#D4AF37] font-bold tracking-widest uppercase mb-2">{product.brand}</div>
                     <h1 className="text-4xl font-display font-bold mb-4 leading-tight">{product.name}</h1>
                     
@@ -215,7 +215,7 @@ export default function ProductDetails() {
                                                 <Loader2 className="animate-spin" size={24} />
                                             </motion.div>
                                         ) : addSuccess ? (
-                                            <motion.div key="success" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2">
+                                            <motion.div key="success" initial={{ opacity: 0,scale: 0.5 }} animate={{ opacity: 1,scale: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2">
                                                 <CheckCircle2 size={24} /> Added!
                                             </motion.div>
                                         ) : (
@@ -251,7 +251,7 @@ export default function ProductDetails() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {reviews.map((review: any) => (
                             <motion.div 
-                                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0,y: 20 }} animate={{ opacity: 1,y: 0 }}
                                 key={review.id} 
                                 className="bg-[#121212] p-6 rounded-3xl border border-white/5 relative"
                             >
@@ -274,7 +274,7 @@ export default function ProductDetails() {
                                         )}
                                     </div>
                                     <div className="flex text-[#D4AF37]">
-                                        {[...Array(5)].map((_, i) => (
+                                        {[...Array(5)].map((_,i) => (
                                             <Star key={i} size={16} fill={i < review.rating ? 'currentColor' : 'none'} className={i >= review.rating ? 'text-gray-600' : ''} />
                                         ))}
                                     </div>

@@ -1,4 +1,4 @@
-import React,{ useState,useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import { MapPin,Home,Briefcase,Plus,Edit2,Trash2,CheckCircle,X,Loader2,AlertCircle } from 'lucide-react';
 import { getAddresses,addAddress,updateAddress,deleteAddress } from '../api/addressApi';
 

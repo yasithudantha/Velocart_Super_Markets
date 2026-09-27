@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { useEffect } from 'react';
 import { BrowserRouter as Router,Routes,Route,Navigate,useNavigate,useLocation } from 'react-router-dom';
 import LandingPage from './features/landing/components/LandingPage';
@@ -25,12 +24,12 @@ import MainAdminDashboard from './features/admin/components/MainAdminDashboard';
 // ==========================================
 // FEATURE 5: IDLE TIMEOUT ENGINE
 // ==========================================
-function SessionGuard({ children }: { children: ReactNode }) {
+function SessionGuard({ children }: { children: JSX.Element }) {
   const navigate=useNavigate();
   const location=useLocation();
 
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
+    let timeoutId: NodeJS.Timeout;
     
     const handleActivity=() => {
       clearTimeout(timeoutId);
@@ -57,14 +56,14 @@ function SessionGuard({ children }: { children: ReactNode }) {
   return children;
 }
 
-function PrivateRoute({ children }: { children: ReactNode }) {
+function PrivateRoute({ children }: { children: JSX.Element }) {
   const token=localStorage.getItem('token');
   const location=useLocation();
   if(!token) return <Navigate to="/login" state={{ from: location }} replace />;
   return children;
 }
 
-function AdminRoute({ children,allowedRoles }: { children: ReactNode,allowedRoles: string[] }) {
+function AdminRoute({ children,allowedRoles }: { children: JSX.Element,allowedRoles: string[] }) {
   const token=localStorage.getItem('token');
   const userStr=localStorage.getItem('user');
   const location=useLocation();
