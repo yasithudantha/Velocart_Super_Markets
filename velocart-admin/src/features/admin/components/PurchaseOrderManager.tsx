@@ -1,6 +1,6 @@
 import { useState,useEffect } from 'react';
 import { motion,AnimatePresence } from 'framer-motion';
-import { Truck,Plus,Check,AlertTriangle,AlertCircle,FileText,X,Calendar,PackageOpen,Loader2,Trash2,Edit2,Bot,Activity,CheckCircle2 } from 'lucide-react';
+import { Truck,Plus,Check,AlertTriangle,FileText,X,Calendar,PackageOpen,Loader2,Trash2,Edit2,Bot,Activity,CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
 import { getPendingERPWorkflows,triggerERPAIWorkflow,updateWorkflowStatus,createPurchaseOrder } from '../api/inventoryApi';
 
@@ -232,7 +232,7 @@ export default function PurchaseOrderManager() {
             <AnimatePresence>
                 {toast && (
                     <motion.div initial={{ opacity: 0,y: -50 }} animate={{ opacity: 1,y: 0 }} exit={{ opacity: 0,y: -50 }} className={`fixed top-6 right-6 z-[100] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl font-bold text-white ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
-                        {toast.type === 'success' ? <CheckCircle2 size={24} /> : <AlertTriangle,AlertCircle size={24} />}
+                        {toast.type === 'success' ? <CheckCircle2 size={24} /> : <AlertTriangle size={24} />}
                         {toast.message}
                     </motion.div>
                 )}
@@ -396,7 +396,7 @@ export default function PurchaseOrderManager() {
 
                                 {modalError && (
                                     <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-bold flex items-center gap-2">
-                                        <AlertTriangle,AlertCircle size={18} /> {modalError}
+                                        <AlertTriangle size={18} /> {modalError}
                                     </div>
                                 )}
 
@@ -483,12 +483,12 @@ export default function PurchaseOrderManager() {
                                 
                                 {modalError && (
                                     <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-bold flex items-center gap-2">
-                                        <AlertTriangle,AlertCircle size={18} /> {modalError}
+                                        <AlertTriangle size={18} /> {modalError}
                                     </div>
                                 )}
 
                                 <div className="bg-orange-500/10 border border-orange-500/30 p-4 rounded-xl mb-6 flex gap-3 text-orange-400">
-                                    <AlertTriangle,AlertCircle className="flex-shrink-0" />
+                                    <AlertTriangle className="flex-shrink-0" />
                                     <p className="text-sm">Enter the exact quantities received. <strong>Batch Number and Expiry Date are strictly required</strong> to initialize the FEFO (First-Expired,First-Out) inventory engine.</p>
                                 </div>
                                 <div className="space-y-6">
