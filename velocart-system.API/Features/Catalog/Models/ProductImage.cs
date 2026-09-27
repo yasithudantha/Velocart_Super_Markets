@@ -16,7 +16,7 @@ namespace velocart_system.API.Models
         public Product? Product { get; set; }
 
         [Required]
-        public string ImageUrl { get; set; } = string.Empty;
+        public string ImageUrl { get; set; }=string.Empty;
 
         public bool IsPrimary { get; set; } // True if this is the main cover image
     }

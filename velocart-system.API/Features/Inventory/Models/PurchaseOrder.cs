@@ -19,17 +19,17 @@ namespace velocart_system.API.Features.Inventory.Models
 
         [Required]
         public int SupplierId { get; set; }
-        public Supplier Supplier { get; set; } = null!;
+        public Supplier Supplier { get; set; }=null!;
 
-        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+        public DateTime OrderDate { get; set; }=DateTime.UtcNow;
         public DateTime ExpectedDeliveryDate { get; set; }
 
         [Required]
-        public POStatus Status { get; set; } = POStatus.Placed;
+        public POStatus Status { get; set; }=POStatus.Placed;
 
         public decimal TotalAmount { get; set; }
 
         // Navigation
-        public ICollection<PurchaseOrderItem> Items { get; set; } = new List<PurchaseOrderItem>();
+        public ICollection<PurchaseOrderItem> Items { get; set; }=new List<PurchaseOrderItem>();
     }
 }

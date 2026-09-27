@@ -1,11 +1,11 @@
-name: CI
+name: Full CI Pipeline
 on:
   push:
     branches: [ "main", "IT*" ]
   pull_request:
     branches: [ "main" ]
 jobs:
-  build-and-check:
+  build-backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -13,5 +13,33 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - name: Build API
+      - name: Build API (.NET)
         run: dotnet build ./velocart-system.API/velocart-system.API.csproj
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install and Build Admin
+        run: |
+          cd velocart-admin
+          npm install
+          npm run build
+
+  build-ai-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Verify AI Service
+        run: |
+          cd velocart-ai-service
+          pip install -r requirements.txt
+          python -m py_compile main.py

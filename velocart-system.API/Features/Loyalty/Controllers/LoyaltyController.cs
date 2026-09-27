@@ -19,66 +19,66 @@ namespace velocart_system.API.Features.Loyalty.Controllers
 
         public LoyaltyController(ApplicationDbContext context)
         {
-            _context = context;
+            _context=context;
         }
 
         private int GetSecureUserId()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+            var userIdClaim=User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
                               ?? User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
-            if (int.TryParse(userIdClaim, out int userId)) return userId;
+            if(int.TryParse(userIdClaim,out int userId)) return userId;
             throw new UnauthorizedAccessException("Invalid token claims.");
         }
 
         [HttpGet("dashboard")]
         public async Task<ActionResult<LoyaltyDashboardResponseDto>> GetMyLoyaltyDashboard()
         {
-            int secureUserId = GetSecureUserId();
+            int secureUserId=GetSecureUserId();
 
-            var loyaltyAccount = await _context.LoyaltyAccounts
+            var loyaltyAccount=await _context.LoyaltyAccounts
                 .Include(l => l.User)
                 .Include(l => l.CurrentTier)
-                .FirstOrDefaultAsync(l => l.UserId == secureUserId);
+                .FirstOrDefaultAsync(l => l.UserId==secureUserId);
 
-            if (loyaltyAccount == null || loyaltyAccount.User == null || loyaltyAccount.CurrentTier == null)
-                return NotFound(new { message = "Loyalty account not found for this user." });
+            if(loyaltyAccount==null || loyaltyAccount.User==null || loyaltyAccount.CurrentTier==null)
+                return NotFound(new { message="Loyalty account not found for this user." });
 
-            var allRules = await _context.LoyaltyRules.OrderBy(r => r.MinimumPoints).ToListAsync();
+            var allRules=await _context.LoyaltyRules.OrderBy(r => r.MinimumPoints).ToListAsync();
             
-            string nextTierName = "Maximum Tier Reached";
-            int pointsForNext = 0;
-            decimal progress = 100m;
+            string nextTierName="Maximum Tier Reached";
+            int pointsForNext=0;
+            decimal progress=100m;
 
-            var nextRule = allRules.FirstOrDefault(r => r.MinimumPoints > loyaltyAccount.CurrentPointsBalance);
-            if (nextRule != null)
+            var nextRule=allRules.FirstOrDefault(r => r.MinimumPoints > loyaltyAccount.CurrentPointsBalance);
+            if(nextRule != null)
             {
-                nextTierName = nextRule.TierName;
-                pointsForNext = nextRule.MinimumPoints - loyaltyAccount.CurrentPointsBalance;
+                nextTierName=nextRule.TierName;
+                pointsForNext=nextRule.MinimumPoints - loyaltyAccount.CurrentPointsBalance;
                 
-                int currentTierMin = loyaltyAccount.CurrentTier.MinimumPoints;
-                int range = nextRule.MinimumPoints - currentTierMin;
-                int pointsIntoCurrentTier = loyaltyAccount.CurrentPointsBalance - currentTierMin;
+                int currentTierMin=loyaltyAccount.CurrentTier.MinimumPoints;
+                int range=nextRule.MinimumPoints - currentTierMin;
+                int pointsIntoCurrentTier=loyaltyAccount.CurrentPointsBalance - currentTierMin;
                 
-                if (range > 0)
+                if(range > 0)
                 {
-                    progress = Math.Round(((decimal)pointsIntoCurrentTier / range) * 100, 2);
+                    progress=Math.Round(((decimal)pointsIntoCurrentTier / range) * 100,2);
                 }
             }
 
-            var dashboardData = new LoyaltyDashboardResponseDto
+            var dashboardData=new LoyaltyDashboardResponseDto
             {
-                CustomerName = loyaltyAccount.User.FullName,
-                LoyaltyIdNumber = loyaltyAccount.LoyaltyIdNumber,
-                CurrentTier = loyaltyAccount.CurrentTier.TierName,
-                Status = loyaltyAccount.Status,
-                ExpiryDate = loyaltyAccount.ExpiryDate,
-                CurrentPointsBalance = loyaltyAccount.CurrentPointsBalance,
-                TotalPointsEarned = loyaltyAccount.TotalPointsEarned,
-                TotalPointsRedeemed = loyaltyAccount.TotalPointsRedeemed,
-                TotalEligibleSpend = loyaltyAccount.TotalEligibleSpend,
-                NextTier = nextTierName,
-                PointsRequiredForNextTier = pointsForNext,
-                ProgressPercentage = progress
+                CustomerName=loyaltyAccount.User.FullName,
+                LoyaltyIdNumber=loyaltyAccount.LoyaltyIdNumber,
+                CurrentTier=loyaltyAccount.CurrentTier.TierName,
+                Status=loyaltyAccount.Status,
+                ExpiryDate=loyaltyAccount.ExpiryDate,
+                CurrentPointsBalance=loyaltyAccount.CurrentPointsBalance,
+                TotalPointsEarned=loyaltyAccount.TotalPointsEarned,
+                TotalPointsRedeemed=loyaltyAccount.TotalPointsRedeemed,
+                TotalEligibleSpend=loyaltyAccount.TotalEligibleSpend,
+                NextTier=nextTierName,
+                PointsRequiredForNextTier=pointsForNext,
+                ProgressPercentage=progress
             };
 
             return Ok(dashboardData);

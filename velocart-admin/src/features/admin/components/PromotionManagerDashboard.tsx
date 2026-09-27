@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import React,{ useState,useEffect } from 'react';
 import { motion,AnimatePresence } from 'framer-motion';
 import { 
     Megaphone,Percent,BarChart3,Plus,Trash2,X,Loader2,
@@ -234,7 +234,7 @@ export default function PromotionManagerDashboard() {
     finally { setIsSubmitting(false); }
 };
 
-    const handleCheckboxArray=(__formState: any,setFormState: any,field: string,id: number) => {
+    const handleCheckboxArray=(formState: any,setFormState: any,field: string,id: number) => {
         setFormState((prev: any) => { const arr=prev[field]; if(arr.includes(id)) return { ...prev,[field]: arr.filter((x: number) => x !== id) }; return { ...prev,[field]: [...arr,id] }; });
     };
 

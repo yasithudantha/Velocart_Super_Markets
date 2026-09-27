@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'react';
+import React,{ useEffect,useState } from 'react';
 import { motion,AnimatePresence } from 'framer-motion';
 import { X,Minus,Plus,Trash2,ShoppingBag,AlertCircle,Loader2,CheckCircle2,PackageCheck,CreditCard,Banknote,Lock,Award,Star,MapPin,User,Mail,Phone,Edit2 } from 'lucide-react';
 import { getCart,updateCartItem,removeCartItem,checkoutOrder } from '../api/catalogApi';

@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import React,{ useState,useEffect } from 'react';
 import { motion,AnimatePresence } from 'framer-motion';
 import { Package,Image as ImageIcon,Plus,Trash2,Save,Tag,Box,ArrowLeft,Loader2,UploadCloud,X,CheckCircle2,AlertCircle,Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
