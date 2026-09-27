@@ -1,4 +1,7 @@
 fastapi
 uvicorn
+requests
 langgraph
-langchain-ollama
+langchain_ollama
+langchain_core
+langchain-google-genai

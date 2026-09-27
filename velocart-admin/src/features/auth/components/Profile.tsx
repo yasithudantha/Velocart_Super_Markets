@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React,{ useEffect,useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Phone, ShieldCheck, LogOut, Edit2, Save, X, Loader2, Bell, Lock, AlertTriangle, Award, Package, Check, CheckCircle2 } from 'lucide-react';
-import { getUserProfile, updateUserProfile, changePassword, requestEmailChange, deleteAccount, getMyNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '../api/userApi';
+import { motion,AnimatePresence } from 'framer-motion';
+import { User,Mail,Phone,ShieldCheck,LogOut,Edit2,Save,X,Loader2,Bell,Lock,AlertTriangle,Award,Package,Check,CheckCircle2 } from 'lucide-react';
+import { getUserProfile,updateUserProfile,changePassword,requestEmailChange,deleteAccount,getMyNotifications,markNotificationAsRead,markAllNotificationsAsRead } from '../api/userApi';
 import { logoutUser } from '../api/authApi';
 import AddressManager from './AddressManager';
 
@@ -10,69 +10,69 @@ import LoyaltyDashboard from "../../Loyalty/component/LoyaltyDashboard";
 import OrderHistory from "../../catalog/components/OrderHistory";
 
 export default function Profile() {
-    const navigate = useNavigate();
-    const [profile, setProfile] = useState<any>(null);
-    const [isEditing, setIsEditing] = useState(false);
+    const navigate=useNavigate();
+    const [profile,setProfile]=useState<any>(null);
+    const [isEditing,setIsEditing]=useState(false);
     
-    const [activeView, setActiveView] = useState<'profile' | 'loyalty' | 'orders'>('profile');
+    const [activeView,setActiveView]=useState<'profile' | 'loyalty' | 'orders'>('profile');
     
-    const [editData, setEditData] = useState({ fullName: '', phoneNumber: '', receiveNotifications: true, communicationPreference: 'Email' });
+    const [editData,setEditData]=useState({ fullName: '',phoneNumber: '',receiveNotifications: true,communicationPreference: 'Email' });
     
-    const [securityData, setSecurityData] = useState({ 
-        emailCurrentPassword: '', newEmail: '', passwordCurrentPassword: '', newPassword: '', deleteCurrentPassword: ''
+    const [securityData,setSecurityData]=useState({ 
+        emailCurrentPassword: '',newEmail: '',passwordCurrentPassword: '',newPassword: '',deleteCurrentPassword: ''
     });
-    const [isSecuritySaving, setIsSecuritySaving] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
+    const [isSecuritySaving,setIsSecuritySaving]=useState(false);
+    const [isLoading,setIsLoading]=useState(true);
+    const [error,setError]=useState('');
+    const [message,setMessage]=useState('');
 
     // NEW: Notification States (SRS 6.15)
-    const [notifications, setNotifications] = useState<any[]>([]);
-    const [isNotifOpen, setIsNotifOpen] = useState(false);
+    const [notifications,setNotifications]=useState<any[]>([]);
+    const [isNotifOpen,setIsNotifOpen]=useState(false);
 
     useEffect(() => {
-        const fetchProfileData = async () => {
+        const fetchProfileData=async () => {
             try {
-                const data = await getUserProfile();
+                const data=await getUserProfile();
                 setProfile(data);
                 setEditData({ 
-                    fullName: data.fullName, phoneNumber: data.phoneNumber,
-                    receiveNotifications: data.receiveNotifications ?? true, communicationPreference: data.communicationPreference || 'Email'
+                    fullName: data.fullName,phoneNumber: data.phoneNumber,
+                    receiveNotifications: data.receiveNotifications ?? true,communicationPreference: data.communicationPreference || 'Email'
                 });
                 
                 // Fetch Notifications concurrently
-                const notifs = await getMyNotifications();
+                const notifs=await getMyNotifications();
                 setNotifications(notifs);
 
             } catch (err: any) {
                 setError(err.toString());
-                if (err.toString().includes("Unauthorized")) setTimeout(() => handleLogout(), 2000);
+                if(err.toString().includes("Unauthorized")) setTimeout(() => handleLogout(),2000);
             } finally {
                 setIsLoading(false);
             }
         };
         fetchProfileData();
-    }, []);
+    },[]);
 
     // NEW: Notification Handlers
-    const handleMarkAsRead = async (id: number) => {
+    const handleMarkAsRead=async (id: number) => {
         try {
             await markNotificationAsRead(id);
-            setNotifications(notifications.map(n => n.id === id ? { ...n, isRead: true } : n));
+            setNotifications(notifications.map(n => n.id === id ? { ...n,isRead: true } : n));
         } catch (e) { console.error(e); }
     };
 
-    const handleMarkAllAsRead = async () => {
+    const handleMarkAllAsRead=async () => {
         try {
             await markAllNotificationsAsRead();
-            setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+            setNotifications(notifications.map(n => ({ ...n,isRead: true })));
         } catch (e) { console.error(e); }
     };
 
-    const unreadCount = notifications.filter(n => !n.isRead).length;
+    const unreadCount=notifications.filter(n => !n.isRead).length;
 
-    const handleLogout = async () => {
-        try { if (profile?.id) await logoutUser(profile.id); } catch (e) { console.error(e); }
+    const handleLogout=async () => {
+        try { if(profile?.id) await logoutUser(profile.id); } catch (e) { console.error(e); }
         localStorage.removeItem('velocart_token');
         localStorage.removeItem('velocart_user');
         localStorage.removeItem('token');
@@ -81,20 +81,20 @@ export default function Profile() {
         navigate('/login');
     };
 
-    const handleSave = async () => {
+    const handleSave=async () => {
         setError(''); setMessage(''); setIsLoading(true);
         try {
 
-            let cleanedPhone = editData.phoneNumber.replace(/\s/g, '');
-            if (cleanedPhone.startsWith('0')) {
-                cleanedPhone = '+94' + cleanedPhone.substring(1);
+            let cleanedPhone=editData.phoneNumber.replace(/\s/g,'');
+            if(cleanedPhone.startsWith('0')) {
+                cleanedPhone='+94' + cleanedPhone.substring(1);
             }
-            const payload = {
-                ...profile, 
+            const payload={
+                ...profile,
                 ...editData,
                 phoneNumber: cleanedPhone
             };
-            const result = await updateUserProfile(payload);
+            const result=await updateUserProfile(payload);
             setMessage(result.message);
             setProfile(payload);
             setEditData({
@@ -106,16 +106,16 @@ export default function Profile() {
         finally { setIsLoading(false); }
     };
 
-    const handleSecurityAction = async (action: 'password' | 'email' | 'delete', e: React.FormEvent) => {
+    const handleSecurityAction=async (action: 'password' | 'email' | 'delete',e: React.FormEvent) => {
         e.preventDefault(); setIsSecuritySaving(true); setError(''); setMessage('');
         try {
-            if (action === 'password') {
-                const res = await changePassword({ currentPassword: securityData.passwordCurrentPassword, newPassword: securityData.newPassword });
-                setMessage(res.message); setSecurityData({ ...securityData, passwordCurrentPassword: '', newPassword: '' });
-            } else if (action === 'email') {
-                const res = await requestEmailChange({ currentPassword: securityData.emailCurrentPassword, newEmail: securityData.newEmail });
-                setMessage(res.message); setSecurityData({ ...securityData, emailCurrentPassword: '', newEmail: '' });
-            } else if (action === 'delete') {
+            if(action === 'password') {
+                const res=await changePassword({ currentPassword: securityData.passwordCurrentPassword,newPassword: securityData.newPassword });
+                setMessage(res.message); setSecurityData({ ...securityData,passwordCurrentPassword: '',newPassword: '' });
+            } else if(action === 'email') {
+                const res=await requestEmailChange({ currentPassword: securityData.emailCurrentPassword,newEmail: securityData.newEmail });
+                setMessage(res.message); setSecurityData({ ...securityData,emailCurrentPassword: '',newEmail: '' });
+            } else if(action === 'delete') {
                 if(!window.confirm("Are you absolutely sure? This cannot be undone.")) { setIsSecuritySaving(false); return; }
                 await deleteAccount({ currentPassword: securityData.deleteCurrentPassword });
                 alert("Account deleted. We are sorry to see you go.");
@@ -125,12 +125,12 @@ export default function Profile() {
         finally { setIsSecuritySaving(false); }
     };
 
-    const containerVariants = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } };
+    const containerVariants={ hidden: { opacity: 0,y: 20 },show: { opacity: 1,y: 0,transition: { duration: 0.6,ease: "easeOut" } } };
 
-    if (isLoading && !profile) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-12 h-12 text-primary animate-spin" /></div>;
+    if(isLoading && !profile) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-12 h-12 text-primary animate-spin" /></div>;
 
-    const isGoogleUser = profile?.authProvider === 'GOOGLE' || (!profile?.passwordHash && profile?.profilePictureUrl);
-    const userRole = profile?.role || profile?.Role || profile?.userRole || profile?.UserRole;
+    const isGoogleUser=profile?.authProvider === 'GOOGLE' || (!profile?.passwordHash && profile?.profilePictureUrl);
+    const userRole=profile?.role || profile?.Role || profile?.userRole || profile?.UserRole;
 
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#F7F3E8] py-10" onClick={() => setIsNotifOpen(false)}>
@@ -146,7 +146,7 @@ export default function Profile() {
                         <h1 className="font-display text-3xl font-bold text-white tracking-wide">
                             My <span className="text-primary">Workspace</span>
                         </h1>
-                        <p className="text-gray-400 font-sans text-sm mt-1">Manage your identity, rewards, and orders.</p>
+                        <p className="text-gray-400 font-sans text-sm mt-1">Manage your identity,rewards,and orders.</p>
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -159,7 +159,7 @@ export default function Profile() {
 
                             <AnimatePresence>
                                 {isNotifOpen && (
-                                    <motion.div initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="absolute right-0 mt-3 w-80 bg-[#1A1A1A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
+                                    <motion.div initial={{ opacity: 0,y: 10,scale: 0.95 }} animate={{ opacity: 1,y: 0,scale: 1 }} exit={{ opacity: 0,scale: 0.95 }} className="absolute right-0 mt-3 w-80 bg-[#1A1A1A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
                                         <div className="p-4 border-b border-white/5 flex justify-between items-center bg-black/40">
                                             <h3 className="font-bold text-white text-sm">Notifications</h3>
                                             {unreadCount > 0 && (
@@ -216,9 +216,9 @@ export default function Profile() {
 
                 <AnimatePresence mode="wait">
                     {activeView === 'profile' && (
-                        <motion.div key="profile" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
+                        <motion.div key="profile" initial={{ opacity: 0,y: 10 }} animate={{ opacity: 1,y: 0 }} exit={{ opacity: 0,y: -10 }} transition={{ duration: 0.2 }}>
                             {profile && !profile.phoneNumber && !isEditing && (
-                                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-start gap-3">
+                                <motion.div initial={{ opacity: 0,y: -10 }} animate={{ opacity: 1,y: 0 }} className="mb-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-start gap-3">
                                     <div className="p-1 rounded-full bg-orange-500/20 text-orange-400 mt-0.5"><span className="flex h-4 w-4 items-center justify-center font-bold text-xs">!</span></div>
                                     <div>
                                         <h3 className="text-orange-400 font-semibold text-sm mb-1">Action Required: Incomplete Profile</h3>
@@ -233,22 +233,22 @@ export default function Profile() {
 
                             {profile && (
                                 <div className="space-y-6">
-                                    <div className="flex items-center justify-between p-4 rounded-xl bg-black/40 border border-white/5">
+                                    <div className="flex items-center p-4 rounded-xl bg-black/40 border border-white/5">
                                         <div className="flex items-center gap-4 w-full">
                                             <div className="p-3 rounded-full bg-primary/10 text-primary"><User size={20} /></div>
                                             <div className="flex-1">
                                                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Full Name</p>
-                                                {isEditing ? <input value={editData.fullName} onChange={(e) => setEditData({...editData, fullName: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" /> : <p className="text-white font-medium">{profile.fullName}</p>}
+                                                {isEditing ? <input value={editData.fullName} onChange={(e) => setEditData({...editData,fullName: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" /> : <p className="text-white font-medium">{profile.fullName}</p>}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center justify-between p-4 rounded-xl bg-black/40 border border-white/5">
+                                    <div className="flex items-center p-4 rounded-xl bg-black/40 border border-white/5">
                                         <div className="flex items-center gap-4 w-full">
                                             <div className="p-3 rounded-full bg-primary/10 text-primary"><Phone size={20} /></div>
                                             <div className="flex-1">
                                                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Phone Number</p>
-                                                {isEditing ? <input value={editData.phoneNumber} onChange={(e) => setEditData({...editData, phoneNumber: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" /> : <p className="text-white font-medium">{profile.phoneNumber || 'Not provided'}</p>}
+                                                {isEditing ? <input value={editData.phoneNumber} onChange={(e) => setEditData({...editData,phoneNumber: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" /> : <p className="text-white font-medium">{profile.phoneNumber || 'Not provided'}</p>}
                                             </div>
                                         </div>
                                     </div>
@@ -261,12 +261,12 @@ export default function Profile() {
                                                 {isEditing ? (
                                                     <div className="space-y-4">
                                                         <label className="flex items-center gap-3 cursor-pointer">
-                                                            <input type="checkbox" checked={editData.receiveNotifications} onChange={(e) => setEditData({...editData, receiveNotifications: e.target.checked})} className="w-4 h-4 accent-primary" />
+                                                            <input type="checkbox" checked={editData.receiveNotifications} onChange={(e) => setEditData({...editData,receiveNotifications: e.target.checked})} className="w-4 h-4 accent-primary" />
                                                             <span className="text-sm text-gray-300">Receive Marketing & Promo Updates</span>
                                                         </label>
                                                         <div>
                                                             <p className="text-xs text-gray-500 mb-1">Order Update Channel</p>
-                                                            <select value={editData.communicationPreference} onChange={(e) => setEditData({...editData, communicationPreference: e.target.value})} className="glass-input w-full md:w-1/2 py-2 px-3 rounded-lg text-sm bg-black/50 text-white">
+                                                            <select value={editData.communicationPreference} onChange={(e) => setEditData({...editData,communicationPreference: e.target.value})} className="glass-input w-full md:w-1/2 py-2 px-3 rounded-lg text-sm bg-black/50 text-white">
                                                                 <option value="Email">Email Only</option><option value="SMS">SMS Only</option><option value="Both">Email & SMS</option>
                                                             </select>
                                                         </div>
@@ -312,29 +312,29 @@ export default function Profile() {
                                         <div className="p-6 bg-black/40 border border-white/5 rounded-xl text-center"><ShieldCheck size={32} className="mx-auto text-blue-400 mb-3" /><h3 className="font-bold text-white mb-1">Secured by Google</h3><p className="text-gray-400 text-sm">Your account authentication and email are managed securely by Google.</p></div>
                                     ) : (
                                         <div className="space-y-4">
-                                            <form onSubmit={(e) => handleSecurityAction('email', e)} className="p-5 bg-black/40 border border-white/5 rounded-xl">
+                                            <form onSubmit={(e) => handleSecurityAction('email',e)} className="p-5 bg-black/40 border border-white/5 rounded-xl">
                                                 <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">Update Email Address</h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                                    <input required type="email" placeholder="New Email Address" value={securityData.newEmail} onChange={(e) => setSecurityData({...securityData, newEmail: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" />
-                                                    <input required type="password" placeholder="Current Password (Required)" value={securityData.emailCurrentPassword} onChange={(e) => setSecurityData({...securityData, emailCurrentPassword: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" />
+                                                    <input required type="email" placeholder="New Email Address" value={securityData.newEmail} onChange={(e) => setSecurityData({...securityData,newEmail: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" />
+                                                    <input required type="password" placeholder="Current Password (Required)" value={securityData.emailCurrentPassword} onChange={(e) => setSecurityData({...securityData,emailCurrentPassword: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" />
                                                 </div>
                                                 <button type="submit" disabled={isSecuritySaving} className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-2">{isSecuritySaving ? <Loader2 size={14} className="animate-spin" /> : null} Request Change</button>
                                             </form>
-                                            <form onSubmit={(e) => handleSecurityAction('password', e)} className="p-5 bg-black/40 border border-white/5 rounded-xl">
+                                            <form onSubmit={(e) => handleSecurityAction('password',e)} className="p-5 bg-black/40 border border-white/5 rounded-xl">
                                                 <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">Change Password</h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                                    <input required type="password" placeholder="Current Password" value={securityData.passwordCurrentPassword} onChange={(e) => setSecurityData({...securityData, passwordCurrentPassword: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" />
-                                                    <input required type="password" placeholder="New Password" value={securityData.newPassword} onChange={(e) => setSecurityData({...securityData, newPassword: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" />
+                                                    <input required type="password" placeholder="Current Password" value={securityData.passwordCurrentPassword} onChange={(e) => setSecurityData({...securityData,passwordCurrentPassword: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" />
+                                                    <input required type="password" placeholder="New Password" value={securityData.newPassword} onChange={(e) => setSecurityData({...securityData,newPassword: e.target.value})} className="glass-input w-full py-2 px-3 rounded-lg text-sm" />
                                                 </div>
                                                 <button type="submit" disabled={isSecuritySaving} className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-2">{isSecuritySaving ? <Loader2 size={14} className="animate-spin" /> : null} Update Password</button>
                                             </form>
                                         </div>
                                     )}
 
-                                    <form onSubmit={(e) => handleSecurityAction('delete', e)} className="mt-8 p-5 bg-red-500/10 border border-red-500/20 rounded-xl">
+                                    <form onSubmit={(e) => handleSecurityAction('delete',e)} className="mt-8 p-5 bg-red-500/10 border border-red-500/20 rounded-xl">
                                         <h3 className="text-sm font-bold text-red-400 mb-2 flex items-center gap-2"><AlertTriangle size={16} /> Danger Zone</h3>
                                         <p className="text-xs text-red-300/70 mb-4">Deleting your account is permanent and cannot be undone.</p>
-                                        {!isGoogleUser && (<input required type="password" placeholder="Enter password to confirm" value={securityData.deleteCurrentPassword} onChange={(e) => setSecurityData({...securityData, deleteCurrentPassword: e.target.value})} className="glass-input w-full md:w-1/2 py-2 px-3 rounded-lg text-sm mb-3 border-red-500/30 focus:border-red-500" />)}
+                                        {!isGoogleUser && (<input required type="password" placeholder="Enter password to confirm" value={securityData.deleteCurrentPassword} onChange={(e) => setSecurityData({...securityData,deleteCurrentPassword: e.target.value})} className="glass-input w-full md:w-1/2 py-2 px-3 rounded-lg text-sm mb-3 border-red-500/30 focus:border-red-500" />)}
                                         <button type="submit" disabled={isSecuritySaving} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors block">Delete Account</button>
                                     </form>
                                 </div>
@@ -345,13 +345,13 @@ export default function Profile() {
                     )}
 
                     {activeView === 'loyalty' && (
-                        <motion.div key="loyalty" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
+                        <motion.div key="loyalty" initial={{ opacity: 0,y: 10 }} animate={{ opacity: 1,y: 0 }} exit={{ opacity: 0,y: -10 }} transition={{ duration: 0.2 }}>
                             <LoyaltyDashboard />
                         </motion.div>
                     )}
 
                     {activeView === 'orders' && (
-                        <motion.div key="orders" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
+                        <motion.div key="orders" initial={{ opacity: 0,y: 10 }} animate={{ opacity: 1,y: 0 }} exit={{ opacity: 0,y: -10 }} transition={{ duration: 0.2 }}>
                             <OrderHistory />
                         </motion.div>
                     )}

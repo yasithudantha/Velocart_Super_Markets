@@ -16,18 +16,18 @@ namespace velocart_system.API.Migrations
                 name: "AgentWorkflows",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    WorkflowName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    ExecutionSummary = table.Column<string>(type: "text", nullable: false),
-                    ProposedPayload = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    WorkflowName=table.Column<string>(type: "character varying(100)",maxLength: 100,nullable: false),
+                    Status=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
+                    ExecutionSummary=table.Column<string>(type: "text",nullable: false),
+                    ProposedPayload=table.Column<string>(type: "text",nullable: true),
+                    CreatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false),
+                    UpdatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AgentWorkflows", x => x.Id);
+                    table.PrimaryKey("PK_AgentWorkflows",x => x.Id);
                 });
         }
 

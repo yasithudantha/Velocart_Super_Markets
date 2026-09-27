@@ -45,12 +45,12 @@ namespace velocart_system.API.Migrations
                 name: "ProductChargeCategories",
                 columns: table => new
                 {
-                    ProductChargeId = table.Column<int>(type: "integer", nullable: false),
-                    CategoryId = table.Column<int>(type: "integer", nullable: false)
+                    ProductChargeId=table.Column<int>(type: "integer",nullable: false),
+                    CategoryId=table.Column<int>(type: "integer",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductChargeCategories", x => new { x.ProductChargeId, x.CategoryId });
+                    table.PrimaryKey("PK_ProductChargeCategories",x => new { x.ProductChargeId,x.CategoryId });
                     table.ForeignKey(
                         name: "FK_ProductChargeCategories_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -69,12 +69,12 @@ namespace velocart_system.API.Migrations
                 name: "ProductChargeProducts",
                 columns: table => new
                 {
-                    ProductChargeId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                    ProductChargeId=table.Column<int>(type: "integer",nullable: false),
+                    ProductId=table.Column<int>(type: "integer",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductChargeProducts", x => new { x.ProductChargeId, x.ProductId });
+                    table.PrimaryKey("PK_ProductChargeProducts",x => new { x.ProductChargeId,x.ProductId });
                     table.ForeignKey(
                         name: "FK_ProductChargeProducts_ProductCharges_ProductChargeId",
                         column: x => x.ProductChargeId,

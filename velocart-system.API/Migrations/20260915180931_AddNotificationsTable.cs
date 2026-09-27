@@ -16,18 +16,18 @@ namespace velocart_system.API.Migrations
                 name: "Notifications",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    Title = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
-                    Message = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    Type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id=table.Column<int>(type: "integer",nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId=table.Column<int>(type: "integer",nullable: false),
+                    Title=table.Column<string>(type: "character varying(150)",maxLength: 150,nullable: false),
+                    Message=table.Column<string>(type: "character varying(1000)",maxLength: 1000,nullable: false),
+                    Type=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
+                    IsRead=table.Column<bool>(type: "boolean",nullable: false),
+                    CreatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.PrimaryKey("PK_Notifications",x => x.Id);
                     table.ForeignKey(
                         name: "FK_Notifications_Users_UserId",
                         column: x => x.UserId,

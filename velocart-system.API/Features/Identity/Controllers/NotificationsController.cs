@@ -17,7 +17,7 @@ namespace velocart_system.API.Features.Identity.Controllers
 
         public NotificationsController(ApplicationDbContext context)
         {
-            _context = context;
+            _context=context;
         }
 
         private int GetUserId() => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
@@ -25,9 +25,9 @@ namespace velocart_system.API.Features.Identity.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyNotifications()
         {
-            var userId = GetUserId();
-            var notifications = await _context.Notifications
-                .Where(n => n.UserId == userId)
+            var userId=GetUserId();
+            var notifications=await _context.Notifications
+                .Where(n => n.UserId==userId)
                 .OrderByDescending(n => n.CreatedAt)
                 .Take(50) // Load only the latest 50 for performance
                 .ToListAsync();
@@ -38,11 +38,11 @@ namespace velocart_system.API.Features.Identity.Controllers
         [HttpPut("{id}/read")]
         public async Task<IActionResult> MarkAsRead(int id)
         {
-            var userId = GetUserId();
-            var notification = await _context.Notifications.FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
-            if (notification == null) return NotFound();
+            var userId=GetUserId();
+            var notification=await _context.Notifications.FirstOrDefaultAsync(n => n.Id==id && n.UserId==userId);
+            if(notification==null) return NotFound();
 
-            notification.IsRead = true;
+            notification.IsRead=true;
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -50,9 +50,9 @@ namespace velocart_system.API.Features.Identity.Controllers
         [HttpPut("read-all")]
         public async Task<IActionResult> MarkAllAsRead()
         {
-            var userId = GetUserId();
-            var unread = await _context.Notifications.Where(n => n.UserId == userId && !n.IsRead).ToListAsync();
-            foreach (var n in unread) n.IsRead = true;
+            var userId=GetUserId();
+            var unread=await _context.Notifications.Where(n => n.UserId==userId && !n.IsRead).ToListAsync();
+            foreach (var n in unread) n.IsRead=true;
             await _context.SaveChangesAsync();
             return Ok();
         }

@@ -18,17 +18,17 @@ namespace velocart_system.API.Features.Identity.Models
         [JsonIgnore]
         public User? User { get; set; }
 
-        [Required, MaxLength(150)]
-        public string Title { get; set; } = string.Empty;
+        [Required,MaxLength(150)]
+        public string Title { get; set; }=string.Empty;
 
-        [Required, MaxLength(1000)]
-        public string Message { get; set; } = string.Empty;
+        [Required,MaxLength(1000)]
+        public string Message { get; set; }=string.Empty;
 
-        [Required, MaxLength(50)]
-        public string Type { get; set; } = "SYSTEM"; // LOYALTY, ORDER, SYSTEM, PROMOTION
+        [Required,MaxLength(50)]
+        public string Type { get; set; }="SYSTEM"; // LOYALTY,ORDER,SYSTEM,PROMOTION
 
-        public bool IsRead { get; set; } = false;
+        public bool IsRead { get; set; }=false;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }=DateTime.UtcNow;
     }
 }

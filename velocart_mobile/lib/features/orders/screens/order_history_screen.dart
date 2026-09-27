@@ -6,6 +6,9 @@ import '../../cart/screens/cart_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({Key? key}) : super(key: key);
@@ -15,8 +18,8 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
-  List<dynamic> orders = [];
-  bool isLoading = true;
+  List<dynamic> orders=[];
+  bool isLoading=true;
   int? reorderingId;
   int? cancellingId;
   int? confirmingId;
@@ -30,14 +33,14 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
   Future<void> _fetchOrders() async {
     try {
-      final data = await CatalogApi.getOrderHistory();
+      final data=await CatalogApi.getOrderHistory();
 
       setState(() {
-        orders = data;
-        isLoading = false;
+        orders=data;
+        isLoading=false;
       });
     } catch (e) {
-      setState(() => isLoading = false);
+      setState(() => isLoading=false);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -49,10 +52,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   }
 
   Future<void> _handleReorder(int orderId) async {
-    setState(() => reorderingId = orderId);
+    setState(() => reorderingId=orderId);
 
     try {
-      final response = await CatalogApi.reorderItems(orderId);
+      final response=await CatalogApi.reorderItems(orderId);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -62,7 +65,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         ),
       );
 
-      if (mounted) {
+      if(mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -74,56 +77,54 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            e.toString().replaceAll('Exception: ', ''),
+            e.toString().replaceAll('Exception: ',''),
           ),
           backgroundColor: Colors.orange,
         ),
       );
     } finally {
-      if (mounted) {
-        setState(() => reorderingId = null);
+      if(mounted) {
+        setState(() => reorderingId=null);
       }
     }
   }
 
-  Future<void> _handleCancelOrder(int orderId) async {
-    final bool? confirm = await showDialog<bool>(
+    // THE FIX: Add the 'isPaidCard' parameter
+    Future<void> _handleCancelOrder(int orderId,bool isPaidCard) async {
+    final bool? confirm=await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Cancel Order"),
-          content: const Text(
-            "Are you sure you want to cancel this order?",
+          content: Text(
+            isPaidCard 
+                ? "Are you sure you want to cancel this order?\n\n" "Note: Your card refund will take 2-3 business days to process."
+                : "Are you sure you want to cancel this order?",
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
           actions: [
             TextButton(
-              child: const Text(
-                "No",
-                style: TextStyle(color: Colors.grey),
-              ),
+              child: const Text("No",style: TextStyle(color: Colors.grey),),
               onPressed: () => Navigator.of(context).pop(false),
             ),
-            TextButton(
-              child: const Text(
-                "Yes, Cancel",
-                style: TextStyle(color: Colors.red),
-              ),
+           TextButton(
+              child: const Text("Yes,Cancel",style: TextStyle(color: Colors.red)),
               onPressed: () => Navigator.of(context).pop(true),
             ),
           ],
         );
       },
     );
+          
 
-    if (confirm != true) return;
+    if(confirm != true) return;
 
-    setState(() => cancellingId = orderId);
+    setState(() => cancellingId=orderId);
 
     try {
-      final response = await CatalogApi.cancelOrder(orderId);
+      final response=await CatalogApi.cancelOrder(orderId);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -137,21 +138,21 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            e.toString().replaceAll('Exception: ', ''),
+            e.toString().replaceAll('Exception: ',''),
           ),
           backgroundColor: Colors.red,
         ),
       );
     } finally {
-      setState(() => cancellingId = null);
+      setState(() => cancellingId=null);
     }
   }
 
   Future<void> _handleConfirmReceipt(int orderId) async {
-    setState(() => confirmingId = orderId);
+    setState(() => confirmingId=orderId);
 
     try {
-      final msg = await CatalogApi.confirmReceipt(orderId);
+      final msg=await CatalogApi.confirmReceipt(orderId);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -165,24 +166,24 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            e.toString().replaceAll('Exception: ', ''),
+            e.toString().replaceAll('Exception: ',''),
           ),
           backgroundColor: Colors.red,
         ),
       );
     } finally {
-      setState(() => confirmingId = null);
+      setState(() => confirmingId=null);
     }
   }
 
   // ============================================================
   // NEW: HANDLE REFUND CHOICE SUBMISSION
   // ============================================================
-  Future<void> _handleChooseRefund(int complaintId, String method) async {
-    setState(() => refundingComplaintId = complaintId);
+  Future<void> _handleChooseRefund(int complaintId,String method) async {
+    setState(() => refundingComplaintId=complaintId);
 
     try {
-      final response = await CatalogApi.chooseRefundMethod(complaintId, method);
+      final response=await CatalogApi.chooseRefundMethod(complaintId,method);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -196,147 +197,137 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.toString().replaceAll('Exception: ', '')),
+          content: Text(e.toString().replaceAll('Exception: ','')),
           backgroundColor: Colors.red,
         ),
       );
     } finally {
-      setState(() => refundingComplaintId = null);
+      setState(() => refundingComplaintId=null);
     }
   }
 
   void _showComplaintDialog(int orderId) {
-    final _subjectCtrl = TextEditingController();
-    final _descCtrl = TextEditingController();
-    bool _isSubmittingComplaint = false;
+    final _subjectCtrl=TextEditingController();
+    final _descCtrl=TextEditingController();
+    File? _selectedImage;
+    bool _isSubmittingComplaint=false;
+    final ImagePicker _picker=ImagePicker();
 
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (context, setModalState) => AlertDialog(
+        builder: (context,setModalState) => AlertDialog(
           backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Row(
             children: [
-              Icon(
-                Icons.report_problem,
-                color: Colors.orange,
-              ),
+              Icon(Icons.report_problem,color: Colors.orange),
               SizedBox(width: 10),
               Text("Report a Problem"),
             ],
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Is something missing or damaged? Let our Delivery Manager know.",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Is something missing or damaged? Let our Delivery Manager know.",
+                  style: TextStyle(fontSize: 12,color: Colors.grey),
                 ),
-              ),
-              const SizedBox(height: 15),
-              TextField(
-                controller: _subjectCtrl,
-                decoration: InputDecoration(
-                  labelText: "Subject",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: _subjectCtrl,
+                  decoration: InputDecoration(
+                    labelText: "Subject",
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: _descCtrl,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _descCtrl,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    labelText: "Description",
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 15),
+                
+                // --- NEW DEVICE FEATURE UI ---
+                const Text("Upload Photo (Optional)",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.grey)),
+                const SizedBox(height: 8),
+                InkWell(
+                  onTap: () async {
+                    try {
+                      final XFile? image=await _picker.pickImage(source: ImageSource.camera,imageQuality: 70); // Uses Native Camera
+                      if(image != null) {
+                        setModalState(() => _selectedImage=File(image.path));
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Camera permission denied."),backgroundColor: Colors.red));
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: _selectedImage==null ? 80 : 150,
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade50,
+                      border: Border.all(color: Colors.orange.shade200,style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: _selectedImage==null 
+                        ? const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.camera_alt,color: Colors.orange),
+                              SizedBox(height: 4),
+                              Text("Tap to open Camera",style: TextStyle(color: Colors.orange,fontSize: 12,fontWeight: FontWeight.bold))
+                            ],
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.file(_selectedImage!,fit: BoxFit.cover),
+                          ),
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text(
-                "Cancel",
-                style: TextStyle(color: Colors.grey),
-              ),
+              child: const Text("Cancel",style: TextStyle(color: Colors.grey)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: _isSubmittingComplaint
                   ? null
                   : () async {
-                      if (_subjectCtrl.text.isEmpty ||
-                          _descCtrl.text.isEmpty) {
-                        return;
-                      }
+                      if(_subjectCtrl.text.isEmpty || _descCtrl.text.isEmpty) return;
 
-                      setModalState(
-                        () => _isSubmittingComplaint = true,
-                      );
-
+                      setModalState(() => _isSubmittingComplaint=true);
                       try {
-                        final msg =
-                            await CatalogApi.submitComplaint(
+                        final msg=await CatalogApi.submitComplaint(
                           orderId,
                           _subjectCtrl.text,
                           _descCtrl.text,
+                          imageFile: _selectedImage,// Pass the native file
                         );
-
                         Navigator.pop(ctx);
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(msg),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-                        _fetchOrders(); // Refresh to show new complaint
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg),backgroundColor: Colors.green));
+                        _fetchOrders();
                       } catch (e) {
-                        setModalState(
-                          () => _isSubmittingComplaint = false,
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              e.toString()
-                                  .replaceAll('Exception: ', ''),
-                            ),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
+                        setModalState(() => _isSubmittingComplaint=false);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString().replaceAll('Exception: ','')),backgroundColor: Colors.red));
                       }
                     },
               child: _isSubmittingComplaint
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : const Text(
-                      "Submit",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  ? const SizedBox(width: 16,height: 16,child: CircularProgressIndicator(color: Colors.white,strokeWidth: 2))
+                  : const Text("Submit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -348,9 +339,9 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     int productId,
     String productName,
   ) {
-    int selectedRating = 5;
-    TextEditingController commentCtrl = TextEditingController();
-    bool isSubmitting = false;
+    int selectedRating=5;
+    TextEditingController commentCtrl=TextEditingController();
+    bool isSubmitting=false;
 
     showModalBottomSheet(
       context: context,
@@ -363,7 +354,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       ),
       builder: (context) {
         return StatefulBuilder(
-          builder: (context, setModalState) {
+          builder: (context,setModalState) {
             return Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context)
@@ -483,7 +474,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           ? null
                           : () async {
                               setModalState(
-                                () => isSubmitting = true,
+                                () => isSubmitting=true,
                               );
 
                               try {
@@ -507,7 +498,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                 );
                               } catch (e) {
                                 setModalState(
-                                  () => isSubmitting = false,
+                                  () => isSubmitting=false,
                                 );
 
                                 ScaffoldMessenger.of(context)
@@ -515,7 +506,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                   SnackBar(
                                     content: Text(
                                       e.toString().replaceAll(
-                                          'Exception: ', ''),
+                                          'Exception: ',''),
                                     ),
                                     backgroundColor: Colors.red,
                                   ),
@@ -553,7 +544,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   }
 
   Future<void> _downloadReceiptAsText(
-    Map<String, dynamic> receiptData,
+    Map<String,dynamic> receiptData,
   ) async {
     try {
       final String orderNumber =
@@ -565,14 +556,14 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       final directory =
           Directory('/storage/emulated/0/Download');
 
-      if (!await directory.exists()) {
+      if(!await directory.exists()) {
         await directory.create(recursive: true);
       }
 
       final file =
           File('${directory.path}/$fileName');
 
-      StringBuffer buffer = StringBuffer();
+      StringBuffer buffer=StringBuffer();
 
       buffer.writeln(
           "====================================");
@@ -608,13 +599,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         "Subtotal:         Rs. ${receiptData['subtotal'].toStringAsFixed(2)}",
       );
 
-      if (receiptData['discountAmount'] > 0) {
+      if(receiptData['discountAmount'] > 0) {
         buffer.writeln(
           "Promotions:      -Rs. ${receiptData['discountAmount'].toStringAsFixed(2)}",
         );
       }
 
-      if (receiptData['loyaltyDiscountAmount'] > 0) {
+      if(receiptData['loyaltyDiscountAmount'] > 0) {
         buffer.writeln(
           "Loyalty Pts:     -Rs. ${receiptData['loyaltyDiscountAmount'].toStringAsFixed(2)}",
         );
@@ -642,7 +633,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         buffer.toString(),
       );
 
-      if (mounted) {
+      if(mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -654,7 +645,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         );
       }
     } catch (e) {
-      if (mounted) {
+      if(mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -667,9 +658,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     }
   }
 
-  Future<void> _showDeliveryDetailsDialog(
-    int orderId,
-  ) async {
+  Future<void> _showDeliveryDetailsDialog(Map<String,dynamic> order) async {
+    int orderId=order['id'];
+    String orderStatus=order['orderStatus'];
+    bool isConfirmed=order['isCustomerConfirmed']==true;
+    
+    // STRICT CONSTRAINT: Only show map if Delivering,or Delivered but not yet confirmed
+    bool showMap=orderStatus=='DELIVERING' || (orderStatus=='DELIVERED' && !isConfirmed);
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -684,10 +679,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       final prefs =
           await SharedPreferences.getInstance();
 
-      final token = prefs.getString('velocart_token') ??
+      final token=prefs.getString('velocart_token') ??
           prefs.getString('token');
 
-      final res = await http.get(
+      final res=await http.get(
         Uri.parse(
           '${AuthApiService.baseUrl}/orders/$orderId/delivery-details',
         ),
@@ -696,12 +691,17 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         },
       );
 
+      final locRes=await http.get(
+        Uri.parse('${AuthApiService.baseUrl}/orders/$orderId/locations'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
       Navigator.pop(context); // Close spinner
 
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
+      if(res.statusCode==200) {
+        final data=jsonDecode(res.body);
 
-        if (data['message'] != null) {
+        if(data['message'] != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(data['message']),
@@ -844,7 +844,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  if (data['assignedDriverContact'] !=
+                  if(data['assignedDriverContact'] !=
                           null &&
                       data['assignedDriverContact']
                           .isNotEmpty)
@@ -855,7 +855,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                         fontSize: 12,
                       ),
                     ),
-                  if (data['deliveryNotes'] != null &&
+                  if(data['deliveryNotes'] != null &&
                       data['deliveryNotes'].isNotEmpty) ...[
                     const SizedBox(height: 15),
                     Container(
@@ -886,6 +886,74 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                  // --- NEW: CUSTOMER LIVE TRACKING MAP ---
+                  if(showMap && locRes.statusCode==200 && jsonDecode(locRes.body).isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    const Row(
+                      children: [
+                        Icon(Icons.pin_drop,color: Colors.blue,size: 16),
+                        SizedBox(width: 6),
+                        Text("Live Tracking",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black12),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: FlutterMap(
+                          options: MapOptions(
+                            // Center map on the most recent location
+                            initialCenter: LatLng(jsonDecode(locRes.body)[0]['latitude'],jsonDecode(locRes.body)[0]['longitude']),
+                            initialZoom: 13.0,
+                          ),
+                          children: [
+                            TileLayer(
+                              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              userAgentPackageName: 'com.velocart.app',// Required by OSM policy
+                            ),
+                            MarkerLayer(
+                              markers: (jsonDecode(locRes.body) as List).map((loc) => Marker(
+                                point: LatLng(loc['latitude'],loc['longitude']),
+                                width: 40,
+                                height: 40,
+                                child: const Icon(Icons.location_on,color: Colors.red,size: 36),
+                              )).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    
+                    // Timeline History
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 120),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: jsonDecode(locRes.body).length,
+                        itemBuilder: (ctx,i) {
+                          final loc=jsonDecode(locRes.body)[i];
+                          final time=DateTime.parse(loc['timestamp']).toLocal();
+                          return ListTile(
+                            dense: true,
+                            leading: const Icon(Icons.my_location,size: 16,color: Colors.blue),
+                            title: Text(loc['placeName'],style: const TextStyle(fontSize: 12,fontWeight: FontWeight.bold),maxLines: 1,overflow: TextOverflow.ellipsis),
+                            subtitle: Text("${time.day}/${time.month}/${time.year}  ${time.hour}:${time.minute.toString().padLeft(2,'0')}",style: const TextStyle(fontSize: 10)),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -930,10 +998,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     try {
       final prefs =
           await SharedPreferences.getInstance();
-      final token = prefs.getString('velocart_token') ??
+      final token=prefs.getString('velocart_token') ??
           prefs.getString('token');
 
-      final res = await http.get(
+      final res=await http.get(
         Uri.parse(
           '${AuthApiService.baseUrl}/orders/$orderId/invoice',
         ),
@@ -944,8 +1012,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
       Navigator.pop(context); 
 
-      if (res.statusCode == 200) {
-        final receiptData = jsonDecode(res.body);
+      if(res.statusCode==200) {
+        final receiptData=jsonDecode(res.body);
 
         showDialog(
           context: context,
@@ -1037,20 +1105,20 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                   fontSize: 12,
                                 ),
                               ),
-                              Text(
-                                receiptData[
-                                        'paymentStatus'] ??
-                                    '',
-                                style: TextStyle(
-                                  color: receiptData[
-                                              'paymentStatus'] ==
-                                          'PENDING'
-                                      ? Colors.orange
-                                      : Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
+                             Text(
+                              receiptData['paymentStatus'] ?? '',
+                              style: TextStyle(
+                                color: receiptData['paymentStatus']=='REFUND_PENDING' 
+                                    ? Colors.blue 
+                                    : receiptData['paymentStatus']=='CANCELLED'
+                                        ? Colors.red
+                                        : receiptData['paymentStatus']=='PENDING'
+                                            ? Colors.orange
+                                            : Colors.green,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
                               ),
+                            ),
                             ],
                           ),
                         ),
@@ -1117,7 +1185,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                         ),
                       ],
                     ),
-                    if (receiptData['discountAmount'] > 0)
+                    if(receiptData['discountAmount'] > 0)
                       Row(
                         mainAxisAlignment:
                             MainAxisAlignment.spaceBetween,
@@ -1138,7 +1206,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           ),
                         ],
                       ),
-                    if (receiptData[
+                    if(receiptData[
                             'loyaltyDiscountAmount'] >
                         0)
                       Row(
@@ -1369,13 +1437,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       const EdgeInsets.all(16),
                   itemCount: orders.length,
                   itemBuilder:
-                      (context, index) {
-                    final order = orders[index];
-                    final bool isDelivered = order['orderStatus'] == 'DELIVERED';
-                    final bool isPending = order['orderStatus'] == 'PENDING';
-                    final bool isCancelled = order['orderStatus'] == 'CANCELLED';
-                    final bool isConfirmed = order['isCustomerConfirmed'] == true;
-                    final orderDate = DateTime.parse(order['orderDate']).toLocal();
+                      (context,index) {
+                    final order=orders[index];
+                    final bool isDelivered=order['orderStatus']=='DELIVERED';
+                    final bool isPending=order['orderStatus']=='PENDING' || order['orderStatus']=='VALIDATING';
+                    final bool isCancelled=order['orderStatus']=='CANCELLED';
+                    final bool isConfirmed=order['isCustomerConfirmed']==true;
+                    final orderDate=DateTime.parse(order['orderDate']).toLocal();
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 20),
@@ -1386,7 +1454,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
                             blurRadius: 10,
-                            offset: const Offset(0, 5),
+                            offset: const Offset(0,5),
                           ),
                         ],
                       ),
@@ -1407,20 +1475,20 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text("Order Number", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                      const Text("Order Number",style: TextStyle(fontSize: 12,color: Colors.grey)),
                                       Text(
                                         order['orderNumber'],
-                                        style: const TextStyle(fontWeight: FontWeight.w900, color: Color(0xFFD4AF37), fontSize: 16),
+                                        style: const TextStyle(fontWeight: FontWeight.w900,color: Color(0xFFD4AF37),fontSize: 16),
                                       ),
                                       const SizedBox(height: 4),
-                                      Text("${orderDate.day}/${orderDate.month}/${orderDate.year}", style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)),
+                                      Text("${orderDate.day}/${orderDate.month}/${orderDate.year}",style: const TextStyle(fontSize: 12,color: Colors.grey,fontWeight: FontWeight.bold)),
                                     ],
                                   ),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
                                         decoration: BoxDecoration(
                                           color: isDelivered ? Colors.green.shade50 : isCancelled ? Colors.red.shade50 : Colors.orange.shade50,
                                           borderRadius: BorderRadius.circular(10),
@@ -1435,45 +1503,69 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                           ),
                                         ),
                                       ),
-                                      if (isDelivered || isCancelled) ...[
+                                      // ADDED: Show REFUND_PENDING directly on the card so the user doesn't panic
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        order['paymentStatus']=='REFUND_PENDING'
+                                            ? 'Refund Processing'
+                                            : 'Payment: ${order['paymentStatus']}',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: order['paymentStatus']=='REFUND_PENDING'
+                                              ? Colors.blue 
+                                              : Colors.grey,
+                                        ),
+                                      ),
+                                      if(isDelivered || isCancelled) ...[
                                         const SizedBox(height: 8),
                                         InkWell(
-                                          onTap: reorderingId == order['id'] ? null : () => _handleReorder(order['id']),
+                                          onTap: reorderingId==order['id'] ? null : () => _handleReorder(order['id']),
                                           child: Row(
                                             children: [
-                                              reorderingId == order['id']
-                                                  ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFD4AF37)))
-                                                  : const Icon(Icons.refresh, size: 14, color: Color(0xFFD4AF37)),
+                                              reorderingId==order['id']
+                                                  ? const SizedBox(width: 14,height: 14,child: CircularProgressIndicator(strokeWidth: 2,color: Color(0xFFD4AF37)))
+                                                  : const Icon(Icons.refresh,size: 14,color: Color(0xFFD4AF37)),
                                               const SizedBox(width: 4),
-                                              const Text("Reorder", style: TextStyle(color: Color(0xFFD4AF37), fontSize: 12, fontWeight: FontWeight.bold)),
+                                              const Text("Reorder",style: TextStyle(color: Color(0xFFD4AF37),fontSize: 12,fontWeight: FontWeight.bold)),
                                             ],
                                           ),
                                         ),
                                       ],
-                                      if (isPending) ...[
+                                      
+                                      if(isPending) ...[
                                         const SizedBox(height: 8),
                                         InkWell(
-                                          onTap: cancellingId == order['id'] ? null : () => _handleCancelOrder(order['id']),
+                                          // THE FIX: Check paymentMethod and grandTotal,ignore paymentStatus string
+                                          onTap: cancellingId==order['id'] 
+                                              ? null 
+                                              : () {
+                                                  // Safe casting to handle Dart dynamic JSON types (int vs double)
+                                                  final double grandTotal=(order['grandTotal'] ?? 0).toDouble();
+                                                  final bool isPaidCard=(order['paymentMethod']=='CARD') && (grandTotal > 0);
+                                                  
+                                                  _handleCancelOrder(order['id'],isPaidCard);
+                                                },
                                           child: Row(
                                             children: [
-                                              cancellingId == order['id']
-                                                  ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.redAccent))
-                                                  : const Icon(Icons.cancel_outlined, size: 14, color: Colors.redAccent),
+                                              cancellingId==order['id']
+                                                  ? const SizedBox(width: 14,height: 14,child: CircularProgressIndicator(strokeWidth: 2,color: Colors.redAccent))
+                                                  : const Icon(Icons.cancel_outlined,size: 14,color: Colors.redAccent),
                                               const SizedBox(width: 4),
-                                              const Text("Cancel", style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                                              const Text("Cancel",style: TextStyle(color: Colors.redAccent,fontSize: 12,fontWeight: FontWeight.bold)),
                                             ],
                                           ),
                                         ),
                                       ],
-                                      if (order['orderStatus'] == 'DELIVERING' || order['orderStatus'] == 'DELIVERED') ...[
+                                      if(order['orderStatus']=='DELIVERING' || order['orderStatus']=='DELIVERED') ...[
                                         const SizedBox(height: 8),
                                         InkWell(
-                                          onTap: () => _showDeliveryDetailsDialog(order['id']),
+                                          onTap: () => _showDeliveryDetailsDialog(order),
                                           child: const Row(
                                             children: [
-                                              Icon(Icons.local_shipping_outlined, size: 14, color: Colors.blue),
+                                              Icon(Icons.local_shipping_outlined,size: 14,color: Colors.blue),
                                               SizedBox(width: 4),
-                                              Text("Delivery Info", style: TextStyle(color: Colors.blue, fontSize: 12, fontWeight: FontWeight.bold)),
+                                              Text("Delivery Info",style: TextStyle(color: Colors.blue,fontSize: 12,fontWeight: FontWeight.bold)),
                                             ],
                                           ),
                                         ),
@@ -1484,9 +1576,9 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                               ),
                             ),
 
-                            if (isDelivered && !isConfirmed)
+                            if(isDelivered && !isConfirmed)
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
                                 decoration: BoxDecoration(
                                   color: Colors.orange.shade50,
                                   border: Border(bottom: BorderSide(color: Colors.orange.shade100)),
@@ -1501,7 +1593,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                         ),
                                         onPressed: () => _showComplaintDialog(order['id']),
-                                        child: const Text("Report Problem", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                                        child: const Text("Report Problem",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold)),
                                       ),
                                     ),
                                     const SizedBox(width: 10),
@@ -1513,40 +1605,40 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                           elevation: 0,
                                         ),
-                                        onPressed: confirmingId == order['id'] ? null : () => _handleConfirmReceipt(order['id']),
-                                        child: confirmingId == order['id']
-                                            ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                                            : const Text("Confirm Receipt", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                                        onPressed: confirmingId==order['id'] ? null : () => _handleConfirmReceipt(order['id']),
+                                        child: confirmingId==order['id']
+                                            ? const SizedBox(width: 14,height: 14,child: CircularProgressIndicator(color: Colors.white,strokeWidth: 2))
+                                            : const Text("Confirm Receipt",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold)),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
 
-                            if (isConfirmed)
+                            if(isConfirmed)
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
                                 color: Colors.green.shade50,
                                 child: const Row(
                                   children: [
-                                    Icon(Icons.check_circle, color: Colors.green, size: 16),
+                                    Icon(Icons.check_circle,color: Colors.green,size: 16),
                                     SizedBox(width: 6),
-                                    Text("Delivery Confirmed by You", style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
+                                    Text("Delivery Confirmed by You",style: TextStyle(color: Colors.green,fontSize: 12,fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                               ),
 
                             Padding(
-                              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 4),
+                              padding: const EdgeInsets.only(left: 16,right: 16,top: 16,bottom: 4),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
+                                  const Icon(Icons.location_on_outlined,size: 16,color: Colors.grey),
                                   const SizedBox(width: 5),
                                   Expanded(
                                     child: Text(
                                       "Delivered to: ${order['deliveryAddress']} via ${order['deliveryMethod']}",
-                                      style: const TextStyle(fontSize: 12, color: Colors.black87),
+                                      style: const TextStyle(fontSize: 12,color: Colors.black87),
                                     ),
                                   ),
                                 ],
@@ -1571,7 +1663,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                           child: Center(
                                             child: Text(
                                               "${item['quantity']}x",
-                                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                                              style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.grey),
                                             ),
                                           ),
                                         ),
@@ -1588,23 +1680,23 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                               ),
                                               Text(
                                                 "${item['variantName']} • Rs. ${item['unitPrice'].toStringAsFixed(2)}",
-                                                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                                style: const TextStyle(fontSize: 12,color: Colors.grey),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        if (isDelivered && item['productId'] != null && item['productId'] > 0)
+                                        if(isDelivered && item['productId'] != null && item['productId'] > 0)
                                           ElevatedButton.icon(
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.white,
                                               foregroundColor: const Color(0xFFD4AF37),
                                               side: const BorderSide(color: Color(0xFFD4AF37)),
                                               elevation: 0,
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                              padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 0),
                                             ),
-                                            icon: const Icon(Icons.star, size: 16),
-                                            label: const Text("Review", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                                            onPressed: () => _showReviewDialog(item['productId'], item['productName']),
+                                            icon: const Icon(Icons.star,size: 16),
+                                            label: const Text("Review",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold)),
+                                            onPressed: () => _showReviewDialog(item['productId'],item['productName']),
                                           )
                                         else
                                           Text(
@@ -1621,13 +1713,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                             // ============================================================
                             // NEW: COMPLAINTS & REFUNDS UI BLOCK
                             // ============================================================
-                            if (order['complaints'] != null && (order['complaints'] as List).isNotEmpty)
+                            if(order['complaints'] != null && (order['complaints'] as List).isNotEmpty)
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
                                 child: Column(
                                   children: (order['complaints'] as List).map<Widget>((comp) {
-                                    final isResolutionOffered = comp['status'] == 'RESOLUTION_OFFERED';
-                                    final isPendingChoice = comp['refundStatus'] == 'Pending_Customer_Choice';
+                                    final isResolutionOffered=comp['status']=='RESOLUTION_OFFERED';
+                                    final isPendingChoice=comp['refundStatus']=='Pending_Customer_Choice';
 
                                     return Container(
                                       margin: const EdgeInsets.only(bottom: 8),
@@ -1647,81 +1739,81 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                             children: [
                                               Expanded(
                                                 child: Text(
-                                                  "Ticket: ${comp['subject']}", 
-                                                  style: TextStyle(fontWeight: FontWeight.bold, color: isResolutionOffered ? Colors.orange.shade800 : Colors.black87),
+                                                  "Ticket: ${comp['subject']}",
+                                                  style: TextStyle(fontWeight: FontWeight.bold,color: isResolutionOffered ? Colors.orange.shade800 : Colors.black87),
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
                                               ),
                                               Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                                decoration: BoxDecoration(color: isResolutionOffered ? Colors.orange : Colors.grey, borderRadius: BorderRadius.circular(4)),
+                                                padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 2),
+                                                decoration: BoxDecoration(color: isResolutionOffered ? Colors.orange : Colors.grey,borderRadius: BorderRadius.circular(4)),
                                                 child: Text(
-                                                  comp['status'].toString().replaceAll('_', ' '), 
-                                                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)
+                                                  comp['status'].toString().replaceAll('_',' '),
+                                                  style: const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold)
                                                 ),
                                               )
                                             ],
                                           ),
                                           
-                                          if (isResolutionOffered && isPendingChoice) ...[
+                                          if(isResolutionOffered && isPendingChoice) ...[
                                             const Padding(
                                               padding: EdgeInsets.symmetric(vertical: 8),
                                               child: Divider(height: 1),
                                             ),
                                             Text(
-                                              "AI Resolution: ${comp['resolutionNotes'] ?? 'Refund offered.'}", 
-                                              style: TextStyle(fontSize: 12, color: Colors.grey.shade800)
+                                              "AI Resolution: ${comp['resolutionNotes'] ?? 'Refund offered.'}",
+                                              style: TextStyle(fontSize: 12,color: Colors.grey.shade800)
                                             ),
                                             const SizedBox(height: 8),
                                             Text(
-                                              "Refund Approved: Rs. ${(comp['refundAmount'] ?? 0).toStringAsFixed(2)}", 
-                                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange)
+                                              "Refund Approved: Rs. ${(comp['refundAmount'] ?? 0).toStringAsFixed(2)}",
+                                              style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.orange)
                                             ),
                                             const SizedBox(height: 12),
                                             Row(
                                               children: [
                                                 Expanded(
                                                   child: OutlinedButton.icon(
-                                                    style: OutlinedButton.styleFrom(foregroundColor: Colors.black87, padding: EdgeInsets.zero),
-                                                    icon: const Icon(Icons.credit_card, size: 14),
-                                                    label: const Text("To Card", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                                                    onPressed: refundingComplaintId == comp['id'] ? null : () => _handleChooseRefund(comp['id'], 'OriginalPayment'),
+                                                    style: OutlinedButton.styleFrom(foregroundColor: Colors.black87,padding: EdgeInsets.zero),
+                                                    icon: const Icon(Icons.credit_card,size: 14),
+                                                    label: const Text("To Card",style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold)),
+                                                    onPressed: refundingComplaintId==comp['id'] ? null : () => _handleChooseRefund(comp['id'],'OriginalPayment'),
                                                   ),
                                                 ),
                                                 const SizedBox(width: 8),
                                                 Expanded(
                                                   child: ElevatedButton.icon(
-                                                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), foregroundColor: Colors.black, padding: EdgeInsets.zero, elevation: 0),
-                                                    icon: const Icon(Icons.star, size: 14),
-                                                    label: const Text("To Points (+10%)", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                                    onPressed: refundingComplaintId == comp['id'] ? null : () => _handleChooseRefund(comp['id'], 'LoyaltyPoints'),
+                                                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37),foregroundColor: Colors.black,padding: EdgeInsets.zero,elevation: 0),
+                                                    icon: const Icon(Icons.star,size: 14),
+                                                    label: const Text("To Points (+10%)",style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold)),
+                                                    onPressed: refundingComplaintId==comp['id'] ? null : () => _handleChooseRefund(comp['id'],'LoyaltyPoints'),
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ],
 
-                                          if (comp['refundStatus'] == 'Processing')
+                                          if(comp['refundStatus']=='Processing')
                                             const Padding(
                                               padding: EdgeInsets.only(top: 8.0),
                                               child: Row(
                                                 children: [
-                                                  SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
+                                                  SizedBox(width: 12,height: 12,child: CircularProgressIndicator(strokeWidth: 2)),
                                                   SizedBox(width: 6),
-                                                  Text("Your card refund is processing...", style: TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold)),
+                                                  Text("Your card refund is processing...",style: TextStyle(fontSize: 12,color: Colors.blue,fontWeight: FontWeight.bold)),
                                                 ],
                                               ),
                                             ),
                                             
-                                          if (comp['refundStatus'] == 'Completed')
+                                          if(comp['refundStatus']=='Completed')
                                             const Padding(
                                               padding: EdgeInsets.only(top: 8.0),
                                               child: Row(
                                                 children: [
-                                                  Icon(Icons.check_circle, size: 14, color: Colors.green),
+                                                  Icon(Icons.check_circle,size: 14,color: Colors.green),
                                                   SizedBox(width: 4),
-                                                  Text("Refund Completed", style: TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.bold)),
+                                                  Text("Refund Completed",style: TextStyle(fontSize: 12,color: Colors.green,fontWeight: FontWeight.bold)),
                                                 ],
                                               ),
                                             ),
@@ -1747,13 +1839,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                     ),
                                     onPressed: () => _showReceiptDialog(order['id']),
-                                    icon: const Icon(Icons.receipt_long, size: 18, color: Colors.blue),
-                                    label: const Text("View Receipt", style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                                    icon: const Icon(Icons.receipt_long,size: 18,color: Colors.blue),
+                                    label: const Text("View Receipt",style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold)),
                                   ),
                                   Row(
                                     children: [
-                                      const Text("Total: ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-                                      Text("Rs. ${order['grandTotal'].toStringAsFixed(2)}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+                                      const Text("Total: ",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey)),
+                                      Text("Rs. ${order['grandTotal'].toStringAsFixed(2)}",style: const TextStyle(fontSize: 20,fontWeight: FontWeight.w900)),
                                     ],
                                   ),
                                 ],

@@ -19,15 +19,15 @@ namespace velocart_system.API.Features.Orders.Models
         // Nullable because the original promotion might be deleted in the future
         public int? OriginalPromotionId { get; set; }
 
-        [Required, MaxLength(150)]
-        public string PromotionNameSnapshot { get; set; } = string.Empty;
+        [Required,MaxLength(150)]
+        public string PromotionNameSnapshot { get; set; }=string.Empty;
 
-        [Required, MaxLength(50)]
-        public string PromotionTypeSnapshot { get; set; } = string.Empty;
+        [Required,MaxLength(50)]
+        public string PromotionTypeSnapshot { get; set; }=string.Empty;
 
-        [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName="decimal(18,2)")]
         public decimal DiscountApplied { get; set; }
         
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }=DateTime.UtcNow;
     }
 }

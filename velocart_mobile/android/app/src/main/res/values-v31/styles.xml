@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <!-- Native Android 12+ Splash Screen Attributes -->
+        <!-- Force the background to be pitch black -->
+        <item name="android:windowSplashScreenBackground">@android:color/black</item>
+        
+        <!-- Force the center logo to be completely transparent so it is invisible -->
+        <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+    </style>
+    
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">?android:colorBackground</item>
+    </style>
+</resources>
