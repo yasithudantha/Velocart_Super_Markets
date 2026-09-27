@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useEffect } from 'react';
 import { BrowserRouter as Router,Routes,Route,Navigate,useNavigate,useLocation } from 'react-router-dom';
 import LandingPage from './features/landing/components/LandingPage';

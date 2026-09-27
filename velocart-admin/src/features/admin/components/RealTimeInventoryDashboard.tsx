@@ -1,4 +1,4 @@
-import React,{ useState,useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LayoutDashboard,History,AlertTriangle,DollarSign,Package,AlertOctagon,ArrowUpRight,ArrowDownRight,Loader2 } from 'lucide-react';
 import axios from 'axios';
