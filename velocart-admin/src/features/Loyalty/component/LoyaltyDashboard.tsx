@@ -1,5 +1,5 @@
 import { useEffect,useState } from 'react';
-import { Loader2,Award,Star,TrendingUp,CreditCard,Package,Info,History } from 'lucide-react';
+import { Loader2,Award,Star,TrendingUp,CreditCard,Info,History } from 'lucide-react';
 import { getLoyaltyDashboard,type LoyaltyDashboardData } from '../api/loyaltyApi';
 import { getOrderHistory } from '../../catalog/api/catalogApi';
 
