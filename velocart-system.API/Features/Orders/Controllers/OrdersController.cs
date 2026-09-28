@@ -82,12 +82,12 @@ namespace velocart_system.API.Features.Orders.Controllers
 
             if (!string.IsNullOrEmpty(request.IdempotencyKey))
             {
-                var existingOrder=await _context.Orders.FirstOrDefaultAsync(o => o.IdempotencyKey==request.IdempotencyKey && o.UserId==secureUserId);
+                var existingOrder=await _context.Orders.FirstOrDefaultAsync(o => o.IdempotencyKey == request.IdempotencyKey && o.UserId == secureUserId);
                 if (existingOrder != null) return Ok(new CheckoutResponseDto { OrderNumber=existingOrder.OrderNumber,GrandTotal=existingOrder.GrandTotal,Message="Order recovered successfully.",PaymentStatus=existingOrder.PaymentStatus });
             }
 
-            var cart=await _context.ShoppingCarts.Include(c => c.Items).ThenInclude(i => i.Variant).ThenInclude(v => v!.Product).FirstOrDefaultAsync(c => c.UserId==secureUserId);
-            if (cart==null || !cart.Items.Any()) return BadRequest("Shopping cart is empty.");
+            var cart=await _context.ShoppingCarts.Include(c => c.Items).ThenInclude(i => i.Variant).ThenInclude(v => v!.Product).FirstOrDefaultAsync(c => c.UserId == secureUserId);
+            if (cart == null || !cart.Items.Any()) return BadRequest("Shopping cart is empty.");
 
             var now=DateTime.UtcNow;
             
@@ -95,12 +95,12 @@ namespace velocart_system.API.Features.Orders.Controllers
                 .Include(p => p.PromotionProducts)
                 .Include(p => p.PromotionCategories)
                 .Include(p => p.PromotionTiers)
-                .Where(p => p.Status=="ACTIVE" && p.StartDate <= now && p.EndDate >= now).ToListAsync();
+                .Where(p => p.Status == "ACTIVE" && p.StartDate <= now && p.EndDate >= now).ToListAsync();
 
             var activeTaxes=await _context.TaxRules
                 .Include(t => t.TaxRuleProducts)
                 .Include(t => t.TaxRuleCategories)
-                .Where(t => t.IsActive && t.StartDate <= now && (t.EndDate==null || t.EndDate >= now)).ToListAsync();
+                .Where(t => t.IsActive && t.StartDate <= now && (t.EndDate == null || t.EndDate >= now)).ToListAsync();
 
             var activeCharges=await _context.ProductCharges.Where(pc => pc.IsActive).ToListAsync();
 
@@ -108,7 +108,7 @@ namespace velocart_system.API.Features.Orders.Controllers
             {
                 UserId=secureUserId,OrderDate=DateTime.UtcNow,DeliveryAddress=request.DeliveryAddress,DeliveryMethod=request.DeliveryMethod,
                 OrderNumber=$"SM-{DateTime.UtcNow.Year}-{new Random().Next(100000,999999)}",IdempotencyKey=request.IdempotencyKey,
-                PaymentMethod=request.PaymentMethod,PaymentStatus="PENDING",OrderStatus=request.PaymentMethod=="COD" ? "VALIDATING" : "PENDING"
+                PaymentMethod=request.PaymentMethod,PaymentStatus="PENDING",OrderStatus=request.PaymentMethod == "COD" ? "VALIDATING" : "PENDING"
             };
 
             decimal calculatedSubtotal=0; 
@@ -120,7 +120,7 @@ namespace velocart_system.API.Features.Orders.Controllers
             foreach (var cartItem in cart.Items)
             {
                 var variant=cartItem.Variant;
-                if (variant==null || variant.Product==null || !variant.IsActive) return BadRequest($"Item {variant?.Product?.Name} is no longer available.");
+                if (variant == null || variant.Product == null || !variant.IsActive) return BadRequest($"Item {variant?.Product?.Name} is no longer available.");
                 if (variant.StockQuantity < cartItem.Quantity) return BadRequest($"System sync error: Insufficient stock for {variant.Product.Name}.");
 
                 decimal originalItemTotal=variant.Price * cartItem.Quantity;
@@ -130,17 +130,17 @@ namespace velocart_system.API.Features.Orders.Controllers
                 foreach (var promo in activePromotions)
                 {
                     bool isEligible=(!promo.PromotionProducts.Any() && !promo.PromotionCategories.Any() && string.IsNullOrEmpty(promo.TargetBrand)) || 
-                                      promo.PromotionProducts.Any(pp => pp.ProductId==variant.Product.Id) || 
-                                      promo.PromotionCategories.Any(pc => pc.CategoryId==variant.Product.CategoryId) || 
+                                      promo.PromotionProducts.Any(pp => pp.ProductId == variant.Product.Id) || 
+                                      promo.PromotionCategories.Any(pc => pc.CategoryId == variant.Product.CategoryId) || 
                                       (!string.IsNullOrEmpty(promo.TargetBrand) && string.Equals(promo.TargetBrand,variant.Product.Brand,StringComparison.OrdinalIgnoreCase));
 
                     if (isEligible)
                     {
                         decimal potentialDiscount=0;
-                        if (promo.Type==PromotionType.PERCENTAGE_DISCOUNT) potentialDiscount=originalItemTotal * (promo.DiscountValue / 100m);
-                        else if (promo.Type==PromotionType.FIXED_AMOUNT_DISCOUNT) potentialDiscount=promo.DiscountValue * cartItem.Quantity;
-                        else if (promo.Type==PromotionType.BUY_ONE_GET_ONE && cartItem.Quantity >= 2) potentialDiscount=(cartItem.Quantity / 2) * variant.Price;
-                        else if (promo.Type==PromotionType.BUY_X_GET_Y && promo.BuyQuantityX.HasValue && promo.GetQuantityY.HasValue)
+                        if (promo.Type == PromotionType.PERCENTAGE_DISCOUNT) potentialDiscount=originalItemTotal * (promo.DiscountValue / 100m);
+                        else if (promo.Type == PromotionType.FIXED_AMOUNT_DISCOUNT) potentialDiscount=promo.DiscountValue * cartItem.Quantity;
+                        else if (promo.Type == PromotionType.BUY_ONE_GET_ONE && cartItem.Quantity >= 2) potentialDiscount=(cartItem.Quantity / 2) * variant.Price;
+                        else if (promo.Type == PromotionType.BUY_X_GET_Y && promo.BuyQuantityX.HasValue && promo.GetQuantityY.HasValue)
                         {
                             int sets=cartItem.Quantity / (promo.BuyQuantityX.Value + promo.GetQuantityY.Value);
                             potentialDiscount=sets * promo.GetQuantityY.Value * variant.Price;
@@ -163,7 +163,7 @@ namespace velocart_system.API.Features.Orders.Controllers
                     appliedPromosDict[appliedPromo.Id].DiscountApplied += itemDiscount;
                 }
 
-                var applicableTaxes=activeTaxes.Where(t => (!t.TaxRuleProducts.Any() && !t.TaxRuleCategories.Any()) || t.TaxRuleProducts.Any(tp => tp.ProductId==variant.Product.Id) || t.TaxRuleCategories.Any(tc => tc.CategoryId==variant.Product.CategoryId)).ToList();
+                var applicableTaxes=activeTaxes.Where(t => (!t.TaxRuleProducts.Any() && !t.TaxRuleCategories.Any()) || t.TaxRuleProducts.Any(tp => tp.ProductId == variant.Product.Id) || t.TaxRuleCategories.Any(tc => tc.CategoryId == variant.Product.CategoryId)).ToList();
 
                 decimal itemTax=0;
                 if (applicableTaxes.Any())
@@ -187,15 +187,15 @@ namespace velocart_system.API.Features.Orders.Controllers
                     });
             }
             
-            var cartPromos=activePromotions.Where(p => p.Type==PromotionType.MINIMUM_SPEND_DISCOUNT || p.Type==PromotionType.TIERED_DISCOUNT).ToList();
+            var cartPromos=activePromotions.Where(p => p.Type == PromotionType.MINIMUM_SPEND_DISCOUNT || p.Type == PromotionType.TIERED_DISCOUNT).ToList();
             decimal rawSubtotal=calculatedSubtotal - calculatedDiscountAmount;
 
             foreach (var promo in cartPromos)
             {
                 decimal cartDiscount=0;
-                if (promo.Type==PromotionType.MINIMUM_SPEND_DISCOUNT && promo.MinimumSpend.HasValue && rawSubtotal >= promo.MinimumSpend.Value)
+                if (promo.Type == PromotionType.MINIMUM_SPEND_DISCOUNT && promo.MinimumSpend.HasValue && rawSubtotal >= promo.MinimumSpend.Value)
                     cartDiscount=promo.DiscountValue;
-                else if (promo.Type==PromotionType.TIERED_DISCOUNT && promo.PromotionTiers.Any())
+                else if (promo.Type == PromotionType.TIERED_DISCOUNT && promo.PromotionTiers.Any())
                 {
                     var highestTier=promo.PromotionTiers.Where(t => rawSubtotal >= t.MinimumSpendAmount).OrderByDescending(t => t.MinimumSpendAmount).FirstOrDefault();
                     if (highestTier != null) cartDiscount=rawSubtotal * (highestTier.DiscountValue / 100m);
@@ -218,8 +218,8 @@ namespace velocart_system.API.Features.Orders.Controllers
 
             if (request.PointsToRedeem > 0)
             {
-                loyaltyAccountToUpdate=await _context.LoyaltyAccounts.Include(l => l.CurrentTier).Include(l => l.PointLots.Where(p => p.RemainingPoints > 0 && !p.IsExpired).OrderBy(p => p.ExpiresAt)).FirstOrDefaultAsync(l => l.UserId==secureUserId);
-                if (loyaltyAccountToUpdate != null && loyaltyAccountToUpdate.Status=="ACTIVE" && loyaltyAccountToUpdate.CurrentTier != null)
+                loyaltyAccountToUpdate=await _context.LoyaltyAccounts.Include(l => l.CurrentTier).Include(l => l.PointLots.Where(p => p.RemainingPoints > 0 && !p.IsExpired).OrderBy(p => p.ExpiresAt)).FirstOrDefaultAsync(l => l.UserId == secureUserId);
+                if (loyaltyAccountToUpdate != null && loyaltyAccountToUpdate.Status == "ACTIVE" && loyaltyAccountToUpdate.CurrentTier != null)
                 {
                     actualPointsToRedeem=Math.Min(request.PointsToRedeem,loyaltyAccountToUpdate.CurrentPointsBalance);
                     actualPointsToRedeem=Math.Min(actualPointsToRedeem,loyaltyAccountToUpdate.CurrentTier.MaxRedeemablePointsPerOrder);
@@ -235,8 +235,8 @@ namespace velocart_system.API.Features.Orders.Controllers
                 bool isEligible=rawSubtotal >= charge.MinOrderAmount && (!charge.MaxOrderAmount.HasValue || rawSubtotal <= charge.MaxOrderAmount.Value);
                 if (isEligible)
                 {
-                    if (charge.ChargeType=="FIXED") deliveryFee += charge.AmountOrPercentage;
-                    else if (charge.ChargeType=="PERCENTAGE") deliveryFee += rawSubtotal * (charge.AmountOrPercentage / 100m);
+                    if (charge.ChargeType == "FIXED") deliveryFee += charge.AmountOrPercentage;
+                    else if (charge.ChargeType == "PERCENTAGE") deliveryFee += rawSubtotal * (charge.AmountOrPercentage / 100m);
                 }
             }   
             order.DeliveryFee=deliveryFee;
@@ -249,7 +249,7 @@ namespace velocart_system.API.Features.Orders.Controllers
             
             order.GrandTotal=Math.Max(0,(rawSubtotal - loyaltyDiscountAmount) + calculatedTaxAmount + order.DeliveryFee);
 
-            if (order.GrandTotal==0)
+            if (order.GrandTotal == 0)
             {
                 order.PaymentStatus="PAID";
                 order.OrderStatus="VALIDATING";
@@ -264,7 +264,7 @@ namespace velocart_system.API.Features.Orders.Controllers
 
             foreach(var item in order.Items)
             {
-                var variant=cart.Items.First(i => i.ProductVariantId==item.ProductVariantId).Variant;
+                var variant=cart.Items.First(i => i.ProductVariantId == item.ProductVariantId).Variant;
                 int originalQty=variant!.StockQuantity;
                 variant.ReservedQuantity=Math.Max(0,variant.ReservedQuantity - item.Quantity);
                 variant.StockQuantity -= item.Quantity; 
@@ -273,7 +273,7 @@ namespace velocart_system.API.Features.Orders.Controllers
                     ProductVariantId=variant.Id,Type=TransactionType.Sold,QuantityChanged=-item.Quantity,QuantityBefore=originalQty,QuantityAfter=variant.StockQuantity,ReferenceDocument=$"ORDER-{order.OrderNumber}",Reason="E-Commerce Sale"
                 });
 
-                var batches=await _context.ProductBatches.Where(b => b.ProductVariantId==variant.Id && b.CurrentQuantity > 0).OrderBy(b => b.ExpiryDate).ToListAsync();
+                var batches=await _context.ProductBatches.Where(b => b.ProductVariantId == variant.Id && b.CurrentQuantity > 0).OrderBy(b => b.ExpiryDate).ToListAsync();
                 int remainingToDeduct=item.Quantity;
                 foreach (var batch in batches) { if (remainingToDeduct <= 0) break; int deductAmount=Math.Min(batch.CurrentQuantity,remainingToDeduct); batch.CurrentQuantity -= deductAmount; remainingToDeduct -= deductAmount; }
             }
@@ -304,19 +304,19 @@ namespace velocart_system.API.Features.Orders.Controllers
 
             string stripeUrl=string.Empty;
             
-            if (request.PaymentMethod=="CARD" && order.GrandTotal > 0)
+            if (request.PaymentMethod == "CARD" && order.GrandTotal > 0)
             {
                 var options=new SessionCreateOptions { PaymentMethodTypes=new List<string> { "card" },LineItems=stripeLineItems,Mode="payment",SuccessUrl="http://localhost:5173/orders?payment=success",CancelUrl="http://localhost:5173/catalog?payment=cancelled",Metadata=new Dictionary<string,string> { { "OrderNumber",order.OrderNumber } } };
                 var service=new SessionService();
                 var session=await service.CreateAsync(options);
                 stripeUrl=session.Url;
             }
-            else if (request.PaymentMethod=="COD" || order.GrandTotal==0)
+            else if (request.PaymentMethod == "COD" || order.GrandTotal == 0)
             {
                 await ProcessLoyaltyEarningAsync(order,secureUserId);
             }
 
-            return Ok(new CheckoutResponseDto { OrderNumber=order.OrderNumber,Subtotal=order.Subtotal,TaxAmount=order.TaxAmount,DeliveryFee=order.DeliveryFee,DiscountAmount=order.DiscountAmount,LoyaltyDiscountApplied=loyaltyDiscountAmount,GrandTotal=order.GrandTotal,PaymentStatus=order.PaymentStatus,StripeUrl=stripeUrl,PointsRedeemed=actualPointsToRedeem,Message=request.PaymentMethod=="CARD" && order.GrandTotal > 0 ? "Redirecting to secure gateway..." : "Order placed successfully!" });
+            return Ok(new CheckoutResponseDto { OrderNumber=order.OrderNumber,Subtotal=order.Subtotal,TaxAmount=order.TaxAmount,DeliveryFee=order.DeliveryFee,DiscountAmount=order.DiscountAmount,LoyaltyDiscountApplied=loyaltyDiscountAmount,GrandTotal=order.GrandTotal,PaymentStatus=order.PaymentStatus,StripeUrl=stripeUrl,PointsRedeemed=actualPointsToRedeem,Message=request.PaymentMethod == "CARD" && order.GrandTotal > 0 ? "Redirecting to secure gateway..." : "Order placed successfully!" });
         }
 
         [AllowAnonymous] 
@@ -327,13 +327,13 @@ namespace velocart_system.API.Features.Orders.Controllers
             try
             {
                 var stripeEvent=EventUtility.ConstructEvent(json,Request.Headers["Stripe-Signature"],_configuration["Stripe:WebhookSecret"]);
-                if (stripeEvent.Type=="checkout.session.completed")
+                if (stripeEvent.Type == "checkout.session.completed")
                 {
                     var session=stripeEvent.Data.Object as Session;
                     if (session != null && session.Metadata.ContainsKey("OrderNumber"))
                     {
                         var orderNumber=session.Metadata["OrderNumber"];
-                        var order=await _context.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.OrderNumber==orderNumber);
+                        var order=await _context.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
                         
                         if (order != null)
                         {
@@ -353,7 +353,7 @@ namespace velocart_system.API.Features.Orders.Controllers
         public async Task<ActionResult> GetMyOrders()
         {
             int secureUserId=GetSecureUserId();
-            var orders=await _context.Orders.Include(o => o.Items).ThenInclude(i => i.Variant).Include(o => o.Complaints).Where(o => o.UserId==secureUserId).OrderByDescending(o => o.OrderDate)
+            var orders=await _context.Orders.Include(o => o.Items).ThenInclude(i => i.Variant).Include(o => o.Complaints).Where(o => o.UserId == secureUserId).OrderByDescending(o => o.OrderDate)
                 .Select(o => new { 
                     o.Id,o.OrderNumber,o.OrderDate,o.DeliveryAddress,o.DeliveryMethod,
                     o.Subtotal,o.DiscountAmount,o.LoyaltyPointsUsed,o.LoyaltyDiscountAmount,
@@ -370,23 +370,23 @@ namespace velocart_system.API.Features.Orders.Controllers
         public async Task<ActionResult> Reorder(int orderId)
         {
             int secureUserId=GetSecureUserId();
-            var oldOrder=await _context.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.Id==orderId && o.UserId==secureUserId);
-            if (oldOrder==null) return NotFound("Order not found.");
+            var oldOrder=await _context.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == secureUserId);
+            if (oldOrder == null) return NotFound("Order not found.");
 
-            var cart=await _context.ShoppingCarts.Include(c => c.Items).FirstOrDefaultAsync(c => c.UserId==secureUserId);
-            if (cart==null) { cart=new ShoppingCart { UserId=secureUserId }; _context.ShoppingCarts.Add(cart); await _context.SaveChangesAsync(); }
+            var cart=await _context.ShoppingCarts.Include(c => c.Items).FirstOrDefaultAsync(c => c.UserId == secureUserId);
+            if (cart == null) { cart=new ShoppingCart { UserId=secureUserId }; _context.ShoppingCarts.Add(cart); await _context.SaveChangesAsync(); }
 
             int itemsAdded=0; int itemsSkipped=0;
             foreach (var oldItem in oldOrder.Items)
             {
-                var variant=await _context.ProductVariants.Include(v => v.Product).FirstOrDefaultAsync(v => v.Id==oldItem.ProductVariantId);
-                if (variant==null || !variant.IsActive || variant.Product==null || !variant.Product.IsActive) { itemsSkipped++; continue; }
+                var variant=await _context.ProductVariants.Include(v => v.Product).FirstOrDefaultAsync(v => v.Id == oldItem.ProductVariantId);
+                if (variant == null || !variant.IsActive || variant.Product == null || !variant.Product.IsActive) { itemsSkipped++; continue; }
 
                 int availableStock=variant.StockQuantity - variant.ReservedQuantity;
                 if (availableStock <= 0) { itemsSkipped++; continue; }
 
                 int safeQuantity=Math.Min(oldItem.Quantity,availableStock);
-                var existingCartItem=cart.Items.FirstOrDefault(i => i.ProductVariantId==variant.Id);
+                var existingCartItem=cart.Items.FirstOrDefault(i => i.ProductVariantId == variant.Id);
 
                 if (existingCartItem != null) existingCartItem.Quantity += safeQuantity;
                 else cart.Items.Add(new ShoppingCartItem { ShoppingCartId=cart.Id,ProductVariantId=variant.Id,Quantity=safeQuantity });
@@ -394,7 +394,7 @@ namespace velocart_system.API.Features.Orders.Controllers
                 variant.ReservedQuantity += safeQuantity; 
                 itemsAdded++;
             }
-            if (itemsAdded==0) return BadRequest("None of the items in this order are currently available.");
+            if (itemsAdded == 0) return BadRequest("None of the items in this order are currently available.");
             cart.LastUpdated=DateTime.UtcNow; await _context.SaveChangesAsync();
             return Ok(new { message=itemsSkipped > 0 ? $"Added {itemsAdded} items to cart. ({itemsSkipped} unavailable)." : "All items added to cart successfully!" });
         }
@@ -403,14 +403,14 @@ namespace velocart_system.API.Features.Orders.Controllers
         public async Task<ActionResult> CancelOrder(int orderId)
         {
             int secureUserId=GetSecureUserId();
-            var order=await _context.Orders.Include(o => o.Items).Include(o => o.User).FirstOrDefaultAsync(o => o.Id==orderId && o.UserId==secureUserId);
-            if (order==null) return NotFound("Order not found.");
+            var order=await _context.Orders.Include(o => o.Items).Include(o => o.User).FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == secureUserId);
+            if (order == null) return NotFound("Order not found.");
 
             if (order.OrderStatus != "PENDING" && order.OrderStatus != "VALIDATING") 
                 return BadRequest("Orders that have been Confirmed or Distributed cannot be cancelled.");
 
             // 2. ADDED: Check if this was a Card payment that requires a refund
-            bool requiresRefund=(order.PaymentMethod=="CARD" && order.GrandTotal > 0);
+            bool requiresRefund=(order.PaymentMethod == "CARD" && order.GrandTotal > 0);
             
             order.OrderStatus="CANCELLED";
 
@@ -503,7 +503,7 @@ namespace velocart_system.API.Features.Orders.Controllers
         public async Task<ActionResult> ResolveComplaint(int complaintId)
         {
             var complaint=await _context.DeliveryComplaints.FindAsync(complaintId);
-            if (complaint==null) return NotFound("Complaint not found.");
+            if (complaint == null) return NotFound("Complaint not found.");
 
             complaint.Status="RESOLVED";
             complaint.ResolvedAt=DateTime.UtcNow;
@@ -516,13 +516,13 @@ namespace velocart_system.API.Features.Orders.Controllers
         [Authorize(Roles="DELIVERYMANAGER")]
         public async Task<ActionResult> UpdateOrderStatus(int orderId,[FromBody] UpdateOrderStatusDto request)
         {
-            var order=await _context.Orders.Include(o => o.User).FirstOrDefaultAsync(o => o.Id==orderId);
-            if (order==null) return NotFound("Order not found.");
+            var order=await _context.Orders.Include(o => o.User).FirstOrDefaultAsync(o => o.Id == orderId);
+            if (order == null) return NotFound("Order not found.");
 
             order.OrderStatus=request.Status;
             await _context.SaveChangesAsync();
 
-            if (request.Status=="DELIVERED" && order.User != null)
+            if (request.Status == "DELIVERED" && order.User != null)
             {
                 await SendOrderDeliveredEmail(order,order.User.Email,order.User.FullName);
             }
@@ -534,10 +534,10 @@ namespace velocart_system.API.Features.Orders.Controllers
         [Authorize(Roles="DELIVERYMANAGER")]
         public async Task<ActionResult> UpdateDeliveryDetails(int orderId,[FromBody] UpdateDeliveryDetailsDto request)
         {
-            var order=await _context.Orders.Include(o => o.DeliveryDetail).FirstOrDefaultAsync(o => o.Id==orderId);
-            if (order==null) return NotFound("Order not found.");
+            var order=await _context.Orders.Include(o => o.DeliveryDetail).FirstOrDefaultAsync(o => o.Id == orderId);
+            if (order == null) return NotFound("Order not found.");
 
-            if (order.DeliveryDetail==null)
+            if (order.DeliveryDetail == null)
             {
                 order.DeliveryDetail=new DeliveryDetail { OrderId=order.Id };
                 _context.DeliveryDetails.Add(order.DeliveryDetail);
@@ -561,10 +561,10 @@ namespace velocart_system.API.Features.Orders.Controllers
         public async Task<ActionResult> GetCustomerDeliveryDetails(int orderId)
         {
             int secureUserId=GetSecureUserId();
-            var order=await _context.Orders.Include(o => o.DeliveryDetail).FirstOrDefaultAsync(o => o.Id==orderId && o.UserId==secureUserId);
+            var order=await _context.Orders.Include(o => o.DeliveryDetail).FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == secureUserId);
 
-            if (order==null) return NotFound("Order not found.");
-            if (order.DeliveryDetail==null) return Ok(new { message="Delivery details have not been assigned yet." });
+            if (order == null) return NotFound("Order not found.");
+            if (order.DeliveryDetail == null) return Ok(new { message="Delivery details have not been assigned yet." });
 
             return Ok(order.DeliveryDetail);
         }
@@ -573,9 +573,9 @@ namespace velocart_system.API.Features.Orders.Controllers
         public async Task<ActionResult> ConfirmReceipt(int orderId)
         {
             int secureUserId=GetSecureUserId();
-            var order=await _context.Orders.FirstOrDefaultAsync(o => o.Id==orderId && o.UserId==secureUserId);
+            var order=await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == secureUserId);
 
-            if (order==null) return NotFound("Order not found.");
+            if (order == null) return NotFound("Order not found.");
             if (order.OrderStatus != "DELIVERED") return BadRequest("You can only confirm receipt for orders marked as Delivered.");
 
             order.IsCustomerConfirmed=true;
@@ -588,9 +588,9 @@ namespace velocart_system.API.Features.Orders.Controllers
         public async Task<ActionResult> SubmitComplaint(int orderId,[FromForm] string subject,[FromForm] string description,[FromForm] IFormFile? image)
         {
             int secureUserId=GetSecureUserId();
-            var order=await _context.Orders.FirstOrDefaultAsync(o => o.Id==orderId && o.UserId==secureUserId);
+            var order=await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == secureUserId);
 
-            if (order==null) return NotFound("Order not found.");
+            if (order == null) return NotFound("Order not found.");
 
             string? uploadedImageUrl=null;
             if (image != null)
@@ -629,19 +629,19 @@ namespace velocart_system.API.Features.Orders.Controllers
             int secureUserId=GetSecureUserId();
             var complaint=await _context.DeliveryComplaints
                 .Include(c => c.Order)
-                .FirstOrDefaultAsync(c => c.Id==complaintId && c.CustomerId==secureUserId);
+                .FirstOrDefaultAsync(c => c.Id == complaintId && c.CustomerId == secureUserId);
 
-            if (complaint==null) return NotFound("Complaint not found.");
+            if (complaint == null) return NotFound("Complaint not found.");
             if (complaint.Status != "RESOLUTION_OFFERED" || complaint.RefundStatus != "Pending_Customer_Choice")
                 return BadRequest("This complaint is not pending a refund choice.");
 
             complaint.RefundMethod=request.RefundMethod;
 
-            if (request.RefundMethod=="LoyaltyPoints")
+            if (request.RefundMethod == "LoyaltyPoints")
             {
                 // Process instant conversion to points! 
                 // We give them a +10% bonus for keeping the money in the ecosystem
-                var loyalty=await _context.LoyaltyAccounts.Include(l => l.CurrentTier).FirstOrDefaultAsync(l => l.UserId==secureUserId);
+                var loyalty=await _context.LoyaltyAccounts.Include(l => l.CurrentTier).FirstOrDefaultAsync(l => l.UserId == secureUserId);
                 if (loyalty != null && loyalty.CurrentTier != null)
                 {
                     // Calculate points (Refund Amount * 1.10) / CurrencyAmountPerPoint
@@ -675,14 +675,14 @@ namespace velocart_system.API.Features.Orders.Controllers
                     return BadRequest("Loyalty account not found. Cannot convert to points.");
                 }
             }
-            else if (request.RefundMethod=="OriginalPayment")
+            else if (request.RefundMethod == "OriginalPayment")
             {
                 complaint.RefundStatus="Processing";
                 // Stays in RESOLUTION_OFFERED so the Admin can see it requires processing
             }
 
             await _context.SaveChangesAsync();
-            return Ok(new { message=$"Refund method set to {request.RefundMethod}. {(request.RefundMethod=="LoyaltyPoints" ? "Points credited instantly!" : "Our team is processing the refund to your card.")}" });
+            return Ok(new { message=$"Refund method set to {request.RefundMethod}. {(request.RefundMethod == "LoyaltyPoints" ? "Points credited instantly!" : "Our team is processing the refund to your card.")}" });
         }
 
         [HttpPut("delivery-management/complaints/{complaintId}/process-refund")]
@@ -692,9 +692,9 @@ namespace velocart_system.API.Features.Orders.Controllers
             var complaint=await _context.DeliveryComplaints
                 .Include(c => c.Customer)
                 .Include(c => c.Order)
-                .FirstOrDefaultAsync(c => c.Id==complaintId);
+                .FirstOrDefaultAsync(c => c.Id == complaintId);
 
-            if (complaint==null) return NotFound("Complaint not found.");
+            if (complaint == null) return NotFound("Complaint not found.");
             if (complaint.RefundStatus != "Processing") return BadRequest("Complaint is not pending manual refund processing.");
 
             complaint.Status="RESOLVED";
@@ -735,9 +735,9 @@ namespace velocart_system.API.Features.Orders.Controllers
             var order=await _context.Orders
                 .Include(o => o.User)
                 .Include(o => o.Items)
-                .FirstOrDefaultAsync(o => o.Id==orderId);
+                .FirstOrDefaultAsync(o => o.Id == orderId);
 
-            if (order==null) return NotFound("Order not found.");
+            if (order == null) return NotFound("Order not found.");
 
             var invoiceData=new {
                 OrderNumber=order.OrderNumber,
@@ -803,9 +803,9 @@ namespace velocart_system.API.Features.Orders.Controllers
         private async Task ProcessLoyaltyEarningAsync(Order order,int userId)
         {
             var alreadyEarned=await _context.LoyaltyTransactions.AnyAsync(
-                t => t.SourceId==order.Id &&
-                     t.SourceType=="ORDER" &&
-                     t.TransactionType=="EARNED");
+                t => t.SourceId == order.Id &&
+                     t.SourceType == "ORDER" &&
+                     t.TransactionType == "EARNED");
 
             if (alreadyEarned)
             {
@@ -814,9 +814,9 @@ namespace velocart_system.API.Features.Orders.Controllers
 
             var loyaltyAccount=await _context.LoyaltyAccounts
                 .Include(l => l.CurrentTier)
-                .FirstOrDefaultAsync(l => l.UserId==userId);
+                .FirstOrDefaultAsync(l => l.UserId == userId);
 
-            if (loyaltyAccount==null || loyaltyAccount.CurrentTier==null || loyaltyAccount.Status != "ACTIVE") return;
+            if (loyaltyAccount == null || loyaltyAccount.CurrentTier == null || loyaltyAccount.Status != "ACTIVE") return;
 
             decimal eligibleAmount=order.Subtotal - order.DiscountAmount;
             if (eligibleAmount <= 0) return;
@@ -878,17 +878,17 @@ namespace velocart_system.API.Features.Orders.Controllers
 
         private async Task ProcessLoyaltyReversalAsync(Order order,int userId)
         {
-            var loyaltyAccount=await _context.LoyaltyAccounts.Include(l => l.CurrentTier).FirstOrDefaultAsync(l => l.UserId==userId);
-            if (loyaltyAccount==null) return;
+            var loyaltyAccount=await _context.LoyaltyAccounts.Include(l => l.CurrentTier).FirstOrDefaultAsync(l => l.UserId == userId);
+            if (loyaltyAccount == null) return;
 
             // ==========================================
             // 1. REVERSE POINTS EARNED FROM THIS ORDER
             // ==========================================
-        var earnedTx=await _context.LoyaltyTransactions.FirstOrDefaultAsync(t => t.SourceId==order.Id && t.SourceType=="ORDER" && t.TransactionType=="EARNED");
+        var earnedTx=await _context.LoyaltyTransactions.FirstOrDefaultAsync(t => t.SourceId == order.Id && t.SourceType == "ORDER" && t.TransactionType == "EARNED");
         if (earnedTx != null)
         {
-            var  alreadyReversed=await _context.LoyaltyTransactions.AnyAsync(t => t.ReversesTransactionId==earnedTx.Id&&
-                t.TransactionType=="REVERSED");
+            var  alreadyReversed=await _context.LoyaltyTransactions.AnyAsync(t => t.ReversesTransactionId == earnedTx.Id&&
+                t.TransactionType == "REVERSED");
             if (!alreadyReversed)
             {
                 int pointsToReverse=earnedTx.Points;
@@ -917,7 +917,7 @@ namespace velocart_system.API.Features.Orders.Controllers
                     ReversesTransactionId=earnedTx.Id
                 });
 
-                var pointLot=await _context.LoyaltyPointLots.FirstOrDefaultAsync(p => p.SourceTransactionId==earnedTx.Id);
+                var pointLot=await _context.LoyaltyPointLots.FirstOrDefaultAsync(p => p.SourceTransactionId == earnedTx.Id);
                 if (pointLot != null)
                 {
                     pointLot.RemainingPoints=0;
@@ -931,7 +931,7 @@ namespace velocart_system.API.Features.Orders.Controllers
         // ==========================================
         if (order.LoyaltyPointsUsed > 0)
         {
-            var  alreadyRefunded=await _context.LoyaltyTransactions.AnyAsync(t => t.SourceId==order.Id && t.SourceType=="ORDER" && t.TransactionType=="REFUNDED");
+            var  alreadyRefunded=await _context.LoyaltyTransactions.AnyAsync(t => t.SourceId == order.Id && t.SourceType == "ORDER" && t.TransactionType == "REFUNDED");
             if (!alreadyRefunded)
             {
                 int balanceBefore=loyaltyAccount.CurrentPointsBalance;
@@ -986,7 +986,7 @@ namespace velocart_system.API.Features.Orders.Controllers
             foreach(var res in resolutions)
             {
                 var complaint=await _context.DeliveryComplaints.FindAsync(res.ComplaintId);
-                if (complaint != null && complaint.Status=="OPEN")
+                if (complaint != null && complaint.Status == "OPEN")
                 {
                     complaint.RefundAmount=res.RefundAmount;
                     complaint.CompensatoryPoints=res.CompensatoryPoints;
@@ -1008,7 +1008,7 @@ namespace velocart_system.API.Features.Orders.Controllers
                     // Grant compensatory points immediately (Apology points)
                     if (res.CompensatoryPoints > 0)
                     {
-                        var loyalty=await _context.LoyaltyAccounts.FirstOrDefaultAsync(l => l.UserId==complaint.CustomerId);
+                        var loyalty=await _context.LoyaltyAccounts.FirstOrDefaultAsync(l => l.UserId == complaint.CustomerId);
                         if (loyalty != null)
                         {
                             int balanceBefore=loyalty.CurrentPointsBalance;
@@ -1051,7 +1051,7 @@ namespace velocart_system.API.Features.Orders.Controllers
         public async Task<ActionResult> AddOrderLocation(int orderId,[FromBody] AddOrderLocationDto request)
         {
             var order=await _context.Orders.FindAsync(orderId);
-            if (order==null) return NotFound("Order not found.");
+            if (order == null) return NotFound("Order not found.");
 
             var location=new OrderLocation
             {
@@ -1076,17 +1076,17 @@ namespace velocart_system.API.Features.Orders.Controllers
             var userRole=User.FindFirst(ClaimTypes.Role)?.Value;
 
             // Security: If they are a customer,ensure they only query their OWN order
-            var orderQuery=_context.Orders.Where(o => o.Id==orderId);
-            if (userRole=="CUSTOMER")
+            var orderQuery=_context.Orders.Where(o => o.Id == orderId);
+            if (userRole == "CUSTOMER")
             {
-                orderQuery=orderQuery.Where(o => o.UserId==secureUserId);
+                orderQuery=orderQuery.Where(o => o.UserId == secureUserId);
             }
 
             var order=await orderQuery.FirstOrDefaultAsync();
-            if (order==null) return NotFound("Order not found or access denied.");
+            if (order == null) return NotFound("Order not found or access denied.");
 
             var locations=await _context.OrderLocations
-                .Where(l => l.OrderId==orderId)
+                .Where(l => l.OrderId == orderId)
                 .OrderByDescending(l => l.Timestamp)
                 .ToListAsync();
 

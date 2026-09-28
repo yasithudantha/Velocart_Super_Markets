@@ -20,14 +20,14 @@ import os
 class LLMWrapper:
     def __init__(self):
         self.provider=os.getenv("AI_PROVIDER","gemini").lower()
-        if self.provider=="local":
+        if self.provider == "local":
             self.llm=OllamaLLM(model="llama3.1",temperature=0,base_url="http://ollama-service:11434")
             print("🤖 LLM Initialized: Using LOCAL OLLAMA (llama3.1)")
         else:
             from langchain_google_genai import ChatGoogleGenerativeAI
             
             api_keys_str=os.getenv("GEMINI_API_KEY","")
-            if not api_keys_str or api_keys_str=="your_gemini_api_key_here":
+            if not api_keys_str or api_keys_str == "your_gemini_api_key_here":
                 print("❌ ERROR: GEMINI_API_KEY is missing or invalid in .env!")
                 self.gemini_pool=[]
             else:
@@ -40,7 +40,7 @@ class LLMWrapper:
             self._pool_index=0
 
     def invoke(self,prompt):
-        if self.provider=="local":
+        if self.provider == "local":
             res=self.llm.invoke(prompt)
         else:
             if not self.gemini_pool:
@@ -102,7 +102,7 @@ def inventory_analyst_agent(state: AgentState):
         # Tool Call: Fetch expiring inventory from C# backend
         response=requests.get(TOOL_INVENTORY_URL,params={"daysThreshold": 30})
         
-        if response.status_code==200:
+        if response.status_code == 200:
             data=response.json()
             if isinstance(data,dict) and "message" in data:
                 # No expiring batches found. Safe failure.
@@ -131,7 +131,7 @@ def inventory_analyst_agent(state: AgentState):
 
 # --- AGENT 2: Action / Tool Agent (Campaign Strategist) ---
 def campaign_strategist_agent(state: AgentState):
-    if state.get("workflow_status")=="COMPLETED_NO_ACTION" or state.get("workflow_status")=="FAILED":
+    if state.get("workflow_status") == "COMPLETED_NO_ACTION" or state.get("workflow_status") == "FAILED":
         return state
 
     print("🤖 W1-Agent 2 (Campaign Strategist): Designing promotion strategy...")
@@ -178,7 +178,7 @@ def campaign_strategist_agent(state: AgentState):
 
 # --- AGENT 3: Validation / Safety Agent (Deterministic Checker) ---
 def safety_validator_agent(state: AgentState):
-    if state.get("workflow_status")=="COMPLETED_NO_ACTION" or state.get("workflow_status")=="FAILED":
+    if state.get("workflow_status") == "COMPLETED_NO_ACTION" or state.get("workflow_status") == "FAILED":
         return state
 
     print("🤖 Agent 3 (Safety Validator): Deterministically checking business rules...")
@@ -189,14 +189,14 @@ def safety_validator_agent(state: AgentState):
     if not isinstance(promo,dict):
         errors.append("Payload is not a valid dictionary.")
     else:
-        if promo.get("Type")=="PERCENTAGE_DISCOUNT" and (promo.get("DiscountValue",0) > 50 or promo.get("DiscountValue",0) < 0):
+        if promo.get("Type") == "PERCENTAGE_DISCOUNT" and (promo.get("DiscountValue",0) > 50 or promo.get("DiscountValue",0) < 0):
             errors.append("Safety Rule Violation: Percentage discount exceeds absolute ceiling of 50%.")
             
-        if promo.get("Type")=="BUY_X_GET_Y":
+        if promo.get("Type") == "BUY_X_GET_Y":
             if not promo.get("BuyQuantityX") or not promo.get("GetQuantityY"):
                 errors.append("Schema Violation: BUY_X_GET_Y must include BuyQuantityX and GetQuantityY.")
             
-        if not promo.get("ProductIds") or len(promo.get("ProductIds"))==0:
+        if not promo.get("ProductIds") or len(promo.get("ProductIds")) == 0:
             errors.append("Safety Rule Violation: Promotion must target specific expiring products,not global.")
 
     if len(errors) > 0:
@@ -216,14 +216,14 @@ def coordinator_agent(state: AgentState):
     print("🤖 Agent 4 (Coordinator): Finalizing state and dispatching for Human Approval...")
     
     # If the workflow failed naturally or validation failed,log a safe failure (Rubric: safe failure)
-    if state.get("workflow_status")=="FAILED" or not state.get("validation_passed",True):
+    if state.get("workflow_status") == "FAILED" or not state.get("validation_passed",True):
         payload={
             "WorkflowName": state["objective"],
             "Status": "FAILED",
             "ExecutionSummary": f"Workflow failed safely. Analysis: {state.get('analysis_report','N/A')} | Errors: {state.get('validation_errors')}",
             "ProposedPayload": None
         }
-    elif state.get("workflow_status")=="COMPLETED_NO_ACTION":
+    elif state.get("workflow_status") == "COMPLETED_NO_ACTION":
         payload={
             "WorkflowName": state["objective"],
             "Status": "COMPLETED",
@@ -242,7 +242,7 @@ def coordinator_agent(state: AgentState):
     try:
         # Tool Call: Save state durably in C# backend (Rubric: Shared State / Observability)
         response=requests.post(TOOL_SAVE_STATE_URL,json=payload)
-        if response.status_code==200:
+        if response.status_code == 200:
             print("✅ Agent 4 complete. State persisted to ASP.NET Core.")
         else:
             print("❌ Agent 4 failed to save state to ASP.NET Core.")
@@ -257,7 +257,7 @@ def coordinator_agent(state: AgentState):
 
 # Define routing logic (Conditional Edges)
 def check_validation_routing(state: AgentState):
-    if state.get("workflow_status")=="COMPLETED_NO_ACTION" or state.get("workflow_status")=="FAILED":
+    if state.get("workflow_status") == "COMPLETED_NO_ACTION" or state.get("workflow_status") == "FAILED":
         return "coordinator"
     if state.get("validation_passed"):
         return "coordinator"
@@ -303,7 +303,7 @@ def context_gatherer_agent(state: DisputeState):
     print("🤖 W2-Agent 1 (Context Gatherer): Fetching open complaints and loyalty metrics...")
     try:
         response=requests.get(TOOL_DISPUTES_URL)
-        if response.status_code==200:
+        if response.status_code == 200:
             data=response.json()
             if isinstance(data,dict) and "message" in data:
                 state["workflow_status"]="COMPLETED_NO_ACTION"
@@ -472,7 +472,7 @@ def demand_forecaster_agent(state: SupplyChainState):
     print("🤖 W3-Agent 1 (Demand Forecaster): Predicting zero-stock dates...")
     try:
         response=requests.get(TOOL_DEMAND_URL)
-        if response.status_code==200:
+        if response.status_code == 200:
             data=response.json()
             if isinstance(data,dict) and "message" in data:
                 state["workflow_status"]="COMPLETED_NO_ACTION"
@@ -491,7 +491,7 @@ def supplier_analyst_agent(state: SupplyChainState):
     print("🤖 W3-Agent 2 (Supplier Analyst): Evaluating supplier prices and lead times...")
     try:
         response=requests.get(TOOL_SUPPLIER_URL)
-        if response.status_code==200:
+        if response.status_code == 200:
             catalog=response.json()
             state["supplier_catalog"]=catalog
             
@@ -580,7 +580,7 @@ def budget_validator_agent(state: SupplyChainState):
         total_cost=sum([item.get("OrderedQuantity",0) * item.get("PurchasePrice",0) for item in po["Items"]])
         if total_cost > 500000:
             errors.append(f"BUDGET VIOLATION: Drafted PO total (Rs. {total_cost}) exceeds the global limit of Rs. 500,000.")
-        if len(po["Items"])==0:
+        if len(po["Items"]) == 0:
             errors.append("PO contains no items.")
 
     if errors:
@@ -632,7 +632,7 @@ def catalog_scanner_agent(state: ComplianceState):
         prod_response=requests.get(TOOL_UNMAPPED_URL)
         tax_response=requests.get(TOOL_TAXES_URL)
         
-        if prod_response.status_code==200 and tax_response.status_code==200:
+        if prod_response.status_code == 200 and tax_response.status_code == 200:
             prod_data=prod_response.json()
             if isinstance(prod_data,dict) and "message" in prod_data:
                 state["workflow_status"]="COMPLETED_NO_ACTION"
@@ -773,7 +773,7 @@ def customer_context_agent(state: CustomerChatState):
     print(f"💬 W5-Agent 1 (Context Gatherer): Fetching profile for User {state['user_id']}...")
     try:
         res=requests.get(f"{TOOL_CUSTOMER_CONTEXT_URL}/{state['user_id']}")
-        if res.status_code==200:
+        if res.status_code == 200:
             state["customer_context"]=json.dumps(res.json())
         else:
             state["customer_context"]="No context available."
@@ -797,7 +797,7 @@ def search_planner_agent(state: CustomerChatState):
             print(f"🔍 Searching catalog for item: {term}")
             try:
                 res=requests.get(f"{TOOL_SEARCH_CATALOG_URL}?query={term}")
-                if res.status_code==200:
+                if res.status_code == 200:
                     search_results_dict[term]=res.json()
             except Exception as e:
                 print(f"⚠️ Search failed for {term}: {e}")
@@ -960,5 +960,5 @@ def customer_chat(request: ChatRequest):
         "proposedCart": final_state.get("proposed_cart")
     }
 
-if __name__=="__main__":
+if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0",port=8000)

@@ -2,10 +2,10 @@
 
 Welcome to Velocart! This is a comprehensive e-commerce platform built with ASP.NET Core, React, and Flutter.
 
-## Current Stage: Continuous Integration (CI)
-In this stage, our team has integrated automated checks using GitHub Actions. 
-- A `.github/workflows/ci.yml` pipeline has been added.
-- The pipeline automatically triggers `dotnet build` on every push and pull request to the `main` branch.
+## Current Phase: Deployment Preparation
+We are heavily optimizing the codebase to ensure production-readiness.
+- **Performance:** Optimized product details and image delivery
+- **Admin Dashboard:** UI metrics tracking stabilized
+- **Delivery API:** Refactored for higher throughput
 
-*Note: Known logical issues from the previous stage (auth validation, discount hardcoding) are currently tracked in GitHub Issues and will be fixed in the next sprint.*
-
+*Note: Final bug sweeps are ongoing across all clients.*

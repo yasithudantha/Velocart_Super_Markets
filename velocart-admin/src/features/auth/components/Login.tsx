@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import { Mail,Lock,ArrowRight } from 'lucide-react';
 import { Link,useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
@@ -23,13 +24,13 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
     const routeUser=(user: any) => {
         const userRole=String(user.role || user.Role || '').toUpperCase();
-        if(userRole === 'DELIVERYMANAGER') {
+        if (userRole === 'DELIVERYMANAGER') {
             navigate('/admin/delivery-management');
-        } else if(userRole === 'PROMOTIONMANAGER') {
+        } else if (userRole === 'PROMOTIONMANAGER') {
             navigate('/admin/promotions'); // <-- NEW: Routes Manager to their dashboard!
-        } else if(userRole === 'ADMIN' || userRole === 'PRODUCTMANAGER') {
+        } else if (userRole === 'ADMIN' || userRole === 'PRODUCTMANAGER') {
             navigate('/admin/products/new'); 
-        } else if(userRole === 'MAINADMIN') {
+        } else if (userRole === 'MAINADMIN') {
             navigate('/admin/main-admin');    
         } else {
             navigate('/catalog'); // Regular customers
@@ -78,12 +79,12 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         }
     };
 
-    const containerVariants: any={
+    const containerVariants: Variants={
         hidden: { opacity: 0,scale: 0.95 },
         show: { opacity: 1,scale: 1,transition: { duration: 0.5,ease: "easeOut" } }
     };
 
-    const itemVariants: any={
+    const itemVariants: Variants={
         hidden: { opacity: 0,y: 15 },
         show: { opacity: 1,y: 0,transition: { type: "spring",stiffness: 300,damping: 24 } }
     };

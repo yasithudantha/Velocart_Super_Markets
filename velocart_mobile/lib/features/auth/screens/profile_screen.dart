@@ -87,18 +87,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _handleSecurityAction(String action) async {
     setState(() => isSecuritySaving=true);
     try {
-      if (action=='email') {
+      if (action == 'email') {
         if (newEmail.isEmpty || emailCurrentPassword.isEmpty) throw "Please fill all email change fields.";
         final msg=await UserApiService.requestEmailChange({'newEmail': newEmail,'currentPassword': emailCurrentPassword});
         _showSnackBar(msg,Colors.green);
-      } else if (action=='password') {
+      } else if (action == 'password') {
         if (newPassword.isEmpty || passwordCurrentPassword.isEmpty) throw "Please fill all password fields.";
         final msg=await UserApiService.changePassword({'newPassword': newPassword,'currentPassword': passwordCurrentPassword});
         _showSnackBar(msg,Colors.green);
-      } else if (action=='delete') {
+      } else if (action == 'delete') {
         if (deleteCurrentPassword.isEmpty) throw "Password required to delete account.";
         final confirm=await _showDeleteConfirmation();
-        if (confirm==true) {
+        if (confirm == true) {
           final msg=await UserApiService.deleteAccount({'currentPassword': deleteCurrentPassword});
           _showSnackBar(msg,Colors.green);
           _logout();
@@ -211,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isGoogleUser=profileData != null && (profileData!['authProvider']=='GOOGLE' || (profileData!['passwordHash']==null && profileData!['profilePictureUrl'] != null));
+    bool isGoogleUser=profileData != null && (profileData!['authProvider'] == 'GOOGLE' || (profileData!['passwordHash'] == null && profileData!['profilePictureUrl'] != null));
 
     return Scaffold(
       backgroundColor: bgDark,
