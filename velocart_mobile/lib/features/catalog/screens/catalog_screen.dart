@@ -54,7 +54,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   }
 
   void _onSearchChanged(String query) {
-    if(_debounce?.isActive ?? false) _debounce!.cancel();
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce=Timer(const Duration(milliseconds: 500),() {
       setState(() => searchTerm=query);
       _fetchProducts();
@@ -91,10 +91,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
             // 100% STRICT VALIDATION LOGIC
             bool hasPriceError=false;
-            if(minPriceCtrl.text.isNotEmpty && maxPriceCtrl.text.isNotEmpty) {
+            if (minPriceCtrl.text.isNotEmpty && maxPriceCtrl.text.isNotEmpty) {
               double? min=double.tryParse(minPriceCtrl.text);
               double? max=double.tryParse(maxPriceCtrl.text);
-              if(min != null && max != null && min > max) {
+              if (min != null && max != null && min > max) {
                 hasPriceError=true;
               }
             }
@@ -159,7 +159,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       ),
                     ],
                   ),
-                  if(hasPriceError)
+                  if (hasPriceError)
                     const Padding(
                       padding: EdgeInsets.only(top: 8.0),
                       child: Text("Min price cannot exceed Max price.",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 12)),
@@ -260,7 +260,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
             ),
           ),
 
-          if(error.isNotEmpty) Padding(padding: const EdgeInsets.all(16),child: Text(error,style: const TextStyle(color: Colors.red))),
+          if (error.isNotEmpty) Padding(padding: const EdgeInsets.all(16),child: Text(error,style: const TextStyle(color: Colors.red))),
 
           // Product Grid
           Expanded(
@@ -325,7 +325,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                         Text(product.name,maxLines: 1,overflow: TextOverflow.ellipsis,style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black87)),
                                         const SizedBox(height: 8),
 
-                                        if(hasDiscount)
+                                        if (hasDiscount)
                                           Text("Rs. ${originalPrice.toStringAsFixed(2)}",style: const TextStyle(fontSize: 12,color: Colors.grey,decoration: TextDecoration.lineThrough)),
                                         Text("Rs. ${displayPrice.toStringAsFixed(2)}",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: hasDiscount ? Colors.red : Colors.black87)),
                                       ],
@@ -334,7 +334,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                 ],
                               ),
 
-                              if(hasDiscount && discountBadge != null)
+                              if (hasDiscount && discountBadge != null)
                                 Positioned(
                                   top: 10,right: 10,
                                   child: Container(
@@ -344,14 +344,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                   ),
                                 ),
 
-                              if(totalStock==0)
+                              if (totalStock==0)
                                 Positioned.fill(
                                   child: Container(
                                     decoration: BoxDecoration(color: Colors.white.withOpacity(0.7),borderRadius: BorderRadius.circular(15)),
                                     child: const Center(child: Text("OUT OF STOCK",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 16))),
                                   ),
                                 ),
-                              if(totalStock > 0 && totalStock <= 10)
+                              if (totalStock > 0 && totalStock <= 10)
                                 Positioned(
                                   top: 10,left: 10,
                                   child: Container(

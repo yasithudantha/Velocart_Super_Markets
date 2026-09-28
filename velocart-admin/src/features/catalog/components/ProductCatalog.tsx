@@ -237,11 +237,11 @@ export default function ProductCatalog() {
                                     min="0"
                                     value={filters.minPrice}
                                     onKeyDown={(e) => { 
-                                        if(e.key === '-' || e.key === 'e' || e.key === '+') e.preventDefault(); 
+                                        if (e.key === '-' || e.key === 'e' || e.key === '+') e.preventDefault(); 
                                     }}
                                     onChange={(e) => {
                                         const val=e.target.value;
-                                        if(Number(val) >= 0 || val === '') handleFilterChange('minPrice',val);
+                                        if (Number(val) >= 0 || val === '') handleFilterChange('minPrice',val);
                                     }}
                                     className={`w-1/2 bg-black/50 border rounded-xl py-2 px-3 focus:outline-none transition-colors ${
                                         filters.minPrice && filters.maxPrice && Number(filters.minPrice) > Number(filters.maxPrice) 
@@ -256,11 +256,11 @@ export default function ProductCatalog() {
                                     min="0"
                                     value={filters.maxPrice}
                                     onKeyDown={(e) => { 
-                                        if(e.key === '-' || e.key === 'e' || e.key === '+') e.preventDefault(); 
+                                        if (e.key === '-' || e.key === 'e' || e.key === '+') e.preventDefault(); 
                                     }}
                                     onChange={(e) => {
                                         const val=e.target.value;
-                                        if(Number(val) >= 0 || val === '') handleFilterChange('maxPrice',val);
+                                        if (Number(val) >= 0 || val === '') handleFilterChange('maxPrice',val);
                                     }}
                                     className={`w-1/2 bg-black/50 border rounded-xl py-2 px-3 focus:outline-none transition-colors ${
                                         filters.minPrice && filters.maxPrice && Number(filters.minPrice) > Number(filters.maxPrice) 
