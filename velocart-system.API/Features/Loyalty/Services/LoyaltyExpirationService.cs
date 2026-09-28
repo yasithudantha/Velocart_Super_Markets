@@ -65,14 +65,14 @@ namespace velocart_system.API.Features.Loyalty.Services
 
             foreach (var lot in expiredLots)
             {
-                if(lot.LoyaltyAccount==null) continue;
+                if (lot.LoyaltyAccount==null) continue;
 
                 int pointsToExpire=lot.RemainingPoints;
                 int balanceBefore=lot.LoyaltyAccount.CurrentPointsBalance;
                 
                 // Deduct expired points
                 lot.LoyaltyAccount.CurrentPointsBalance -= pointsToExpire;
-                if(lot.LoyaltyAccount.CurrentPointsBalance < 0) lot.LoyaltyAccount.CurrentPointsBalance=0; // Safeguard
+                if (lot.LoyaltyAccount.CurrentPointsBalance < 0) lot.LoyaltyAccount.CurrentPointsBalance=0; // Safeguard
 
                 // Void the lot
                 lot.RemainingPoints=0;
@@ -117,12 +117,12 @@ namespace velocart_system.API.Features.Loyalty.Services
 
             foreach (var account in accountsToEvaluate)
             {
-                if(account.CurrentTier==null || !account.LastRenewedAt.HasValue) continue;
+                if (account.CurrentTier==null || !account.LastRenewedAt.HasValue) continue;
 
                 var evaluationEndDate=account.LastRenewedAt.Value.AddDays(account.CurrentTier.TierEvaluationPeriodDays);
                 
                 // If it's time for their annual review...
-                if(evaluationEndDate <= now)
+                if (evaluationEndDate <= now)
                 {
                     // Calculate how many points they actually earned DURING this 1-year period
                     var earnedInPeriod=await _context.LoyaltyTransactions
@@ -133,7 +133,7 @@ namespace velocart_system.API.Features.Loyalty.Services
                     var applicableTier=allRules.FirstOrDefault(r => earnedInPeriod >= r.MinimumPoints) ?? allRules.Last();
 
                     // If they dropped a tier,trigger a downgrade
-                    if(applicableTier.Id != account.CurrentTierRuleId)
+                    if (applicableTier.Id != account.CurrentTierRuleId)
                     {
                         _context.LoyaltyTierHistories.Add(new LoyaltyTierHistory
                         {
@@ -161,7 +161,7 @@ namespace velocart_system.API.Features.Loyalty.Services
                 }
             }
 
-            if(totalLotsExpired > 0 || totalAccountsReviewed > 0)
+            if (totalLotsExpired > 0 || totalAccountsReviewed > 0)
             {
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Loyalty Service Complete: Expired {Lots} point lots. Processed {Reviews} annual tier reviews.",totalLotsExpired,totalAccountsReviewed);
