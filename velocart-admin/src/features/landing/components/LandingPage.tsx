@@ -278,7 +278,7 @@ const fadeUp: any={
         y: 0,
         transition: {
             duration: 0.7,
-            ease: [0.22,1,0.36,1],
+            ease: [0.22,1,0.36,1] as any,
         },
     },
 };
@@ -293,7 +293,7 @@ const fadeScale: any={
         scale: 1,
         transition: {
             duration: 0.75,
-            ease: [0.22,1,0.36,1],
+            ease: [0.22,1,0.36,1] as any,
         },
     },
 };
