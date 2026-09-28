@@ -1,9 +1,6 @@
-import React,{ useState,useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import { motion,AnimatePresence } from 'framer-motion';
-import { 
-    Megaphone,Percent,BarChart3,Plus,Trash2,X,Loader2,
-    CheckCircle2,AlertCircle,Calendar,Power,Users,Star,DollarSign,Activity,ArrowLeft,Tag,ChevronDown,Edit2,Gift,Settings,Truck,ShieldCheck
-} from 'lucide-react';
+import { Megaphone,Percent,BarChart3,Plus,Trash2,X,Loader2,CheckCircle2,AlertCircle,Calendar,Power,Users,Star,DollarSign,Activity,ArrowLeft,Tag,ChevronDown,Edit2,Gift,Settings,Truck,ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { 
     getPromotions,createPromotion,updatePromotion,updatePromotionStatus,deletePromotion,assignPromotionToCustomer,
@@ -69,7 +66,7 @@ export default function PromotionManagerDashboard() {
     const [chargeForm,setChargeForm]=useState<any>(defaultChargeForm);
 
     useEffect(() => {
-        if(activeTab === 'CUSTOMERS') loadInitialCustomers();
+        if (activeTab === 'CUSTOMERS') loadInitialCustomers();
         else fetchData();
     },[activeTab,selectedTier]);
 
@@ -83,12 +80,12 @@ export default function PromotionManagerDashboard() {
     const fetchData=async () => {
         setIsLoading(true);
         try {
-            if(activeTab === 'PROMOTIONS') setPromotions(await getPromotions());
-            else if(activeTab === 'TAXES') setTaxes(await getTaxRules());
-            else if(activeTab === 'CHARGES') setCharges(await getProductCharges());
-            else if(activeTab === 'REPORTS') setReportData(await getLoyaltySummaryReport());
-            else if(activeTab === 'RULES') setLoyaltyRules(await getLoyaltyRules());
-            else if(activeTab === 'AI_AGENT') {
+            if (activeTab === 'PROMOTIONS') setPromotions(await getPromotions());
+            else if (activeTab === 'TAXES') setTaxes(await getTaxRules());
+            else if (activeTab === 'CHARGES') setCharges(await getProductCharges());
+            else if (activeTab === 'REPORTS') setReportData(await getLoyaltySummaryReport());
+            else if (activeTab === 'RULES') setLoyaltyRules(await getLoyaltyRules());
+            else if (activeTab === 'AI_AGENT') {
                 const allWorkflows=await getPendingWorkflows();
                 // STRICT FILTERING: Only show FEFO and Tax tasks
                 const relevantWorkflows=allWorkflows.filter((w: any) => 
@@ -119,7 +116,7 @@ export default function PromotionManagerDashboard() {
     };
 
     const handleGiftPromo=async () => {
-        if(!selectedGiftPromoId || !giftCustomerId) return;
+        if (!selectedGiftPromoId || !giftCustomerId) return;
         setIsSubmitting(true);
         try { await assignPromotionToCustomer(Number(selectedGiftPromoId),giftCustomerId); showToast("Promotion successfully gifted to customer!","success"); setIsGiftModalOpen(false); setSelectedGiftPromoId(''); } 
         catch (err: any) { showToast(err.response?.data?.message || err.response?.data || "Failed to assign promotion.","error"); }
@@ -138,7 +135,7 @@ export default function PromotionManagerDashboard() {
         e.preventDefault(); setIsSubmitting(true);
         try {
             const payload={ ...promoForm,discountValue: Number(promoForm.discountValue) || 0,minimumSpend: promoForm.minimumSpend ? Number(promoForm.minimumSpend) : null,buyQuantityX: promoForm.buyQuantityX ? Number(promoForm.buyQuantityX) : null,getQuantityY: promoForm.getQuantityY ? Number(promoForm.getQuantityY) : null,targetBrand: promoForm.targetBrand || null };
-            if(editingPromoId) await updatePromotion(editingPromoId,payload);
+            if (editingPromoId) await updatePromotion(editingPromoId,payload);
             else await createPromotion(payload);
             showToast(`Promotion successfully ${editingPromoId ? 'updated' : 'deployed'}!`,"success"); setIsPromoModalOpen(false); setPromoForm(defaultPromoForm); setEditingPromoId(null); fetchData();
         } catch (err: any) { showToast(err.response?.data?.message || err.response?.data || "Failed to save promotion.","error"); } 
@@ -153,7 +150,7 @@ export default function PromotionManagerDashboard() {
     };
 
     const handleDeletePromo=async () => {
-        if(!deletePromoId) return;
+        if (!deletePromoId) return;
         setActionLoading(deletePromoId);
         try { await deletePromotion(deletePromoId); showToast("Promotion deleted.","success"); fetchData(); } 
         catch (err) { showToast("Failed to delete promotion.","error"); } 
@@ -168,7 +165,7 @@ export default function PromotionManagerDashboard() {
     };
 
     const handleDeleteTax=async () => {
-        if(!deleteTaxId) return;
+        if (!deleteTaxId) return;
         setActionLoading(deleteTaxId);
         try { await deleteTaxRule(deleteTaxId); showToast("Tax rule deleted.","success"); fetchData(); } 
         catch (err) { showToast("Failed to delete tax rule.","error"); } 
@@ -192,7 +189,7 @@ export default function PromotionManagerDashboard() {
                 minOrderAmount: Number(chargeForm.minOrderAmount),
                 maxOrderAmount: chargeForm.maxOrderAmount === '' ? null : Number(chargeForm.maxOrderAmount)
             };
-            if(editingChargeId) await updateProductCharge(editingChargeId,payload);
+            if (editingChargeId) await updateProductCharge(editingChargeId,payload);
             else await createProductCharge(payload);
             showToast(`Fee successfully ${editingChargeId ? 'updated' : 'created'}!`,"success"); setIsChargeModalOpen(false); setChargeForm(defaultChargeForm); setEditingChargeId(null); fetchData();
         } catch (err: any) { showToast(err.response?.data || "Failed to save fee.","error"); } 
@@ -200,7 +197,7 @@ export default function PromotionManagerDashboard() {
     };
 
     const handleDeleteCharge=async () => {
-        if(!deleteChargeId) return;
+        if (!deleteChargeId) return;
         setActionLoading(deleteChargeId);
         try { await deleteProductCharge(deleteChargeId); showToast("Fee deleted.","success"); fetchData(); } 
         catch (err) { showToast("Failed to delete fee.","error"); } 
@@ -220,7 +217,7 @@ export default function PromotionManagerDashboard() {
         const payload={ ...ruleForm,minimumPoints: Number(ruleForm.minimumPoints),maximumPoints: ruleForm.maximumPoints === '' ? null : Number(ruleForm.maximumPoints),currencyAmountPerPoint: Number(ruleForm.currencyAmountPerPoint),maxRedeemablePointsPerOrder: Number(ruleForm.maxRedeemablePointsPerOrder),maxDiscountPercentage: Number(ruleForm.maxDiscountPercentage),pointExpiryDays: Number(ruleForm.pointExpiryDays),tierEvaluationPeriodDays: Number(ruleForm.tierEvaluationPeriodDays) };
         
         // NEW LOGIC: Differentiate between Edit and Create
-        if(editingRuleId) {
+        if (editingRuleId) {
             await updateLoyaltyRule(editingRuleId,payload);
         } else {
             await createLoyaltyRule({ ...payload,tierName: ruleForm.tierName });
@@ -235,7 +232,7 @@ export default function PromotionManagerDashboard() {
 };
 
     const handleCheckboxArray=(_formState: any,setFormState: any,field: string,id: number) => {
-        setFormState((prev: any) => { const arr=prev[field]; if(arr.includes(id)) return { ...prev,[field]: arr.filter((x: number) => x !== id) }; return { ...prev,[field]: [...arr,id] }; });
+        setFormState((prev: any) => { const arr=prev[field]; if (arr.includes(id)) return { ...prev,[field]: arr.filter((x: number) => x !== id) }; return { ...prev,[field]: [...arr,id] }; });
     };
 
     const getPromoDisplayValue=(promo: any) => {
@@ -272,11 +269,11 @@ export default function PromotionManagerDashboard() {
     const handleReviewAI=async (id: number,status: 'APPROVED' | 'REJECTED',payloadStr: string,workflowName: string) => {
         setActionLoading(id);
         try {
-            if(status === 'APPROVED') {
+            if (status === 'APPROVED') {
                 let payload;
                 try {
                     payload=payloadStr ? JSON.parse(payloadStr) : null;
-                    if(!payload) throw new Error("Empty payload");
+                    if (!payload) throw new Error("Empty payload");
                 } catch (parseError) {
                     showToast("AI generated invalid JSON data. Rejecting workflow.","error");
                     await updateWorkflowStatus(id,'REJECTED'); 
@@ -284,11 +281,11 @@ export default function PromotionManagerDashboard() {
                 }
 
                 // SECURE ROUTING LOGIC based on Workflow Name
-                if(workflowName.includes("Audit") || workflowName.includes("tax") || workflowName.includes("compliances")) {
+                if (workflowName.includes("Audit") || workflowName.includes("tax") || workflowName.includes("compliances")) {
                     await executeBulkTaxMappings(payload);
                     showToast("Catalog Compliance Mappings Applied!","success");
                 } 
-                else if(workflowName.includes("FEFO") || workflowName.includes("protocol") || workflowName.includes("markdown")) {
+                else if (workflowName.includes("FEFO") || workflowName.includes("protocol") || workflowName.includes("markdown")) {
                     const today=new Date();
                     const nextWeek=new Date();
                     nextWeek.setDate(today.getDate() + 7);

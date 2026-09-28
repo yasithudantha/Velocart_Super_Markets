@@ -26,7 +26,7 @@ namespace velocart_system.API.Features.Loyalty.Controllers
         {
             var userIdClaim=User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
                               ?? User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
-            if(int.TryParse(userIdClaim,out int userId)) return userId;
+            if (int.TryParse(userIdClaim,out int userId)) return userId;
             throw new UnauthorizedAccessException("Invalid token claims.");
         }
 
@@ -40,7 +40,7 @@ namespace velocart_system.API.Features.Loyalty.Controllers
                 .Include(l => l.CurrentTier)
                 .FirstOrDefaultAsync(l => l.UserId==secureUserId);
 
-            if(loyaltyAccount==null || loyaltyAccount.User==null || loyaltyAccount.CurrentTier==null)
+            if (loyaltyAccount==null || loyaltyAccount.User==null || loyaltyAccount.CurrentTier==null)
                 return NotFound(new { message="Loyalty account not found for this user." });
 
             var allRules=await _context.LoyaltyRules.OrderBy(r => r.MinimumPoints).ToListAsync();
@@ -50,7 +50,7 @@ namespace velocart_system.API.Features.Loyalty.Controllers
             decimal progress=100m;
 
             var nextRule=allRules.FirstOrDefault(r => r.MinimumPoints > loyaltyAccount.CurrentPointsBalance);
-            if(nextRule != null)
+            if (nextRule != null)
             {
                 nextTierName=nextRule.TierName;
                 pointsForNext=nextRule.MinimumPoints - loyaltyAccount.CurrentPointsBalance;
@@ -59,7 +59,7 @@ namespace velocart_system.API.Features.Loyalty.Controllers
                 int range=nextRule.MinimumPoints - currentTierMin;
                 int pointsIntoCurrentTier=loyaltyAccount.CurrentPointsBalance - currentTierMin;
                 
-                if(range > 0)
+                if (range > 0)
                 {
                     progress=Math.Round(((decimal)pointsIntoCurrentTier / range) * 100,2);
                 }

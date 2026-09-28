@@ -34,7 +34,7 @@ export default function LoyaltyDashboard() {
         fetchAllData();
     },[]);
 
-    if(loading) {
+    if (loading) {
         return (
             <div className="flex flex-col items-center justify-center py-20">
                 <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
@@ -43,11 +43,11 @@ export default function LoyaltyDashboard() {
         );
     }
 
-    if(error) {
+    if (error) {
         return <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm text-center">{error}</div>;
     }
 
-    if(!dashboardData) return null;
+    if (!dashboardData) return null;
 
     const getCardStyles=(tier: string) => {
         switch (tier.toLowerCase()) {
