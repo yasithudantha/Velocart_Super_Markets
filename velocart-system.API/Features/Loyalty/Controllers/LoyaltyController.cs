@@ -38,9 +38,9 @@ namespace velocart_system.API.Features.Loyalty.Controllers
             var loyaltyAccount=await _context.LoyaltyAccounts
                 .Include(l => l.User)
                 .Include(l => l.CurrentTier)
-                .FirstOrDefaultAsync(l => l.UserId==secureUserId);
+                .FirstOrDefaultAsync(l => l.UserId == secureUserId);
 
-            if (loyaltyAccount==null || loyaltyAccount.User==null || loyaltyAccount.CurrentTier==null)
+            if (loyaltyAccount == null || loyaltyAccount.User == null || loyaltyAccount.CurrentTier == null)
                 return NotFound(new { message="Loyalty account not found for this user." });
 
             var allRules=await _context.LoyaltyRules.OrderBy(r => r.MinimumPoints).ToListAsync();
