@@ -15,13 +15,13 @@ class CatalogApi {
   static Map<String,String> _getAuthHeaders() {
     return {
       'Content-Type': 'application/json',
-      if(jwtToken != null) 'Authorization': 'Bearer $jwtToken',
+      if (jwtToken != null) 'Authorization': 'Bearer $jwtToken',
     };
   }
 
   static Future<List<Category>> getCategories() async {
     final response=await http.get(Uri.parse('$baseUrl/catalog/categories'));
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       Iterable l=json.decode(response.body);
       return List<Category>.from(l.map((model) => Category.fromJson(model)));
     } else {
@@ -34,18 +34,18 @@ class CatalogApi {
     String? brand,bool? inStockOnly,String? sortBy
   }) async {
     Map<String,String> queryParams={};
-    if(categoryId != null) queryParams['categoryId']=categoryId.toString();
-    if(search != null && search.isNotEmpty) queryParams['search']=search;
-    if(minPrice != null && minPrice.isNotEmpty) queryParams['minPrice']=minPrice;
-    if(maxPrice != null && maxPrice.isNotEmpty) queryParams['maxPrice']=maxPrice;
-    if(brand != null && brand.isNotEmpty) queryParams['brand']=brand;
-    if(inStockOnly==true) queryParams['inStockOnly']='true';
-    if(sortBy != null && sortBy.isNotEmpty) queryParams['sortBy']=sortBy;
+    if (categoryId != null) queryParams['categoryId']=categoryId.toString();
+    if (search != null && search.isNotEmpty) queryParams['search']=search;
+    if (minPrice != null && minPrice.isNotEmpty) queryParams['minPrice']=minPrice;
+    if (maxPrice != null && maxPrice.isNotEmpty) queryParams['maxPrice']=maxPrice;
+    if (brand != null && brand.isNotEmpty) queryParams['brand']=brand;
+    if (inStockOnly == true) queryParams['inStockOnly']='true';
+    if (sortBy != null && sortBy.isNotEmpty) queryParams['sortBy']=sortBy;
 
     final uri=Uri.parse('$baseUrl/catalog/products').replace(queryParameters: queryParams);
     final response=await http.get(uri);
     
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       Iterable l=json.decode(response.body);
       return List<Product>.from(l.map((model) => Product.fromJson(model)));
     } else {
@@ -55,7 +55,7 @@ class CatalogApi {
 
   static Future<Product> getProductById(int id) async {
     final response=await http.get(Uri.parse('$baseUrl/catalog/products/$id'));
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       return Product.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load product details');
@@ -72,7 +72,7 @@ class CatalogApi {
         'quantity': quantity,
       }),
     );
-    if(response.statusCode != 200) {
+    if (response.statusCode != 200) {
       final errorData=json.decode(response.body);
       throw Exception(errorData['message'] ?? 'Failed to add item to cart.');
     }
@@ -84,7 +84,7 @@ class CatalogApi {
       Uri.parse('$baseUrl/cart'),
       headers: _getAuthHeaders()
     );
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load cart summary');
@@ -98,7 +98,7 @@ class CatalogApi {
       headers: _getAuthHeaders(),
       body: json.encode({'quantity': quantity}),
     );
-    if(response.statusCode != 200) {
+    if (response.statusCode != 200) {
       throw Exception('Failed to update cart item.');
     }
   }
@@ -109,7 +109,7 @@ class CatalogApi {
       Uri.parse('$baseUrl/cart/remove/$cartItemId'),
       headers: _getAuthHeaders()
     );
-    if(response.statusCode != 200) {
+    if (response.statusCode != 200) {
       throw Exception('Failed to remove cart item.');
     }
   }
@@ -144,7 +144,7 @@ class CatalogApi {
         }),
       );
 
-      if(response.statusCode==200 || response.statusCode==409) {
+      if (response.statusCode == 200 || response.statusCode == 409) {
         final data=jsonDecode(response.body);
         data['statusCode']=response.statusCode;
         return data;
@@ -162,9 +162,9 @@ class CatalogApi {
       Uri.parse('$baseUrl/orders/history'),
       headers: _getAuthHeaders()
     );
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       return json.decode(response.body);
-    } else if(response.statusCode==404) {
+    } else if (response.statusCode == 404) {
       return []; 
     } else {
       throw Exception('Failed to load order history');
@@ -182,7 +182,7 @@ class CatalogApi {
         'comment': comment
       }),
     );
-    if(response.statusCode != 200) {
+    if (response.statusCode != 200) {
       final errorData=json.decode(response.body);
       throw Exception(errorData['message'] ?? 'Failed to submit review.');
     }
@@ -190,7 +190,7 @@ class CatalogApi {
 
   static Future<List<dynamic>> getProductReviews(int productId) async {
     final response=await http.get(Uri.parse('$baseUrl/reviews/product/$productId'));
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load reviews');
@@ -203,7 +203,7 @@ class CatalogApi {
       Uri.parse('$baseUrl/orders/$orderId/reorder'),
       headers: _getAuthHeaders(),
     );
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
       throw Exception(json.decode(response.body)['message'] ?? 'Failed to reorder items');
@@ -216,7 +216,7 @@ class CatalogApi {
       Uri.parse('$baseUrl/orders/$orderId/cancel'),
       headers: _getAuthHeaders(),
     );
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
       throw Exception(json.decode(response.body)['message'] ?? 'Failed to cancel order');
@@ -229,7 +229,7 @@ class CatalogApi {
       Uri.parse('$baseUrl/orders/$orderId/confirm-receipt'),
       headers: _getAuthHeaders()
     );
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       return json.decode(response.body)['message'];
     } else {
       throw Exception(json.decode(response.body)['message'] ?? 'Failed to confirm receipt');
@@ -247,14 +247,14 @@ class CatalogApi {
     request.fields['subject']=subject;
     request.fields['description']=description;
 
-    if(imageFile != null) {
+    if (imageFile != null) {
       request.files.add(await http.MultipartFile.fromPath('image',imageFile.path));
     }
 
     final streamedResponse=await request.send();
     final response=await http.Response.fromStream(streamedResponse);
 
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       return json.decode(response.body)['message'];
     } else {
       throw Exception(json.decode(response.body)['message'] ?? 'Failed to submit complaint');
@@ -270,7 +270,7 @@ class CatalogApi {
       body: jsonEncode({'refundMethod': refundMethod}),
     );
 
-    if(response.statusCode==200) {
+    if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
       final error=jsonDecode(response.body);

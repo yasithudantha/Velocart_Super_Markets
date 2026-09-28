@@ -7,7 +7,7 @@ import { getProducts,getCategories } from '../api/catalogApi';
 import type { ProductFilters } from '../api/catalogApi';
 import CartDrawer from './CartDrawer';
 import { logoutUser } from '../../auth/api/authApi';
-
+import StorefrontAssistant from './StorefrontAssistant';
 
 // Interfaces
 interface ProductVariant { 
@@ -429,7 +429,7 @@ export default function ProductCatalog() {
 
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
                 
-            {/* AI Assistant Pending */}
+            <StorefrontAssistant />
 
         </div>
     );
