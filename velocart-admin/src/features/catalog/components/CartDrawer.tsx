@@ -41,7 +41,7 @@ export default function CartDrawer({ isOpen,onClose }: CartDrawerProps) {
     const [checkoutError,setCheckoutError]=useState('');
 
     useEffect(() => {
-        if(isOpen) {
+        if (isOpen) {
             setStep('CART');
             setCheckoutSuccess(null);
             setCheckoutError('');
@@ -74,7 +74,7 @@ export default function CartDrawer({ isOpen,onClose }: CartDrawerProps) {
             const addresses=await getAddresses();
             const targetAddress=addresses.find((a: any) => a.isDefault) || addresses[0];
             
-            if(targetAddress) {
+            if (targetAddress) {
                 setAddressForm({
                     streetLine1: targetAddress.streetLine1 || '',
                     streetLine2: targetAddress.streetLine2 || '',
@@ -93,7 +93,7 @@ export default function CartDrawer({ isOpen,onClose }: CartDrawerProps) {
     };
 
     const handleUpdateQuantity=async (itemId: number,newQty: number,availableStock: number) => {
-        if(newQty < 1 || newQty > availableStock) return;
+        if (newQty < 1 || newQty > availableStock) return;
         setUpdatingItemId(itemId);
         try { await updateCartItem(itemId,newQty); await fetchCart(); } catch (error) {} finally { setUpdatingItemId(null); }
     };
@@ -104,7 +104,7 @@ export default function CartDrawer({ isOpen,onClose }: CartDrawerProps) {
     };
 
     const handleCheckout=async () => {
-        if(isEditingAddress) {
+        if (isEditingAddress) {
             setCheckoutError("Please save your delivery address before placing the order.");
             return;
         }
@@ -124,7 +124,7 @@ export default function CartDrawer({ isOpen,onClose }: CartDrawerProps) {
                 pointsToRedeem 
             );
             
-            if(response.stripeUrl) {
+            if (response.stripeUrl) {
                 setGatewayStatus('Redirecting to Stripe Sandbox...');
                 window.location.href=response.stripeUrl; 
                 return;

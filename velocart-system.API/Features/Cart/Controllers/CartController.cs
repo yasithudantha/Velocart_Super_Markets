@@ -27,7 +27,7 @@ namespace velocart_system.API.Features.Cart.Controllers
         {
             var userIdClaim=User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
                               ?? User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
-            if(int.TryParse(userIdClaim,out int userId)) return userId;
+            if (int.TryParse(userIdClaim,out int userId)) return userId;
             throw new UnauthorizedAccessException("Invalid token claims.");
         }
 
@@ -35,14 +35,14 @@ namespace velocart_system.API.Features.Cart.Controllers
         public async Task<ActionResult> AddToCart([FromBody] AddToCartDto request)
         {
             int secureUserId=GetSecureUserId();
-            if(request.Quantity <= 0) return BadRequest("Quantity must be greater than zero.");
+            if (request.Quantity <= 0) return BadRequest("Quantity must be greater than zero.");
 
             var variant=await _context.ProductVariants.Include(v => v.Product).FirstOrDefaultAsync(v => v.Id==request.ProductVariantId);
-            if(variant==null || !variant.IsActive || (variant.Product != null && !variant.Product.IsActive)) 
+            if (variant==null || !variant.IsActive || (variant.Product != null && !variant.Product.IsActive)) 
                 return BadRequest("This product is no longer available.");
 
             var cart=await _context.ShoppingCarts.Include(c => c.Items).FirstOrDefaultAsync(c => c.UserId==secureUserId);
-            if(cart==null)
+            if (cart==null)
             {
                 cart=new ShoppingCart { UserId=secureUserId };
                 _context.ShoppingCarts.Add(cart);
@@ -54,10 +54,10 @@ namespace velocart_system.API.Features.Cart.Controllers
             int availableStock=variant.StockQuantity - variant.ReservedQuantity;
             int proposedNewQuantity=request.Quantity;
 
-            if(proposedNewQuantity > availableStock)
+            if (proposedNewQuantity > availableStock)
                 return BadRequest(new { message=$"Cannot add to cart. Only {availableStock} units are currently available.",availableStock });
 
-            if(existingItem != null)
+            if (existingItem != null)
             {
                 existingItem.Quantity += request.Quantity;
             }
@@ -81,7 +81,7 @@ namespace velocart_system.API.Features.Cart.Controllers
                 .Include(c => c.Items).ThenInclude(i => i.Variant).ThenInclude(v => v!.Product).ThenInclude(p => p!.Images)
                 .FirstOrDefaultAsync(c => c.UserId==secureUserId);
 
-            if(cart==null) return Ok(new CartResponseDto { UserId=secureUserId });
+            if (cart==null) return Ok(new CartResponseDto { UserId=secureUserId });
 
             var now=DateTime.UtcNow;
             var activePromotions=await _context.Promotions.Include(p => p.PromotionProducts).Include(p => p.PromotionCategories).Where(promo => promo.Status=="ACTIVE" && promo.StartDate <= now && promo.EndDate >= now).ToListAsync();
@@ -97,7 +97,7 @@ namespace velocart_system.API.Features.Cart.Controllers
             foreach (var item in cart.Items)
             {
                 var variant=item.Variant;
-                if(variant==null || variant.Product==null) continue;
+                if (variant==null || variant.Product==null) continue;
 
                 decimal originalTotal=variant.Price * item.Quantity;
                 calcSubtotal += originalTotal;
@@ -105,10 +105,10 @@ namespace velocart_system.API.Features.Cart.Controllers
                 decimal itemDiscount=0;
                 var applicablePromo=activePromotions.FirstOrDefault(promo => promo.PromotionProducts.Any(pp => pp.ProductId==variant.Product.Id) || promo.PromotionCategories.Any(pc => pc.CategoryId==variant.Product.CategoryId) || (!promo.PromotionProducts.Any() && !promo.PromotionCategories.Any()));
 
-                if(applicablePromo != null)
+                if (applicablePromo != null)
                 {
-                    if(applicablePromo.Type.ToString()=="PERCENTAGE_DISCOUNT") itemDiscount=originalTotal * (applicablePromo.DiscountValue / 100m);
-                    else if(applicablePromo.Type.ToString()=="FIXED_AMOUNT_DISCOUNT") itemDiscount=applicablePromo.DiscountValue * item.Quantity;
+                    if (applicablePromo.Type.ToString()=="PERCENTAGE_DISCOUNT") itemDiscount=originalTotal * (applicablePromo.DiscountValue / 100m);
+                    else if (applicablePromo.Type.ToString()=="FIXED_AMOUNT_DISCOUNT") itemDiscount=applicablePromo.DiscountValue * item.Quantity;
                 }
                 
                 calcDiscount += itemDiscount;
@@ -120,7 +120,7 @@ namespace velocart_system.API.Features.Cart.Controllers
                     t.TaxRuleCategories.Any(tc => tc.CategoryId==variant.Product.CategoryId)
                 ).ToList();
 
-                if(applicableTaxes.Any()) 
+                if (applicableTaxes.Any()) 
                     foreach (var tax in applicableTaxes) calcTax += finalItemPrice * (tax.RatePercentage / 100m);
                 else 
                     calcTax += 0m; // Fixed: Removed the 8% fallback
@@ -138,10 +138,10 @@ namespace velocart_system.API.Features.Cart.Controllers
             decimal deliveryFee=0;
             foreach (var charge in activeCharges)
             {
-                if(rawSubtotal >= charge.MinOrderAmount && (!charge.MaxOrderAmount.HasValue || rawSubtotal <= charge.MaxOrderAmount.Value))
+                if (rawSubtotal >= charge.MinOrderAmount && (!charge.MaxOrderAmount.HasValue || rawSubtotal <= charge.MaxOrderAmount.Value))
                 {
-                    if(charge.ChargeType=="FIXED") deliveryFee += charge.AmountOrPercentage;
-                    else if(charge.ChargeType=="PERCENTAGE") deliveryFee += rawSubtotal * (charge.AmountOrPercentage / 100m);
+                    if (charge.ChargeType=="FIXED") deliveryFee += charge.AmountOrPercentage;
+                    else if (charge.ChargeType=="PERCENTAGE") deliveryFee += rawSubtotal * (charge.AmountOrPercentage / 100m);
                 }
             }
 
@@ -158,22 +158,22 @@ namespace velocart_system.API.Features.Cart.Controllers
         [HttpPut("update/{itemId}")]
         public async Task<ActionResult> UpdateCartItem(int itemId,[FromBody] UpdateCartItemDto request)
         {
-            if(request.Quantity <= 0) return BadRequest("Quantity must be greater than zero.");
+            if (request.Quantity <= 0) return BadRequest("Quantity must be greater than zero.");
 
             var cartItem=await _context.ShoppingCartItems.Include(i => i.Variant).FirstOrDefaultAsync(i => i.Id==itemId);
-            if(cartItem==null || cartItem.Variant==null) return NotFound("Cart item not found.");
+            if (cartItem==null || cartItem.Variant==null) return NotFound("Cart item not found.");
 
             int quantityDifference=request.Quantity - cartItem.Quantity;
             int availableStock=cartItem.Variant.StockQuantity - cartItem.Variant.ReservedQuantity;
 
-            if(quantityDifference > 0 && quantityDifference > availableStock)
+            if (quantityDifference > 0 && quantityDifference > availableStock)
                 return BadRequest(new { message=$"Cannot update. Only {availableStock} additional units available.",availableStock });
 
             cartItem.Variant.ReservedQuantity += quantityDifference;
             cartItem.Quantity=request.Quantity;
             
             var cart=await _context.ShoppingCarts.FirstOrDefaultAsync(c => c.Id==cartItem.ShoppingCartId);
-            if(cart != null) cart.LastUpdated=DateTime.UtcNow;
+            if (cart != null) cart.LastUpdated=DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             return Ok(new { message="Cart updated." });
@@ -183,18 +183,18 @@ namespace velocart_system.API.Features.Cart.Controllers
         public async Task<ActionResult> RemoveCartItem(int itemId)
         {
             var cartItem=await _context.ShoppingCartItems.Include(i => i.Variant).FirstOrDefaultAsync(i => i.Id==itemId);
-            if(cartItem==null) return NotFound("Cart item not found.");
+            if (cartItem==null) return NotFound("Cart item not found.");
 
-            if(cartItem.Variant != null)
+            if (cartItem.Variant != null)
             {
                 cartItem.Variant.ReservedQuantity -= cartItem.Quantity;
-                if(cartItem.Variant.ReservedQuantity < 0) cartItem.Variant.ReservedQuantity=0;
+                if (cartItem.Variant.ReservedQuantity < 0) cartItem.Variant.ReservedQuantity=0;
             }
 
             _context.ShoppingCartItems.Remove(cartItem);
             
             var cart=await _context.ShoppingCarts.FirstOrDefaultAsync(c => c.Id==cartItem.ShoppingCartId);
-            if(cart != null) cart.LastUpdated=DateTime.UtcNow;
+            if (cart != null) cart.LastUpdated=DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             return Ok(new { message="Item removed from cart. Reservation released." });

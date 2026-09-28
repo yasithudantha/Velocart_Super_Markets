@@ -30,7 +30,7 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _updateQuantity(int itemId,int newQty,int availableStock) async {
-    if(newQty < 1 || newQty > availableStock) return;
+    if (newQty < 1 || newQty > availableStock) return;
     try {
       setState(() {
         var item=(cart!['items'] as List).firstWhere((i) => i['id']==itemId);
@@ -55,7 +55,7 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if(isLoading) return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))));
+    if (isLoading) return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))));
 
     final items=cart?['items'] as List? ?? [];
     final hasAvailableItems=items.any((i) => i['isAvailable']==true);
@@ -123,7 +123,7 @@ class _CartScreenState extends State<CartScreen> {
                             Text("${item['brand']} • ${item['variantName']}",style: const TextStyle(color: Color(0xFFD4AF37),fontSize: 12,fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
 
-                            if(!isAvailable)
+                            if (!isAvailable)
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
                                 decoration: BoxDecoration(color: Colors.red.shade100,borderRadius: BorderRadius.circular(6)),
@@ -173,7 +173,7 @@ class _CartScreenState extends State<CartScreen> {
               // MATCHING IMAGE: Math Breakdown
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [const Text("Subtotal",style: TextStyle(color: Colors.grey,fontSize: 14)),Text("Rs. ${cart!['subtotal']?.toStringAsFixed(2)}",style: const TextStyle(fontWeight: FontWeight.bold))]),
               const SizedBox(height: 4),
-              if((cart!['discountAmount'] ?? 0) > 0)
+              if ((cart!['discountAmount'] ?? 0) > 0)
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [const Text("Discounts",style: TextStyle(color: Color(0xFFD4AF37),fontSize: 14)),Text("-Rs. ${cart!['discountAmount']?.toStringAsFixed(2)}",style: const TextStyle(color: Color(0xFFD4AF37),fontWeight: FontWeight.bold))]),
               const SizedBox(height: 4),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [const Text("Taxes / VAT",style: TextStyle(color: Colors.grey,fontSize: 14)),Text("Rs. ${cart!['taxAmount']?.toStringAsFixed(2)}",style: const TextStyle(fontWeight: FontWeight.bold))]),
@@ -201,7 +201,7 @@ class _CartScreenState extends State<CartScreen> {
                   onPressed: !hasAvailableItems ? null : () async {
                     // Navigate to Checkout and re-fetch if they came back from a 409 Conflict
                     final shouldRefresh=await Navigator.push(context,MaterialPageRoute(builder: (_) => CheckoutScreen(cartData: cart!)));
-                    if(shouldRefresh==true) _fetchCart();
+                    if (shouldRefresh==true) _fetchCart();
                   },
                   child: const Text("Proceed to Checkout",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black)),
                 ),
