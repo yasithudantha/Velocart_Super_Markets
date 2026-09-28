@@ -54,7 +54,7 @@ namespace velocart_system.API.Features.Identity.Controllers
         private async Task<int> GetOrCreateDefaultSilverTierAsync()
         {
             var silver=await _context.LoyaltyRules.FirstOrDefaultAsync(r => r.TierName=="Silver");
-            if(silver != null) return silver.Id;
+            if (silver != null) return silver.Id;
 
             // Seed the default Silver rule from the SRS if it doesn't exist
             silver=new LoyaltyRule
@@ -88,7 +88,7 @@ namespace velocart_system.API.Features.Identity.Controllers
                 var newId=builder.ToString();
                 
                 // Verify uniqueness against the database
-                if(!await _context.LoyaltyAccounts.AnyAsync(l => l.LoyaltyIdNumber==newId))
+                if (!await _context.LoyaltyAccounts.AnyAsync(l => l.LoyaltyIdNumber==newId))
                     return newId;
             }
         }
@@ -98,12 +98,12 @@ namespace velocart_system.API.Features.Identity.Controllers
         public async Task<IActionResult> RefreshToken([FromBody] TokenRefreshRequest request)
         {
             var principal=GetPrincipalFromExpiredToken(request.Token);
-            if(principal==null) return BadRequest("Invalid client request");
+            if (principal==null) return BadRequest("Invalid client request");
 
             var email=principal.FindFirst(ClaimTypes.Email)?.Value;
             var user=await _context.Users.FirstOrDefaultAsync(u => u.Email==email);
 
-            if(user==null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            if (user==null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
                 _logger.LogWarning("SECURITY ALERT: Invalid refresh token attempt for user {Email}",email);
                 return BadRequest("Invalid token or session expired. Please log in again.");
@@ -123,7 +123,7 @@ namespace velocart_system.API.Features.Identity.Controllers
         public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
         {
             var user=await _context.Users.FindAsync(request.UserId);
-            if(user != null)
+            if (user != null)
             {
                 user.RefreshToken=null;
                 user.RefreshTokenExpiryTime=null;
@@ -139,10 +139,10 @@ namespace velocart_system.API.Features.Identity.Controllers
             try
             {
                 var normalizedEmail=request.Email.Trim().ToLower();
-                if(await _context.Users.AnyAsync(u => u.Email==normalizedEmail)) return BadRequest(new { message="Email is already registered." });
+                if (await _context.Users.AnyAsync(u => u.Email==normalizedEmail)) return BadRequest(new { message="Email is already registered." });
 
                 var formattedPhone=request.PhoneNumber.Trim();
-                if(await _context.Users.AnyAsync(u => u.PhoneNumber==formattedPhone)) 
+                if (await _context.Users.AnyAsync(u => u.PhoneNumber==formattedPhone)) 
                     return BadRequest(new { message="This phone number is already registered to another account." });
 
                 // Generate Loyalty details dynamically
@@ -207,25 +207,25 @@ namespace velocart_system.API.Features.Identity.Controllers
                 var normalizedEmail=request.Email.Trim().ToLower();
                 var user=await _context.Users.FirstOrDefaultAsync(u => u.Email==normalizedEmail);
 
-                if(user==null || user.PasswordHash==null) 
+                if (user==null || user.PasswordHash==null) 
                 {
                     _logger.LogWarning("Failed login attempt for unknown email: {Email}",normalizedEmail);
                     return BadRequest(new { message="Invalid email or password." });
                 }
 
-                if(user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTime.UtcNow)
+                if (user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTime.UtcNow)
                 {
                     var remaining=Math.Ceiling((user.LockoutEnd.Value - DateTime.UtcNow).TotalMinutes);
                     return BadRequest(new { message=$"Account is temporarily locked. Try again in {remaining} minutes." });
                 }
 
-                if(user.AccountStatus=="Suspended" || user.AccountStatus=="Deleted")
+                if (user.AccountStatus=="Suspended" || user.AccountStatus=="Deleted")
                     return BadRequest(new { message="This account has been suspended or deactivated." });
 
-                if(!BCrypt.Net.BCrypt.Verify(request.Password,user.PasswordHash))
+                if (!BCrypt.Net.BCrypt.Verify(request.Password,user.PasswordHash))
                 {
                     user.FailedLoginAttempts++;
-                    if(user.FailedLoginAttempts >= 5) 
+                    if (user.FailedLoginAttempts >= 5) 
                     {
                         user.LockoutEnd=DateTime.UtcNow.AddMinutes(15); 
                         await _context.SaveChangesAsync();
@@ -268,7 +268,7 @@ namespace velocart_system.API.Features.Identity.Controllers
                 var normalizedEmail=payload.Email.Trim().ToLower();
                 var user=await _context.Users.FirstOrDefaultAsync(u => u.Email==normalizedEmail);
 
-                if(user==null)
+                if (user==null)
                 {
                     // Generate Loyalty details dynamically for Google Registration
                     var defaultTierId=await GetOrCreateDefaultSilverTierAsync();
@@ -301,9 +301,9 @@ namespace velocart_system.API.Features.Identity.Controllers
                 }
                 else
                 {
-                    if(user.AccountStatus=="Suspended" || user.AccountStatus=="Deleted") return BadRequest(new { message="This account has been suspended or deactivated." });
+                    if (user.AccountStatus=="Suspended" || user.AccountStatus=="Deleted") return BadRequest(new { message="This account has been suspended or deactivated." });
 
-                    if(user.AuthProvider=="LOCAL")
+                    if (user.AuthProvider=="LOCAL")
                     {
                         user.AuthProvider="GOOGLE"; user.ProviderId=payload.Subject; user.AccountStatus="Active"; user.ProfilePictureUrl=payload.Picture;
                     }
@@ -330,10 +330,10 @@ namespace velocart_system.API.Features.Identity.Controllers
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail([FromQuery] string token)
         {
-            if(string.IsNullOrEmpty(token)) return BadRequest(new { message="Invalid verification token." });
+            if (string.IsNullOrEmpty(token)) return BadRequest(new { message="Invalid verification token." });
 
             var user=await _context.Users.FirstOrDefaultAsync(u => u.VerificationToken==token);
-            if(user==null || user.VerificationTokenExpires < DateTime.UtcNow) return BadRequest(new { message="Invalid or expired verification token." });
+            if (user==null || user.VerificationTokenExpires < DateTime.UtcNow) return BadRequest(new { message="Invalid or expired verification token." });
 
             user.AccountStatus="Active"; user.VerificationToken=null; user.VerificationTokenExpires=null;
             await _context.SaveChangesAsync();
@@ -345,7 +345,7 @@ namespace velocart_system.API.Features.Identity.Controllers
         {
             var user=await _context.Users.FirstOrDefaultAsync(u => u.Email==request.Email.Trim().ToLower());
             var msg="If your email is registered and unverified,a new link has been sent.";
-            if(user==null || user.AccountStatus != "Email unverified") return Ok(new { message=msg });
+            if (user==null || user.AccountStatus != "Email unverified") return Ok(new { message=msg });
 
             user.VerificationToken=Guid.NewGuid().ToString(); user.VerificationTokenExpires=DateTime.UtcNow.AddHours(24);
             await _context.SaveChangesAsync();
@@ -361,7 +361,7 @@ namespace velocart_system.API.Features.Identity.Controllers
             var user=await _context.Users.FirstOrDefaultAsync(u => u.Email==request.Email.Trim().ToLower());
             var msg="If an account with that email exists,a password reset link has been sent.";
             
-            if(user==null || user.AuthProvider=="GOOGLE") return Ok(new { message=msg });
+            if (user==null || user.AuthProvider=="GOOGLE") return Ok(new { message=msg });
 
             user.PasswordResetToken=Guid.NewGuid().ToString(); user.PasswordResetTokenExpires=DateTime.UtcNow.AddHours(1);
             await _context.SaveChangesAsync();
@@ -382,7 +382,7 @@ namespace velocart_system.API.Features.Identity.Controllers
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
         {
             var user=await _context.Users.FirstOrDefaultAsync(u => u.PasswordResetToken==request.Token);
-            if(user==null || user.PasswordResetTokenExpires < DateTime.UtcNow) return BadRequest(new { message="Invalid or expired reset token." });
+            if (user==null || user.PasswordResetTokenExpires < DateTime.UtcNow) return BadRequest(new { message="Invalid or expired reset token." });
 
             user.PasswordHash=BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
             user.PasswordResetToken=null; user.PasswordResetTokenExpires=null; user.FailedLoginAttempts=0; user.LockoutEnd=null;
@@ -426,7 +426,7 @@ namespace velocart_system.API.Features.Identity.Controllers
             var tokenHandler=new JwtSecurityTokenHandler();
             var principal=tokenHandler.ValidateToken(token,tokenValidationParameters,out SecurityToken securityToken);
             var jwtSecurityToken=securityToken as JwtSecurityToken;
-            if(jwtSecurityToken==null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,StringComparison.InvariantCultureIgnoreCase))
+            if (jwtSecurityToken==null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");
 
             return principal;

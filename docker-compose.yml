@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-velocart_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-velocart_password}
+      POSTGRES_DB: ${POSTGRES_DB:-velocart_db}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # To initialize the db locally with a dump,you can uncomment below
+      # - ./init-scripts:/docker-entrypoint-initdb.d
+    profiles:
+      - backend
+
+  api:
+    build:
+      context: ./velocart-system.API
+    ports:
+      - "5176:8080"
+    env_file:
+      - .env
+    environment:
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
+      - AIServiceUrl=http://ai-service:8000
+      - DOTNET_SYSTEM_NET_DISABLEIPV6=1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    profiles:
+      - backend
+
+  ai-service:
+    build:
+      context: ./velocart-ai-service
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    profiles:
+      - ai_agent
+      - backend
+
+  admin:
+    build:
+      context: ./velocart-admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    profiles:
+      - frontend
+
+  # Local LLM Service (Ollama) - Will only start if COMPOSE_PROFILES=local in .env
+  ollama-service:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    profiles:
+      - local
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # Auto-downloads the llama3.1 model when the local profile starts
+  ollama-pull:
+    image: ollama/ollama
+    profiles:
+      - local
+    depends_on:
+      - ollama-service
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    environment:
+      - OLLAMA_HOST=http://ollama-service:11434
+    entrypoint: ["sh","-c","sleep 10 && ollama pull llama3.1"]
+
+volumes:
+  pgdata:
+  ollama_data:
