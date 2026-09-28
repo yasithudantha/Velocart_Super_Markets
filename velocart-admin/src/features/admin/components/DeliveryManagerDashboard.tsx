@@ -64,7 +64,7 @@ export default function DeliveryManagerDashboard() {
     const showToast=(message: string,type: 'success' | 'error') => { setToast({ message,type }); setTimeout(() => setToast(null),4000); };
 
     useEffect(() => { 
-        if(activeTab === 'AI_ADJUDICATOR') fetchAIWorkflows();
+        if (activeTab === 'AI_ADJUDICATOR') fetchAIWorkflows();
         else fetchOrders(); 
     },[activeTab]);
 
@@ -105,12 +105,12 @@ export default function DeliveryManagerDashboard() {
     const handleReviewAI=async (id: number,status: 'APPROVED' | 'REJECTED',payloadStr: string) => {
         setActionLoading(id);
         try {
-            if(status === 'APPROVED') {
+            if (status === 'APPROVED') {
                 // STEP 1: Safely Parse JSON FIRST
                 let payload;
                 try {
                     payload=payloadStr ? JSON.parse(payloadStr) : null;
-                    if(!payload) throw new Error("Empty payload");
+                    if (!payload) throw new Error("Empty payload");
                 } catch (parseError) {
                     showToast("AI generated invalid data. Rejecting workflow.","error");
                     // Auto-reject so the bad data doesn't get stuck in the UI
@@ -148,7 +148,7 @@ export default function DeliveryManagerDashboard() {
 
     const executeStatusUpdate=async () => {
         const { orderId,newStatus }=confirmModal;
-        if(!orderId) return;
+        if (!orderId) return;
 
         setConfirmModal({ isOpen: false,orderId: null,newStatus: '' }); 
         setActionLoading(orderId);
@@ -184,7 +184,7 @@ export default function DeliveryManagerDashboard() {
     };
 
     const submitDeliveryDetails=async () => {
-        if(!deliveryForm.estimatedDeliveryDate) return showToast("Estimated Delivery Date is required.","error");
+        if (!deliveryForm.estimatedDeliveryDate) return showToast("Estimated Delivery Date is required.","error");
         setActionLoading(deliveryModalPO.id);
         try {
             await axios.put(`${API_URL}/orders/delivery-management/${deliveryModalPO.id}/delivery-details`,deliveryForm,getAuthHeader());
@@ -196,7 +196,7 @@ export default function DeliveryManagerDashboard() {
     };
 
     const submitLocationUpdate=async () => {
-        if(!newLocation) return;
+        if (!newLocation) return;
         setActionLoading(deliveryModalPO.id);
         try {
             const payload={ latitude: newLocation.lat,longitude: newLocation.lng,placeName: newLocation.placeName };
@@ -226,7 +226,7 @@ export default function DeliveryManagerDashboard() {
 
     const handlePrintInvoice=() => {
         const printContent=document.getElementById('printable-invoice');
-        if(!printContent) return;
+        if (!printContent) return;
         
         const originalContents=document.body.innerHTML;
         document.body.innerHTML=printContent.innerHTML;
@@ -247,7 +247,7 @@ export default function DeliveryManagerDashboard() {
     };
 
     const handleResolveComplaint=async () => {
-        if(!resolveModalId) return;
+        if (!resolveModalId) return;
         try {
             await axios.put(`${API_URL}/orders/delivery-management/complaints/${resolveModalId}/resolve`,{},getAuthHeader());
             fetchOrders();
@@ -258,7 +258,7 @@ export default function DeliveryManagerDashboard() {
 
     // --- NEW: PROCESS REFUND ACTION ---
     const handleProcessRefund=async () => {
-        if(!refundModalId) return;
+        if (!refundModalId) return;
         setActionLoading(refundModalId);
         try {
             const res=await processRefund(refundModalId);

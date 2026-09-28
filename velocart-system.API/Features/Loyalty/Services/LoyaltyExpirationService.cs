@@ -65,7 +65,7 @@ namespace velocart_system.API.Features.Loyalty.Services
 
             foreach (var lot in expiredLots)
             {
-                if (lot.LoyaltyAccount==null) continue;
+                if (lot.LoyaltyAccount == null) continue;
 
                 int pointsToExpire=lot.RemainingPoints;
                 int balanceBefore=lot.LoyaltyAccount.CurrentPointsBalance;
@@ -110,14 +110,14 @@ namespace velocart_system.API.Features.Loyalty.Services
             // Find accounts whose 1-year evaluation period is up today
             var accountsToEvaluate=await _context.LoyaltyAccounts
                 .Include(a => a.CurrentTier)
-                .Where(a => a.LastRenewedAt.HasValue && a.Status=="ACTIVE")
+                .Where(a => a.LastRenewedAt.HasValue && a.Status == "ACTIVE")
                 .ToListAsync();
 
             int totalAccountsReviewed=0;
 
             foreach (var account in accountsToEvaluate)
             {
-                if (account.CurrentTier==null || !account.LastRenewedAt.HasValue) continue;
+                if (account.CurrentTier == null || !account.LastRenewedAt.HasValue) continue;
 
                 var evaluationEndDate=account.LastRenewedAt.Value.AddDays(account.CurrentTier.TierEvaluationPeriodDays);
                 
@@ -126,7 +126,7 @@ namespace velocart_system.API.Features.Loyalty.Services
                 {
                     // Calculate how many points they actually earned DURING this 1-year period
                     var earnedInPeriod=await _context.LoyaltyTransactions
-                        .Where(t => t.LoyaltyAccountId==account.Id && t.TransactionType=="EARNED" && t.CreatedAt >= account.LastRenewedAt.Value)
+                        .Where(t => t.LoyaltyAccountId == account.Id && t.TransactionType == "EARNED" && t.CreatedAt >= account.LastRenewedAt.Value)
                         .SumAsync(t => t.Points);
 
                     // Determine what tier they actually qualify for now based on this year's activity
