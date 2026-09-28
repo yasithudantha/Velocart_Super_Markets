@@ -5,9 +5,9 @@ const getAuthHeader=() => ({ headers: { Authorization: `Bearer ${localStorage.ge
 
 export const getUsers=async (search?: string,role?: string,status?: string) => {
     const params=new URLSearchParams();
-    if(search) params.append('search',search);
-    if(role) params.append('role',role);
-    if(status) params.append('status',status);
+    if (search) params.append('search',search);
+    if (role) params.append('role',role);
+    if (status) params.append('status',status);
     
     const response=await axios.get(`${API_URL}/MainAdmin/users?${params.toString()}`,getAuthHeader());
     return response.data;
