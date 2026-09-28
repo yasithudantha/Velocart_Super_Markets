@@ -46,7 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         isLoading=false;
       });
     } catch (e) {
-      if(e.toString().contains("Unauthorized")) {
+      if (e.toString().contains("Unauthorized")) {
         _logout(); // Kick user out if token is invalid/expired
       } else {
         _showSnackBar(e.toString(),Colors.redAccent);
@@ -56,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
-    if(_nameController.text.trim().isEmpty || _phoneController.text.trim().isEmpty) {
+    if (_nameController.text.trim().isEmpty || _phoneController.text.trim().isEmpty) {
       _showSnackBar("Name and Phone cannot be empty.",Colors.redAccent);
       return;
     }
@@ -87,18 +87,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _handleSecurityAction(String action) async {
     setState(() => isSecuritySaving=true);
     try {
-      if(action=='email') {
-        if(newEmail.isEmpty || emailCurrentPassword.isEmpty) throw "Please fill all email change fields.";
+      if (action=='email') {
+        if (newEmail.isEmpty || emailCurrentPassword.isEmpty) throw "Please fill all email change fields.";
         final msg=await UserApiService.requestEmailChange({'newEmail': newEmail,'currentPassword': emailCurrentPassword});
         _showSnackBar(msg,Colors.green);
-      } else if(action=='password') {
-        if(newPassword.isEmpty || passwordCurrentPassword.isEmpty) throw "Please fill all password fields.";
+      } else if (action=='password') {
+        if (newPassword.isEmpty || passwordCurrentPassword.isEmpty) throw "Please fill all password fields.";
         final msg=await UserApiService.changePassword({'newPassword': newPassword,'currentPassword': passwordCurrentPassword});
         _showSnackBar(msg,Colors.green);
-      } else if(action=='delete') {
-        if(deleteCurrentPassword.isEmpty) throw "Password required to delete account.";
+      } else if (action=='delete') {
+        if (deleteCurrentPassword.isEmpty) throw "Password required to delete account.";
         final confirm=await _showDeleteConfirmation();
-        if(confirm==true) {
+        if (confirm==true) {
           final msg=await UserApiService.deleteAccount({'currentPassword': deleteCurrentPassword});
           _showSnackBar(msg,Colors.green);
           _logout();
@@ -137,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await prefs.remove('velocart_token');
     await prefs.remove('velocart_user');
     
-    if(mounted) {
+    if (mounted) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -175,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Text(label.toUpperCase(),style: const TextStyle(color: Colors.white54,fontSize: 10,letterSpacing: 1)),
                 const SizedBox(height: 4),
-                if(isEditing && controller != null)
+                if (isEditing && controller != null)
                   TextField(
                     controller: controller,
                     style: const TextStyle(color: Colors.white,fontSize: 14),
@@ -341,7 +341,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  if(isGoogleUser)
+                  if (isGoogleUser)
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(color: surfaceDark,borderRadius: BorderRadius.circular(15),border: Border.all(color: Colors.white10)),
@@ -445,7 +445,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 8),
                         const Text("Deleting your account is permanent and cannot be undone.",style: TextStyle(color: Colors.redAccent,fontSize: 12)),
                         const SizedBox(height: 12),
-                        if(!isGoogleUser) ...[
+                        if (!isGoogleUser) ...[
                           TextField(
                             obscureText: true,
                             style: const TextStyle(color: Colors.white,fontSize: 14),
@@ -459,7 +459,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent,foregroundColor: Colors.white,elevation: 0),
                             onPressed: isSecuritySaving ? null : () {
-                              if(isGoogleUser) {
+                              if (isGoogleUser) {
                                 deleteCurrentPassword="GOOGLE_USER_BYPASS"; // Backend normally bypasses pass check for OAuth users
                               }
                               _handleSecurityAction('delete');
