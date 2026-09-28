@@ -32,8 +32,8 @@ class _LoyaltyDashboardScreenState extends State<LoyaltyDashboardScreen> {
   }
 
   List<Color> _getCardColors(String tier) {
-    if (tier.toLowerCase()=='gold') return [const Color(0xFFD4AF37),const Color(0xFFAA7C11)];
-    if (tier.toLowerCase()=='platinum') return [const Color(0xFFE5E4E2),const Color(0xFFA0A0A0)];
+    if (tier.toLowerCase() == 'gold') return [const Color(0xFFD4AF37),const Color(0xFFAA7C11)];
+    if (tier.toLowerCase() == 'platinum') return [const Color(0xFFE5E4E2),const Color(0xFFA0A0A0)];
     return [const Color(0xFF757F9A),const Color(0xFFD7DDE8)]; // Silver
   }
 
@@ -49,7 +49,7 @@ class _LoyaltyDashboardScreenState extends State<LoyaltyDashboardScreen> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37)))
-          : dashboard==null
+          : dashboard == null
               ? const Center(child: Text("Could not load loyalty data.",style: TextStyle(color: Colors.white54)))
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
