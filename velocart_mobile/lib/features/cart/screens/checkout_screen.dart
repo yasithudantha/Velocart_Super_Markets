@@ -48,17 +48,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final token=prefs.getString('velocart_token');
 
       final addressRes=await http.get(Uri.parse('${AuthApiService.baseUrl}/Address'),headers: {'Authorization': 'Bearer $token'});
-      if (addressRes.statusCode==200) {
+      if (addressRes.statusCode == 200) {
         final List addresses=jsonDecode(addressRes.body);
         if (addresses.isNotEmpty) {
-           final def=addresses.firstWhere((a) => a['isDefault']==true,orElse: () => addresses[0]);
+           final def=addresses.firstWhere((a) => a['isDefault'] == true,orElse: () => addresses[0]);
            deliveryAddress="${def['streetLine1']}${def['streetLine2'] != null ? ',' + def['streetLine2'] : ''},${def['city']},${def['postalCode']},${def['country']}";
         }
       }
       addressController.text=deliveryAddress;
 
       final loyaltyRes=await http.get(Uri.parse('${AuthApiService.baseUrl}/Loyalty/dashboard'),headers: {'Authorization': 'Bearer $token'});
-      if (loyaltyRes.statusCode==200) {
+      if (loyaltyRes.statusCode == 200) {
         userPointsBalance=jsonDecode(loyaltyRes.body)['currentPointsBalance'] ?? 0;
       }
       setState(() => isLoadingData=false);
@@ -130,7 +130,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _handlePlaceOrder({bool force=false}) async {
     setState(() => isCheckingOut=true);
     
-    if (paymentMethod=='CARD') {
+    if (paymentMethod == 'CARD') {
       setState(() => gatewayStatus="Connecting to secure payment gateway...");
     }
 
@@ -145,7 +145,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
 
       // PRESERVED LOGIC: Catching the 409 Conflict
-      if (responseData['statusCode']==409) {
+      if (responseData['statusCode'] == 409) {
         setState(() { isCheckingOut=false; gatewayStatus=''; });
         _generateIdempotencyKey(); 
         _showPriceConflictDialog(responseData);
@@ -351,8 +351,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         onTap: () => setState(() => paymentMethod='CARD'),
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(color: paymentMethod=='CARD' ? const Color(0xFFD4AF37).withOpacity(0.1) : Colors.transparent,border: Border.all(color: paymentMethod=='CARD' ? const Color(0xFFD4AF37) : Colors.grey.shade300),borderRadius: BorderRadius.circular(10)),
-                          child: Column(children: [Icon(Icons.credit_card,color: paymentMethod=='CARD' ? const Color(0xFFD4AF37) : Colors.grey),const SizedBox(height: 4),Text("Card",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12,color: paymentMethod=='CARD' ? const Color(0xFFD4AF37) : Colors.grey))]),
+                          decoration: BoxDecoration(color: paymentMethod == 'CARD' ? const Color(0xFFD4AF37).withOpacity(0.1) : Colors.transparent,border: Border.all(color: paymentMethod == 'CARD' ? const Color(0xFFD4AF37) : Colors.grey.shade300),borderRadius: BorderRadius.circular(10)),
+                          child: Column(children: [Icon(Icons.credit_card,color: paymentMethod == 'CARD' ? const Color(0xFFD4AF37) : Colors.grey),const SizedBox(height: 4),Text("Card",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12,color: paymentMethod == 'CARD' ? const Color(0xFFD4AF37) : Colors.grey))]),
                         ),
                       ),
                     ),
@@ -362,8 +362,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         onTap: () => setState(() => paymentMethod='COD'),
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(color: paymentMethod=='COD' ? const Color(0xFFD4AF37).withOpacity(0.1) : Colors.transparent,border: Border.all(color: paymentMethod=='COD' ? const Color(0xFFD4AF37) : Colors.grey.shade300),borderRadius: BorderRadius.circular(10)),
-                          child: Column(children: [Icon(Icons.money,color: paymentMethod=='COD' ? const Color(0xFFD4AF37) : Colors.grey),const SizedBox(height: 4),Text("Cash",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12,color: paymentMethod=='COD' ? const Color(0xFFD4AF37) : Colors.grey))]),
+                          decoration: BoxDecoration(color: paymentMethod == 'COD' ? const Color(0xFFD4AF37).withOpacity(0.1) : Colors.transparent,border: Border.all(color: paymentMethod == 'COD' ? const Color(0xFFD4AF37) : Colors.grey.shade300),borderRadius: BorderRadius.circular(10)),
+                          child: Column(children: [Icon(Icons.money,color: paymentMethod == 'COD' ? const Color(0xFFD4AF37) : Colors.grey),const SizedBox(height: 4),Text("Cash",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12,color: paymentMethod == 'COD' ? const Color(0xFFD4AF37) : Colors.grey))]),
                         ),
                       ),
                     )
@@ -396,7 +396,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   onPressed: isCheckingOut || deliveryAddress.isEmpty ? null : () => _handlePlaceOrder(force: false),
                   child: isCheckingOut 
                     ? const Row(mainAxisAlignment: MainAxisAlignment.center,children: [SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: Colors.white,strokeWidth: 2)),SizedBox(width: 10),Text("Processing...",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white))])
-                    : Text(paymentMethod=='CARD' ? "Pay Securely" : "Place Order",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white)),
+                    : Text(paymentMethod == 'CARD' ? "Pay Securely" : "Place Order",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white)),
                 ),
               ),
             ],
