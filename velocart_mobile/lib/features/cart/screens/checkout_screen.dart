@@ -48,9 +48,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final token=prefs.getString('velocart_token');
 
       final addressRes=await http.get(Uri.parse('${AuthApiService.baseUrl}/Address'),headers: {'Authorization': 'Bearer $token'});
-      if(addressRes.statusCode==200) {
+      if (addressRes.statusCode==200) {
         final List addresses=jsonDecode(addressRes.body);
-        if(addresses.isNotEmpty) {
+        if (addresses.isNotEmpty) {
            final def=addresses.firstWhere((a) => a['isDefault']==true,orElse: () => addresses[0]);
            deliveryAddress="${def['streetLine1']}${def['streetLine2'] != null ? ',' + def['streetLine2'] : ''},${def['city']},${def['postalCode']},${def['country']}";
         }
@@ -58,7 +58,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       addressController.text=deliveryAddress;
 
       final loyaltyRes=await http.get(Uri.parse('${AuthApiService.baseUrl}/Loyalty/dashboard'),headers: {'Authorization': 'Bearer $token'});
-      if(loyaltyRes.statusCode==200) {
+      if (loyaltyRes.statusCode==200) {
         userPointsBalance=jsonDecode(loyaltyRes.body)['currentPointsBalance'] ?? 0;
       }
       setState(() => isLoadingData=false);
@@ -130,7 +130,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _handlePlaceOrder({bool force=false}) async {
     setState(() => isCheckingOut=true);
     
-    if(paymentMethod=='CARD') {
+    if (paymentMethod=='CARD') {
       setState(() => gatewayStatus="Connecting to secure payment gateway...");
     }
 
@@ -145,19 +145,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
 
       // PRESERVED LOGIC: Catching the 409 Conflict
-      if(responseData['statusCode']==409) {
+      if (responseData['statusCode']==409) {
         setState(() { isCheckingOut=false; gatewayStatus=''; });
         _generateIdempotencyKey(); 
         _showPriceConflictDialog(responseData);
         return;
       }
 
-      if(responseData['stripeUrl'] != null && responseData['stripeUrl'].toString().isNotEmpty) {
+      if (responseData['stripeUrl'] != null && responseData['stripeUrl'].toString().isNotEmpty) {
         final Uri stripeUri=Uri.parse(responseData['stripeUrl']);
-        if(!await launchUrl(stripeUri,mode: LaunchMode.externalApplication)) {
+        if (!await launchUrl(stripeUri,mode: LaunchMode.externalApplication)) {
           throw 'Could not launch secure payment gateway.';
         }
-        if(mounted) { Navigator.pop(context,true); } 
+        if (mounted) { Navigator.pop(context,true); } 
         return;
       }
 
@@ -174,7 +174,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if(gatewayStatus.isNotEmpty) {
+    if (gatewayStatus.isNotEmpty) {
       return Scaffold(
         backgroundColor: const Color(0xFF050505),
         body: Center(
@@ -192,7 +192,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     }
 
-    if(checkoutSuccess != null) {
+    if (checkoutSuccess != null) {
       return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -243,7 +243,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
 
     double finalTotal=(widget.cartData['grandTotal'] ?? 0.0) - pointsToRedeem;
-    if(finalTotal < 0) finalTotal=0;
+    if (finalTotal < 0) finalTotal=0;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -327,7 +327,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     )
                   ],
                 ),
-                if(pointsToRedeem > 0)
+                if (pointsToRedeem > 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text("Applying $pointsToRedeem points (-Rs. $pointsToRedeem.00)",style: const TextStyle(color: Colors.green,fontSize: 12,fontWeight: FontWeight.bold)),
