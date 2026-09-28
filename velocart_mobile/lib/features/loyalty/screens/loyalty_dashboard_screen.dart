@@ -32,8 +32,8 @@ class _LoyaltyDashboardScreenState extends State<LoyaltyDashboardScreen> {
   }
 
   List<Color> _getCardColors(String tier) {
-    if(tier.toLowerCase()=='gold') return [const Color(0xFFD4AF37),const Color(0xFFAA7C11)];
-    if(tier.toLowerCase()=='platinum') return [const Color(0xFFE5E4E2),const Color(0xFFA0A0A0)];
+    if (tier.toLowerCase()=='gold') return [const Color(0xFFD4AF37),const Color(0xFFAA7C11)];
+    if (tier.toLowerCase()=='platinum') return [const Color(0xFFE5E4E2),const Color(0xFFA0A0A0)];
     return [const Color(0xFF757F9A),const Color(0xFFD7DDE8)]; // Silver
   }
 
@@ -141,7 +141,7 @@ class _LoyaltyDashboardScreenState extends State<LoyaltyDashboardScreen> {
                       const SizedBox(height: 20),
 
                       // TIER PROGRESS (SRS 6.1.11)
-                      if(dashboard!['nextTier'] != "Maximum Tier Reached")
+                      if (dashboard!['nextTier'] != "Maximum Tier Reached")
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(color: const Color(0xFF121212),borderRadius: BorderRadius.circular(15),border: Border.all(color: Colors.white10)),
