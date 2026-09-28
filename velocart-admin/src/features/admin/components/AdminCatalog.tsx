@@ -41,7 +41,7 @@ export default function AdminCatalog() {
     };
 
     const confirmDelete=async () => {
-        if(!deleteModal) return;
+        if (!deleteModal) return;
         try {
             await axios.delete(`${API_URL}/admin/products/${deleteModal.id}`,getAuthHeaders());
             setProducts(products.filter(p => p.id !== deleteModal.id));
