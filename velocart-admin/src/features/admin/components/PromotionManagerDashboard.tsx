@@ -11,59 +11,59 @@ import {
 
 
 export default function PromotionManagerDashboard() {
-    const navigate=useNavigate();
-    const [activeTab, setActiveTab]=useState<'PROMOTIONS' | 'TAXES' | 'CHARGES' | 'REPORTS' | 'CUSTOMERS' | 'RULES' | 'AI_AGENT'>('PROMOTIONS');
-    const [isLoading, setIsLoading]=useState(true);
-    const [actionLoading, setActionLoading]=useState<number | null>(null);
-    const [toast, setToast]=useState<{message: string, type: 'success' | 'error'} | null>(null);
+    const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState<'PROMOTIONS' | 'TAXES' | 'CHARGES' | 'REPORTS' | 'CUSTOMERS' | 'RULES' | 'AI_AGENT'>('PROMOTIONS');
+    const [isLoading, setIsLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState<number | null>(null);
+    const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
     
     // AI States
-    const [aiWorkflows, setAiWorkflows]=useState<any[]>([]);
-    const [isTriggeringAI, setIsTriggeringAI]=useState(false);
-    const [isTriggeringCompliance, setIsTriggeringCompliance]=useState(false);
+    const [aiWorkflows, setAiWorkflows] = useState<any[]>([]);
+    const [isTriggeringAI, setIsTriggeringAI] = useState(false);
+    const [isTriggeringCompliance, setIsTriggeringCompliance] = useState(false);
 
-    const [promotions, setPromotions]=useState<any[]>([]);
-    const [taxes, setTaxes]=useState<any[]>([]);
-    const [charges, setCharges]=useState<any[]>([]);
-    const [reportData, setReportData]=useState<any>(null);
-    const [loyaltyRules, setLoyaltyRules]=useState<any[]>([]);
+    const [promotions, setPromotions] = useState<any[]>([]);
+    const [taxes, setTaxes] = useState<any[]>([]);
+    const [charges, setCharges] = useState<any[]>([]);
+    const [reportData, setReportData] = useState<any>(null);
+    const [loyaltyRules, setLoyaltyRules] = useState<any[]>([]);
     
-    const [targetProducts, setTargetProducts]=useState<any[]>([]);
-    const [targetCategories, setTargetCategories]=useState<any[]>([]);
-    const [targetTiers, setTargetTiers]=useState<any[]>([]);
+    const [targetProducts, setTargetProducts] = useState<any[]>([]);
+    const [targetCategories, setTargetCategories] = useState<any[]>([]);
+    const [targetTiers, setTargetTiers] = useState<any[]>([]);
 
-    const [customers, setCustomers]=useState<any[]>([]);
-    const [selectedTier, setSelectedTier]=useState('Silver');
-    const [customerPage, setCustomerPage]=useState(1);
-    const [hasMoreCustomers, setHasMoreCustomers]=useState(false);
-    const [loadingCustomers, setLoadingCustomers]=useState(false);
+    const [customers, setCustomers] = useState<any[]>([]);
+    const [selectedTier, setSelectedTier] = useState('Silver');
+    const [customerPage, setCustomerPage] = useState(1);
+    const [hasMoreCustomers, setHasMoreCustomers] = useState(false);
+    const [loadingCustomers, setLoadingCustomers] = useState(false);
 
-    const [isPromoModalOpen, setIsPromoModalOpen]=useState(false);
-    const [editingPromoId, setEditingPromoId]=useState<number | null>(null);
-    const [isTaxModalOpen, setIsTaxModalOpen]=useState(false);
-    const [isChargeModalOpen, setIsChargeModalOpen]=useState(false);
-    const [editingChargeId, setEditingChargeId]=useState<number | null>(null);
+    const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
+    const [editingPromoId, setEditingPromoId] = useState<number | null>(null);
+    const [isTaxModalOpen, setIsTaxModalOpen] = useState(false);
+    const [isChargeModalOpen, setIsChargeModalOpen] = useState(false);
+    const [editingChargeId, setEditingChargeId] = useState<number | null>(null);
 
-    const [isGiftModalOpen, setIsGiftModalOpen]=useState(false);
-    const [giftCustomerId, setGiftCustomerId]=useState<number | null>(null);
-    const [selectedGiftPromoId, setSelectedGiftPromoId]=useState<string>('');
-    const [isRuleModalOpen, setIsRuleModalOpen]=useState(false);
-    const [editingRuleId, setEditingRuleId]=useState<number | null>(null);
-    const [isSubmitting, setIsSubmitting]=useState(false);
-    const [deletePromoId, setDeletePromoId]=useState<number | null>(null);
-    const [deleteTaxId, setDeleteTaxId]=useState<number | null>(null);
-    const [deleteChargeId, setDeleteChargeId]=useState<number | null>(null);
+    const [isGiftModalOpen, setIsGiftModalOpen] = useState(false);
+    const [giftCustomerId, setGiftCustomerId] = useState<number | null>(null);
+    const [selectedGiftPromoId, setSelectedGiftPromoId] = useState<string>('');
+    const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
+    const [editingRuleId, setEditingRuleId] = useState<number | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [deletePromoId, setDeletePromoId] = useState<number | null>(null);
+    const [deleteTaxId, setDeleteTaxId] = useState<number | null>(null);
+    const [deleteChargeId, setDeleteChargeId] = useState<number | null>(null);
 
-    const todayString=new Date().toISOString().split('T')[0];
-    const defaultPromoForm={ name: '', description: '', type: 'PERCENTAGE_DISCOUNT', discountValue: '', startDate: todayString, endDate: '', isLoyaltyPromotion: false, minimumSpend: '', buyQuantityX: '', getQuantityY: '', targetBrand: '', productIds: [] as number[], categoryIds: [] as number[], loyaltyRuleIds: [] as number[] };
-    const defaultTaxForm={ name: '', ratePercentage: '', startDate: todayString, endDate: '', productIds: [] as number[], categoryIds: [] as number[] };
-    const defaultRuleForm={ minimumPoints: 0, maximumPoints: '', currencyAmountPerPoint: 100, maxRedeemablePointsPerOrder: 50000, maxDiscountPercentage: 5, pointExpiryDays: 365, tierEvaluationPeriodDays: 365, tierName: '' };
-    const defaultChargeForm={ name: '', chargeType: 'FIXED', amountOrPercentage: '', isActive: true, minOrderAmount: 0, maxOrderAmount: '' };
+    const todayString = new Date().toISOString().split('T')[0];
+    const defaultPromoForm = { name: '', description: '', type: 'PERCENTAGE_DISCOUNT', discountValue: '', startDate: todayString, endDate: '', isLoyaltyPromotion: false, minimumSpend: '', buyQuantityX: '', getQuantityY: '', targetBrand: '', productIds: [] as number[], categoryIds: [] as number[], loyaltyRuleIds: [] as number[] };
+    const defaultTaxForm = { name: '', ratePercentage: '', startDate: todayString, endDate: '', productIds: [] as number[], categoryIds: [] as number[] };
+    const defaultRuleForm = { minimumPoints: 0, maximumPoints: '', currencyAmountPerPoint: 100, maxRedeemablePointsPerOrder: 50000, maxDiscountPercentage: 5, pointExpiryDays: 365, tierEvaluationPeriodDays: 365, tierName: '' };
+    const defaultChargeForm = { name: '', chargeType: 'FIXED', amountOrPercentage: '', isActive: true, minOrderAmount: 0, maxOrderAmount: '' };
 
-    const [promoForm, setPromoForm]=useState<any>(defaultPromoForm);
-    const [taxForm, setTaxForm]=useState<any>(defaultTaxForm);
-    const [ruleForm, setRuleForm]=useState<any>(defaultRuleForm);
-    const [chargeForm, setChargeForm]=useState<any>(defaultChargeForm);
+    const [promoForm, setPromoForm] = useState<any>(defaultPromoForm);
+    const [taxForm, setTaxForm] = useState<any>(defaultTaxForm);
+    const [ruleForm, setRuleForm] = useState<any>(defaultRuleForm);
+    const [chargeForm, setChargeForm] = useState<any>(defaultChargeForm);
 
     useEffect(() => {
         if (activeTab === 'CUSTOMERS') loadInitialCustomers();
@@ -75,9 +75,9 @@ export default function PromotionManagerDashboard() {
         getLoyaltyTiersForTargeting().then(res => setTargetTiers(res || [])).catch(err => console.error("Failed to load tier targets", err));
     }, []);
 
-    const showToast=(message: string, type: 'success' | 'error') => { setToast({ message, type }); setTimeout(() => setToast(null), 4000); };
+    const showToast = (message: string, type: 'success' | 'error') => { setToast({ message, type }); setTimeout(() => setToast(null), 4000); };
 
-    const fetchData=async () => {
+    const fetchData = async () => {
         setIsLoading(true);
         try {
             if (activeTab === 'PROMOTIONS') setPromotions(await getPromotions());
@@ -86,9 +86,9 @@ export default function PromotionManagerDashboard() {
             else if (activeTab === 'REPORTS') setReportData(await getLoyaltySummaryReport());
             else if (activeTab === 'RULES') setLoyaltyRules(await getLoyaltyRules());
             else if (activeTab === 'AI_AGENT') {
-                const allWorkflows=await getPendingWorkflows();
+                const allWorkflows = await getPendingWorkflows();
                 // STRICT FILTERING: Only show FEFO and Tax tasks
-                const relevantWorkflows=allWorkflows.filter((w: any) => 
+                const relevantWorkflows = allWorkflows.filter((w: any) => 
                     w.workflowName.includes('FEFO') || 
                     w.workflowName.includes('Audit') || 
                     w.workflowName.includes('tax') ||
@@ -100,22 +100,22 @@ export default function PromotionManagerDashboard() {
         finally { setIsLoading(false); }
     };
 
-    const loadInitialCustomers=async () => {
+    const loadInitialCustomers = async () => {
         setLoadingCustomers(true);
-        try { const res=await getLoyaltyCustomersByTier(selectedTier, 1, 5); setCustomers(res.customers); setHasMoreCustomers(res.hasMore); setCustomerPage(1); } 
+        try { const res = await getLoyaltyCustomersByTier(selectedTier, 1, 5); setCustomers(res.customers); setHasMoreCustomers(res.hasMore); setCustomerPage(1); } 
         catch (err) { showToast("Failed to fetch customers.", "error"); } 
         finally { setLoadingCustomers(false); setIsLoading(false); }
     };
 
-    const loadMoreCustomers=async () => {
-        const nextPage=customerPage + 1;
+    const loadMoreCustomers = async () => {
+        const nextPage = customerPage + 1;
         setLoadingCustomers(true);
-        try { const res=await getLoyaltyCustomersByTier(selectedTier, nextPage, 5); setCustomers(prev => [...prev, ...res.customers]); setHasMoreCustomers(res.hasMore); setCustomerPage(nextPage); } 
+        try { const res = await getLoyaltyCustomersByTier(selectedTier, nextPage, 5); setCustomers(prev => [...prev, ...res.customers]); setHasMoreCustomers(res.hasMore); setCustomerPage(nextPage); } 
         catch (err) { showToast("Failed to fetch more customers.", "error"); } 
         finally { setLoadingCustomers(false); }
     };
 
-    const handleGiftPromo=async () => {
+    const handleGiftPromo = async () => {
         if (!selectedGiftPromoId || !giftCustomerId) return;
         setIsSubmitting(true);
         try { await assignPromotionToCustomer(Number(selectedGiftPromoId), giftCustomerId); showToast("Promotion successfully gifted to customer!", "success"); setIsGiftModalOpen(false); setSelectedGiftPromoId(''); } 
@@ -124,17 +124,17 @@ export default function PromotionManagerDashboard() {
     };
 
     // Promotion Logic
-    const handleOpenCreatePromo=() => { setEditingPromoId(null); setPromoForm(defaultPromoForm); setIsPromoModalOpen(true); };
-    const handleOpenEditPromo=(promo: any) => {
+    const handleOpenCreatePromo = () => { setEditingPromoId(null); setPromoForm(defaultPromoForm); setIsPromoModalOpen(true); };
+    const handleOpenEditPromo = (promo: any) => {
         setEditingPromoId(promo.id);
         setPromoForm({ name: promo.name, description: promo.description, type: promo.type, discountValue: promo.discountValue || '', startDate: promo.startDate.split('T')[0], endDate: promo.endDate.split('T')[0], isLoyaltyPromotion: promo.isLoyaltyPromotion, minimumSpend: promo.minimumSpend || '', buyQuantityX: promo.buyQuantityX || '', getQuantityY: promo.getQuantityY || '', targetBrand: promo.targetBrand || '', productIds: promo.applicableProductIds || [], categoryIds: promo.applicableCategoryIds || [], loyaltyRuleIds: promo.applicableLoyaltyRuleIds || [] });
         setIsPromoModalOpen(true);
     };
 
-    const handleSavePromo=async (e: React.FormEvent) => {
+    const handleSavePromo = async (e: React.FormEvent) => {
         e.preventDefault(); setIsSubmitting(true);
         try {
-            const payload={ ...promoForm, discountValue: Number(promoForm.discountValue) || 0, minimumSpend: promoForm.minimumSpend ? Number(promoForm.minimumSpend) : null, buyQuantityX: promoForm.buyQuantityX ? Number(promoForm.buyQuantityX) : null, getQuantityY: promoForm.getQuantityY ? Number(promoForm.getQuantityY) : null, targetBrand: promoForm.targetBrand || null };
+            const payload = { ...promoForm, discountValue: Number(promoForm.discountValue) || 0, minimumSpend: promoForm.minimumSpend ? Number(promoForm.minimumSpend) : null, buyQuantityX: promoForm.buyQuantityX ? Number(promoForm.buyQuantityX) : null, getQuantityY: promoForm.getQuantityY ? Number(promoForm.getQuantityY) : null, targetBrand: promoForm.targetBrand || null };
             if (editingPromoId) await updatePromotion(editingPromoId, payload);
             else await createPromotion(payload);
             showToast(`Promotion successfully ${editingPromoId ? 'updated' : 'deployed'}!`, "success"); setIsPromoModalOpen(false); setPromoForm(defaultPromoForm); setEditingPromoId(null); fetchData();
@@ -142,14 +142,14 @@ export default function PromotionManagerDashboard() {
         finally { setIsSubmitting(false); }
     };
 
-    const handleTogglePromoStatus=async (id: number, currentStatus: string) => {
+    const handleTogglePromoStatus = async (id: number, currentStatus: string) => {
         setActionLoading(id);
-        const newStatus=currentStatus === 'ACTIVE' || currentStatus === 'SCHEDULED' ? 'INACTIVE' : 'ACTIVE';
+        const newStatus = currentStatus === 'ACTIVE' || currentStatus === 'SCHEDULED' ? 'INACTIVE' : 'ACTIVE';
         try { await updatePromotionStatus(id, newStatus); showToast(`Promotion status updated to ${newStatus}`, "success"); fetchData(); } 
         catch (err) { showToast("Failed to update status.", "error"); } finally { setActionLoading(null); }
     };
 
-    const handleDeletePromo=async () => {
+    const handleDeletePromo = async () => {
         if (!deletePromoId) return;
         setActionLoading(deletePromoId);
         try { await deletePromotion(deletePromoId); showToast("Promotion deleted.", "success"); fetchData(); } 
@@ -158,13 +158,13 @@ export default function PromotionManagerDashboard() {
     };
 
     // Tax Logic
-    const handleCreateTax=async (e: React.FormEvent) => {
+    const handleCreateTax = async (e: React.FormEvent) => {
         e.preventDefault(); setIsSubmitting(true);
         try { await createTaxRule({ ...taxForm, ratePercentage: Number(taxForm.ratePercentage), endDate: taxForm.endDate || null }); showToast("Tax rule successfully deployed!", "success"); setIsTaxModalOpen(false); setTaxForm(defaultTaxForm); fetchData(); } 
         catch (err: any) { showToast(err.response?.data || "Failed to create tax rule.", "error"); } finally { setIsSubmitting(false); }
     };
 
-    const handleDeleteTax=async () => {
+    const handleDeleteTax = async () => {
         if (!deleteTaxId) return;
         setActionLoading(deleteTaxId);
         try { await deleteTaxRule(deleteTaxId); showToast("Tax rule deleted.", "success"); fetchData(); } 
@@ -173,17 +173,17 @@ export default function PromotionManagerDashboard() {
     };
 
     // Charge Logic
-    const handleOpenCreateCharge=() => { setEditingChargeId(null); setChargeForm(defaultChargeForm); setIsChargeModalOpen(true); };
-    const handleOpenEditCharge=(charge: any) => {
+    const handleOpenCreateCharge = () => { setEditingChargeId(null); setChargeForm(defaultChargeForm); setIsChargeModalOpen(true); };
+    const handleOpenEditCharge = (charge: any) => {
         setEditingChargeId(charge.id);
         setChargeForm({ name: charge.name, chargeType: charge.chargeType, amountOrPercentage: charge.amountOrPercentage, isActive: charge.isActive, minOrderAmount: charge.minOrderAmount, maxOrderAmount: charge.maxOrderAmount || '' });
         setIsChargeModalOpen(true);
     };
 
-    const handleSaveCharge=async (e: React.FormEvent) => {
+    const handleSaveCharge = async (e: React.FormEvent) => {
         e.preventDefault(); setIsSubmitting(true);
         try {
-            const payload={ 
+            const payload = { 
                 ...chargeForm, 
                 amountOrPercentage: Number(chargeForm.amountOrPercentage),
                 minOrderAmount: Number(chargeForm.minOrderAmount),
@@ -196,7 +196,7 @@ export default function PromotionManagerDashboard() {
         finally { setIsSubmitting(false); }
     };
 
-    const handleDeleteCharge=async () => {
+    const handleDeleteCharge = async () => {
         if (!deleteChargeId) return;
         setActionLoading(deleteChargeId);
         try { await deleteProductCharge(deleteChargeId); showToast("Fee deleted.", "success"); fetchData(); } 
@@ -205,16 +205,16 @@ export default function PromotionManagerDashboard() {
     };
 
     // Rule Logic
-    const handleOpenEditRule=(rule: any) => {
+    const handleOpenEditRule = (rule: any) => {
         setEditingRuleId(rule.id);
         setRuleForm({ tierName: rule.tierName, minimumPoints: rule.minimumPoints, maximumPoints: rule.maximumPoints || '', currencyAmountPerPoint: rule.currencyAmountPerPoint, maxRedeemablePointsPerOrder: rule.maxRedeemablePointsPerOrder, maxDiscountPercentage: rule.maxDiscountPercentage, pointExpiryDays: rule.pointExpiryDays, tierEvaluationPeriodDays: rule.tierEvaluationPeriodDays });
         setIsRuleModalOpen(true);
     };
 
-   const handleSaveRule=async (e: React.FormEvent) => {
+   const handleSaveRule = async (e: React.FormEvent) => {
     e.preventDefault(); setIsSubmitting(true);
     try {
-        const payload={ ...ruleForm, minimumPoints: Number(ruleForm.minimumPoints), maximumPoints: ruleForm.maximumPoints === '' ? null : Number(ruleForm.maximumPoints), currencyAmountPerPoint: Number(ruleForm.currencyAmountPerPoint), maxRedeemablePointsPerOrder: Number(ruleForm.maxRedeemablePointsPerOrder), maxDiscountPercentage: Number(ruleForm.maxDiscountPercentage), pointExpiryDays: Number(ruleForm.pointExpiryDays), tierEvaluationPeriodDays: Number(ruleForm.tierEvaluationPeriodDays) };
+        const payload = { ...ruleForm, minimumPoints: Number(ruleForm.minimumPoints), maximumPoints: ruleForm.maximumPoints === '' ? null : Number(ruleForm.maximumPoints), currencyAmountPerPoint: Number(ruleForm.currencyAmountPerPoint), maxRedeemablePointsPerOrder: Number(ruleForm.maxRedeemablePointsPerOrder), maxDiscountPercentage: Number(ruleForm.maxDiscountPercentage), pointExpiryDays: Number(ruleForm.pointExpiryDays), tierEvaluationPeriodDays: Number(ruleForm.tierEvaluationPeriodDays) };
         
         // NEW LOGIC: Differentiate between Edit and Create
         if (editingRuleId) {
@@ -231,11 +231,11 @@ export default function PromotionManagerDashboard() {
     finally { setIsSubmitting(false); }
 };
 
-    const handleCheckboxArray=(_formState: any, setFormState: any, field: string, id: number) => {
-        setFormState((prev: any) => { const arr=prev[field]; if (arr.includes(id)) return { ...prev, [field]: arr.filter((x: number) => x !== id) }; return { ...prev, [field]: [...arr, id] }; });
+    const handleCheckboxArray = (formState: any, setFormState: any, field: string, id: number) => {
+        setFormState((prev: any) => { const arr = prev[field]; if (arr.includes(id)) return { ...prev, [field]: arr.filter((x: number) => x !== id) }; return { ...prev, [field]: [...arr, id] }; });
     };
 
-    const getPromoDisplayValue=(promo: any) => {
+    const getPromoDisplayValue = (promo: any) => {
         switch (promo.type) {
             case 'PERCENTAGE_DISCOUNT': return `${promo.discountValue}% OFF`; case 'FIXED_AMOUNT_DISCOUNT': return `Rs. ${promo.discountValue} OFF`;
             case 'BUY_ONE_GET_ONE': return 'BUY 1 GET 1 FREE'; case 'BUY_X_GET_Y': return `BUY ${promo.buyQuantityX || 'X'} GET ${promo.getQuantityY || 'Y'} FREE`;
@@ -245,20 +245,20 @@ export default function PromotionManagerDashboard() {
     };
 
     // --- AI WORKFLOW TRIGGERS ---
-    const handleTriggerFEFO=async () => {
+    const handleTriggerFEFO = async () => {
         setIsTriggeringAI(true);
         try {
-            const res=await triggerAIWorkflow();
+            const res = await triggerAIWorkflow();
             showToast(res.message, "success");
             setTimeout(() => fetchData(), 5000); 
         } catch (err: any) { showToast("Failed to trigger FEFO Service.", "error"); } 
         finally { setIsTriggeringAI(false); }
     };
 
-    const handleTriggerCompliance=async () => {
+    const handleTriggerCompliance = async () => {
         setIsTriggeringCompliance(true);
         try {
-            const res=await triggerComplianceAIWorkflow();
+            const res = await triggerComplianceAIWorkflow();
             showToast(res.message, "success");
             setTimeout(() => fetchData(), 5000); 
         } catch (err: any) { showToast("Failed to trigger Compliance Service.", "error"); } 
@@ -266,13 +266,13 @@ export default function PromotionManagerDashboard() {
     };
 
     // --- TRANSACTIONAL AI EXECUTION ---
-    const handleReviewAI=async (id: number, status: 'APPROVED' | 'REJECTED', payloadStr: string, workflowName: string) => {
+    const handleReviewAI = async (id: number, status: 'APPROVED' | 'REJECTED', payloadStr: string, workflowName: string) => {
         setActionLoading(id);
         try {
             if (status === 'APPROVED') {
                 let payload;
                 try {
-                    payload=payloadStr ? JSON.parse(payloadStr) : null;
+                    payload = payloadStr ? JSON.parse(payloadStr) : null;
                     if (!payload) throw new Error("Empty payload");
                 } catch (parseError) {
                     showToast("AI generated invalid JSON data. Rejecting workflow.", "error");
@@ -286,11 +286,11 @@ export default function PromotionManagerDashboard() {
                     showToast("Catalog Compliance Mappings Applied!", "success");
                 } 
                 else if (workflowName.includes("FEFO") || workflowName.includes("protocol") || workflowName.includes("markdown")) {
-                    const today=new Date();
-                    const nextWeek=new Date();
+                    const today = new Date();
+                    const nextWeek = new Date();
                     nextWeek.setDate(today.getDate() + 7);
-                    payload.startDate=today.toISOString().split('T')[0];
-                    payload.endDate=nextWeek.toISOString().split('T')[0];
+                    payload.startDate = today.toISOString().split('T')[0];
+                    payload.endDate = nextWeek.toISOString().split('T')[0];
 
                     await createPromotion(payload);
                     showToast("AI Promotion Approved and Deployed!", "success");
@@ -511,7 +511,7 @@ export default function PromotionManagerDashboard() {
                                             </div>
                                             <div>
                                                 <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Exchange Rate</div>
-                                                <div className="font-bold text-lg text-[#D4AF37]">Rs. {rule.currencyAmountPerPoint.toFixed(2)}=1 Point</div>
+                                                <div className="font-bold text-lg text-[#D4AF37]">Rs. {rule.currencyAmountPerPoint.toFixed(2)} = 1 Point</div>
                                             </div>
                                             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
                                                 <div><div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Max Redemption</div><div className="font-bold text-white">{rule.maxRedeemablePointsPerOrder.toLocaleString()} pts</div></div>
@@ -563,7 +563,7 @@ export default function PromotionManagerDashboard() {
                                 ) : (
                                     <div className="grid grid-cols-1 gap-6">
                                         {aiWorkflows.map(workflow => {
-                                            const isCompliance=workflow.workflowName.includes('Audit') || workflow.workflowName.includes('tax');
+                                            const isCompliance = workflow.workflowName.includes('Audit') || workflow.workflowName.includes('tax');
                                             
                                             return (
                                                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key={workflow.id} className={`bg-[#121212] border rounded-3xl p-6 ${isCompliance ? 'border-purple-500/30' : 'border-blue-500/30'}`}>
