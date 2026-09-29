@@ -12,7 +12,7 @@ class CatalogApi {
   static String? jwtToken;
   
   // Helper to generate secure headers
-  static Map<String,String> _getAuthHeaders() {
+  static Map<String, String> _getAuthHeaders() {
     return {
       'Content-Type': 'application/json',
       if (jwtToken != null) 'Authorization': 'Bearer $jwtToken',
@@ -30,10 +30,10 @@ class CatalogApi {
   }
 
   static Future<List<Product>> getProducts({
-    int? categoryId,String? search,String? minPrice,String? maxPrice,
-    String? brand,bool? inStockOnly,String? sortBy
+    int? categoryId, String? search, String? minPrice, String? maxPrice,
+    String? brand, bool? inStockOnly, String? sortBy
   }) async {
-    Map<String,String> queryParams={};
+    Map<String, String> queryParams={};
     if (categoryId != null) queryParams['categoryId']=categoryId.toString();
     if (search != null && search.isNotEmpty) queryParams['search']=search;
     if (minPrice != null && minPrice.isNotEmpty) queryParams['minPrice']=minPrice;
@@ -62,8 +62,8 @@ class CatalogApi {
     }
   }
 
-  // SECURED: Removed userId,added auth headers
-  static Future<void> addToCart(int productVariantId,int quantity) async {
+  // SECURED: Removed userId, added auth headers
+  static Future<void> addToCart(int productVariantId, int quantity) async {
     final response=await http.post(
       Uri.parse('$baseUrl/cart/add'),
       headers: _getAuthHeaders(),
@@ -78,10 +78,10 @@ class CatalogApi {
     }
   }
 
-  // SECURED: Removed userId from URL,added auth headers
-  static Future<Map<String,dynamic>> getCart() async {
+  // SECURED: Removed userId from URL, added auth headers
+  static Future<Map<String, dynamic>> getCart() async {
     final response=await http.get(
-      Uri.parse('$baseUrl/cart'),
+      Uri.parse('$baseUrl/cart'), 
       headers: _getAuthHeaders()
     );
     if (response.statusCode == 200) {
@@ -92,7 +92,7 @@ class CatalogApi {
   }
 
   // SECURED: Added auth headers
-  static Future<void> updateCartItem(int cartItemId,int quantity) async {
+  static Future<void> updateCartItem(int cartItemId, int quantity) async {
     final response=await http.put(
       Uri.parse('$baseUrl/cart/update/$cartItemId'),
       headers: _getAuthHeaders(),
@@ -114,8 +114,8 @@ class CatalogApi {
     }
   }
 
-  // SECURED: Removed userId from payload,added auth headers
-  static Future<Map<String,dynamic>> checkoutOrder({
+  // SECURED: Removed userId from payload, added auth headers
+  static Future<Map<String, dynamic>> checkoutOrder({
     required String deliveryAddress,
     required double expectedTotal,
     required bool forceCheckout,
@@ -156,7 +156,7 @@ class CatalogApi {
     }
   }
 
-  // SECURED: Removed userId from URL,added auth headers
+  // SECURED: Removed userId from URL, added auth headers
   static Future<List<dynamic>> getOrderHistory() async {
     final response=await http.get(
       Uri.parse('$baseUrl/orders/history'),
@@ -171,8 +171,8 @@ class CatalogApi {
     }
   }
 
-  // SECURED: Removed userId from payload,added auth headers
-  static Future<void> submitReview(int productId,int rating,String comment) async {
+  // SECURED: Removed userId from payload, added auth headers
+  static Future<void> submitReview(int productId, int rating, String comment) async {
     final response=await http.post(
       Uri.parse('$baseUrl/reviews'),
       headers: _getAuthHeaders(),
@@ -198,7 +198,7 @@ class CatalogApi {
   }
 
   // NEW: SMART REORDER
-  static Future<Map<String,dynamic>> reorderItems(int orderId) async {
+  static Future<Map<String, dynamic>> reorderItems(int orderId) async {
     final response=await http.post(
       Uri.parse('$baseUrl/orders/$orderId/reorder'),
       headers: _getAuthHeaders(),
@@ -211,7 +211,7 @@ class CatalogApi {
   }
 
   // NEW: CANCEL ORDER
-  static Future<Map<String,dynamic>> cancelOrder(int orderId) async {
+  static Future<Map<String, dynamic>> cancelOrder(int orderId) async {
     final response=await http.put(
       Uri.parse('$baseUrl/orders/$orderId/cancel'),
       headers: _getAuthHeaders(),
@@ -236,11 +236,11 @@ class CatalogApi {
     }
   }
 
-  static Future<String> submitComplaint(int orderId,String subject,String description,{File? imageFile}) async {
+  static Future<String> submitComplaint(int orderId, String subject, String description, {File? imageFile}) async {
     final prefs=await SharedPreferences.getInstance();
     final token=prefs.getString('velocart_token') ?? '';
 
-    final request=http.MultipartRequest('POST',Uri.parse('$baseUrl/orders/$orderId/complaints'));
+    final request=http.MultipartRequest('POST', Uri.parse('$baseUrl/orders/$orderId/complaints'));
     request.headers['Authorization']='Bearer $token';
     // Do NOT set Content-Type to application/json; MultipartRequest sets its own boundary.
 
@@ -248,7 +248,7 @@ class CatalogApi {
     request.fields['description']=description;
 
     if (imageFile != null) {
-      request.files.add(await http.MultipartFile.fromPath('image',imageFile.path));
+      request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
     }
 
     final streamedResponse=await request.send();
@@ -262,7 +262,7 @@ class CatalogApi {
   }
 
   // NEW: CHOOSE REFUND METHOD
-  static Future<Map<String,dynamic>> chooseRefundMethod(int complaintId,String refundMethod) async {
+  static Future<Map<String, dynamic>> chooseRefundMethod(int complaintId, String refundMethod) async {
     final url=Uri.parse('$baseUrl/orders/complaints/$complaintId/choose-refund');
     final response=await http.put(
       url,
