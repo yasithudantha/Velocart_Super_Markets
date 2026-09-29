@@ -42,10 +42,10 @@ namespace velocart_system.API.Features.Promotions.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCharge(int id,[FromBody] CreateProductChargeDto request)
+        public async Task<ActionResult> UpdateCharge(int id, [FromBody] CreateProductChargeDto request)
         {
-            var charge=await _context.ProductCharges.FirstOrDefaultAsync(c => c.Id==id);
-            if(charge==null) return NotFound("Fee not found.");
+            var charge=await _context.ProductCharges.FirstOrDefaultAsync(c => c.Id == id);
+            if (charge == null) return NotFound("Fee not found.");
 
             charge.Name=request.Name;
             charge.ChargeType=request.ChargeType;
@@ -64,8 +64,8 @@ namespace velocart_system.API.Features.Promotions.Controllers
             var charges=await _context.ProductCharges
                 .OrderByDescending(c => c.CreatedAt)
                 .Select(c => new {
-                    c.Id,c.Name,c.ChargeType,c.AmountOrPercentage,
-                    c.MinOrderAmount,c.MaxOrderAmount,c.IsActive
+                    c.Id, c.Name, c.ChargeType, c.AmountOrPercentage, 
+                    c.MinOrderAmount, c.MaxOrderAmount, c.IsActive
                 }).ToListAsync();
                 
             return Ok(charges);
@@ -75,7 +75,7 @@ namespace velocart_system.API.Features.Promotions.Controllers
         public async Task<ActionResult> DeleteCharge(int id)
         {
             var charge=await _context.ProductCharges.FindAsync(id);
-            if(charge==null) return NotFound("Fee not found.");
+            if (charge == null) return NotFound("Fee not found.");
             
             _context.ProductCharges.Remove(charge);
             await _context.SaveChangesAsync();

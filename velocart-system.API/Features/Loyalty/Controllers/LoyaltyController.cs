@@ -26,7 +26,7 @@ namespace velocart_system.API.Features.Loyalty.Controllers
         {
             var userIdClaim=User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
                               ?? User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
-            if (int.TryParse(userIdClaim,out int userId)) return userId;
+            if (int.TryParse(userIdClaim, out int userId)) return userId;
             throw new UnauthorizedAccessException("Invalid token claims.");
         }
 
@@ -61,7 +61,7 @@ namespace velocart_system.API.Features.Loyalty.Controllers
                 
                 if (range > 0)
                 {
-                    progress=Math.Round(((decimal)pointsIntoCurrentTier / range) * 100,2);
+                    progress=Math.Round(((decimal)pointsIntoCurrentTier / range) * 100, 2);
                 }
             }
 
