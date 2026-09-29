@@ -1,10 +1,10 @@
-import { useState,useEffect } from 'react';
-import { motion,AnimatePresence } from 'framer-motion';
-import { Truck,FileText,CheckCircle,Clock,AlertTriangle,X,Loader2,Printer,MapPin,Edit,User,HelpCircle,Activity,CheckCircle2,Bot,Banknote } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Truck, FileText, CheckCircle, Clock, AlertTriangle, X, Loader2, Printer, MapPin, Edit, User, HelpCircle, Activity, CheckCircle2, Bot, Banknote } from 'lucide-react';
 import axios from 'axios';
-import { getPendingDisputeWorkflows,triggerDisputeAIWorkflow,updateWorkflowStatus,executeAIResolutions,processRefund } from '../api/deliveryApi';
+import { getPendingDisputeWorkflows, triggerDisputeAIWorkflow, updateWorkflowStatus, executeAIResolutions, processRefund } from '../api/deliveryApi';
 // --- NEW MAP IMPORTS ---
-import { MapContainer,TileLayer,Marker,Popup,useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -17,104 +17,104 @@ L.Icon.Default.mergeOptions({
 });
 // -----------------------
 
-const API_URL='http://localhost:5176/api';
-const getAuthHeader=() => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+const API_URL = 'http://localhost:5176/api';
+const getAuthHeader = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
 
 export default function DeliveryManagerDashboard() {
-    const [orders,setOrders]=useState<any[]>([]);
-    const [isLoading,setIsLoading]=useState(true);
-    const [error,setError]=useState('');
-    const [actionLoading,setActionLoading]=useState<number | null>(null);
-    const [toast,setToast]=useState<{message: string,type: 'success' | 'error'} | null>(null);
+    const [orders, setOrders] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [actionLoading, setActionLoading] = useState<number | null>(null);
+    const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
     
     // NEW AI STATES
-    const [activeTab,setActiveTab]=useState<'ORDERS' | 'COMPLAINTS' | 'AI_ADJUDICATOR'>('ORDERS');
-    const [aiWorkflows,setAiWorkflows]=useState<any[]>([]);
-    const [isTriggeringAI,setIsTriggeringAI]=useState(false);
+    const [activeTab, setActiveTab] = useState<'ORDERS' | 'COMPLAINTS' | 'AI_ADJUDICATOR'>('ORDERS');
+    const [aiWorkflows, setAiWorkflows] = useState<any[]>([]);
+    const [isTriggeringAI, setIsTriggeringAI] = useState(false);
 
     // --- MODAL STATES ---
-    const [deliveryModalPO,setDeliveryModalPO]=useState<any | null>(null);
-    const [deliveryForm,setDeliveryForm]=useState({ deliveryNumber: '',estimatedDeliveryDate: '',estimatedDeliveryTime: '',assignedDriverName: '',assignedDriverContact: '',deliveryNotes: '' });
+    const [deliveryModalPO, setDeliveryModalPO] = useState<any | null>(null);
+    const [deliveryForm, setDeliveryForm] = useState({ deliveryNumber: '', estimatedDeliveryDate: '', estimatedDeliveryTime: '', assignedDriverName: '', assignedDriverContact: '', deliveryNotes: '' });
     
-    const [invoiceModalPO,setInvoiceModalPO]=useState<any | null>(null);
-    const [invoiceData,setInvoiceData]=useState<any | null>(null);
-    const [confirmModal,setConfirmModal]=useState<{ isOpen: boolean,orderId: number | null,newStatus: string }>({ isOpen: false,orderId: null,newStatus: '' });
-    const [resolveModalId,setResolveModalId]=useState<number | null>(null);
-    const [refundModalId,setRefundModalId]=useState<number | null>(null);
-    const [orderLocations,setOrderLocations]=useState<any[]>([]);
-    const [newLocation,setNewLocation]=useState<{lat: number,lng: number,placeName: string} | null>(null);
+    const [invoiceModalPO, setInvoiceModalPO] = useState<any | null>(null);
+    const [invoiceData, setInvoiceData] = useState<any | null>(null);
+    const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean, orderId: number | null, newStatus: string }>({ isOpen: false, orderId: null, newStatus: '' });
+    const [resolveModalId, setResolveModalId] = useState<number | null>(null);
+    const [refundModalId, setRefundModalId] = useState<number | null>(null);
+    const [orderLocations, setOrderLocations] = useState<any[]>([]);
+    const [newLocation, setNewLocation] = useState<{lat: number, lng: number, placeName: string} | null>(null);
 
     function LocationPicker() {
         useMapEvents({
             click: async (e) => {
-                const { lat,lng }=e.latlng;
+                const { lat, lng } = e.latlng;
                 try {
                     // 100% Free OpenStreetMap Nominatim API
-                    const res=await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-                    const placeName=res.data.display_name || "Unknown Location";
-                    setNewLocation({ lat,lng,placeName });
+                    const res = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                    const placeName = res.data.display_name || "Unknown Location";
+                    setNewLocation({ lat, lng, placeName });
                 } catch (error) {
-                    setNewLocation({ lat,lng,placeName: "Custom Pinned Location" });
+                    setNewLocation({ lat, lng, placeName: "Custom Pinned Location" });
                 }
             }
         });
         return null;
     }
 
-    const showToast=(message: string,type: 'success' | 'error') => { setToast({ message,type }); setTimeout(() => setToast(null),4000); };
+    const showToast = (message: string, type: 'success' | 'error') => { setToast({ message, type }); setTimeout(() => setToast(null), 4000); };
 
     useEffect(() => { 
         if (activeTab === 'AI_ADJUDICATOR') fetchAIWorkflows();
         else fetchOrders(); 
-    },[activeTab]);
+    }, [activeTab]);
 
-    const fetchOrders=async () => {
+    const fetchOrders = async () => {
         setIsLoading(true); setError('');
         try {
-            const response=await axios.get(`${API_URL}/orders/delivery-management/orders`,getAuthHeader());
+            const response = await axios.get(`${API_URL}/orders/delivery-management/orders`, getAuthHeader());
             setOrders(response.data);
         } catch (err: any) { setError(err.response?.data?.message || "Failed to load active orders."); } 
         finally { setIsLoading(false); }
     };
 
     // --- NEW: AI WORKFLOW LOGIC ---
-    const fetchAIWorkflows=async () => {
+    const fetchAIWorkflows = async () => {
         setIsLoading(true);
         try {
-            const res=await getPendingDisputeWorkflows();
-            // Filter so Delivery Manager ONLY sees Dispute Adjudicator tasks,not FEFO tasks
-            const disputeTasks=res.filter((w: any) => w.workflowName.includes('Adjudicate'));
+            const res = await getPendingDisputeWorkflows();
+            // Filter so Delivery Manager ONLY sees Dispute Adjudicator tasks, not FEFO tasks
+            const disputeTasks = res.filter((w: any) => w.workflowName.includes('Adjudicate'));
             setAiWorkflows(disputeTasks);
-        } catch (err) { showToast("Failed to fetch pending AI tasks.","error"); }
+        } catch (err) { showToast("Failed to fetch pending AI tasks.", "error"); }
         finally { setIsLoading(false); }
     };
 
-    const handleTriggerAI=async () => {
+    const handleTriggerAI = async () => {
         setIsTriggeringAI(true);
         try {
-            const res=await triggerDisputeAIWorkflow();
-            showToast(res.message,"success");
-            setTimeout(() => fetchAIWorkflows(),5000); 
+            const res = await triggerDisputeAIWorkflow();
+            showToast(res.message, "success");
+            setTimeout(() => fetchAIWorkflows(), 5000); 
         } catch (err: any) {
-            showToast("Failed to trigger Dispute AI Service.","error");
+            showToast("Failed to trigger Dispute AI Service.", "error");
         } finally {
             setIsTriggeringAI(false);
         }
     };
 
-    const handleReviewAI=async (id: number,status: 'APPROVED' | 'REJECTED',payloadStr: string) => {
+    const handleReviewAI = async (id: number, status: 'APPROVED' | 'REJECTED', payloadStr: string) => {
         setActionLoading(id);
         try {
             if (status === 'APPROVED') {
                 // STEP 1: Safely Parse JSON FIRST
                 let payload;
                 try {
-                    payload=payloadStr ? JSON.parse(payloadStr) : null;
+                    payload = payloadStr ? JSON.parse(payloadStr) : null;
                     if (!payload) throw new Error("Empty payload");
                 } catch (parseError) {
-                    showToast("AI generated invalid data. Rejecting workflow.","error");
+                    showToast("AI generated invalid data. Rejecting workflow.", "error");
                     // Auto-reject so the bad data doesn't get stuck in the UI
-                    await updateWorkflowStatus(id,'REJECTED'); 
+                    await updateWorkflowStatus(id, 'REJECTED'); 
                     fetchAIWorkflows();
                     setActionLoading(null);
                     return;
@@ -124,47 +124,47 @@ export default function DeliveryManagerDashboard() {
                 await executeAIResolutions(payload);
                 
                 // STEP 3: ONLY mark as Approved if the execution succeeded!
-                await updateWorkflowStatus(id,status);
-                showToast("AI Dispute Resolutions Approved and Executed!","success");
+                await updateWorkflowStatus(id, status);
+                showToast("AI Dispute Resolutions Approved and Executed!", "success");
             } else {
-                // If the user just clicked "Reject",we just update the status safely
-                await updateWorkflowStatus(id,status);
-                showToast("AI Resolutions Rejected.","success");
+                // If the user just clicked "Reject", we just update the status safely
+                await updateWorkflowStatus(id, status);
+                showToast("AI Resolutions Rejected.", "success");
             }
             
             fetchAIWorkflows();
             fetchOrders(); // Refresh orders in background so complaints show as resolved
         } catch (err: any) {
-            showToast(err.response?.data?.message || err.response?.data || "Failed to execute AI workflow.","error");
+            showToast(err.response?.data?.message || err.response?.data || "Failed to execute AI workflow.", "error");
         } finally {
             setActionLoading(null);
         }
     };
 
     // --- WORKFLOW ACTIONS ---
-    const promptStatusUpdate=(orderId: number,newStatus: string) => {
-        setConfirmModal({ isOpen: true,orderId,newStatus });
+    const promptStatusUpdate = (orderId: number, newStatus: string) => {
+        setConfirmModal({ isOpen: true, orderId, newStatus });
     };
 
-    const executeStatusUpdate=async () => {
-        const { orderId,newStatus }=confirmModal;
+    const executeStatusUpdate = async () => {
+        const { orderId, newStatus } = confirmModal;
         if (!orderId) return;
 
-        setConfirmModal({ isOpen: false,orderId: null,newStatus: '' }); 
+        setConfirmModal({ isOpen: false, orderId: null, newStatus: '' }); 
         setActionLoading(orderId);
         
         try {
-            await axios.put(`${API_URL}/orders/delivery-management/${orderId}/status`,{ status: newStatus },getAuthHeader());
+            await axios.put(`${API_URL}/orders/delivery-management/${orderId}/status`, { status: newStatus }, getAuthHeader());
             fetchOrders();
-            showToast(`Order status updated to ${newStatus}`,"success");
+            showToast(`Order status updated to ${newStatus}`, "success");
         } catch (err: any) { 
-            showToast(err.response?.data?.message || "Failed to update status.","error"); 
+            showToast(err.response?.data?.message || "Failed to update status.", "error"); 
         } 
         finally { setActionLoading(null); }
     };
 
-    const openDeliveryModal=async (order: any) => {
-        const details=order.deliveryDetail || {};
+    const openDeliveryModal = async (order: any) => {
+        const details = order.deliveryDetail || {};
         setDeliveryForm({
             deliveryNumber: details.deliveryNumber || `DEL-${new Date().getFullYear()}-${order.id}`,
             estimatedDeliveryDate: details.estimatedDeliveryDate ? details.estimatedDeliveryDate.split('T')[0] : '',
@@ -178,64 +178,64 @@ export default function DeliveryManagerDashboard() {
 
         // Fetch existing map locations
         try {
-            const res=await axios.get(`${API_URL}/orders/${order.id}/locations`,getAuthHeader());
+            const res = await axios.get(`${API_URL}/orders/${order.id}/locations`, getAuthHeader());
             setOrderLocations(res.data);
         } catch (err) { console.error("Failed to load locations"); }
     };
 
-    const submitDeliveryDetails=async () => {
-        if (!deliveryForm.estimatedDeliveryDate) return showToast("Estimated Delivery Date is required.","error");
+    const submitDeliveryDetails = async () => {
+        if (!deliveryForm.estimatedDeliveryDate) return showToast("Estimated Delivery Date is required.", "error");
         setActionLoading(deliveryModalPO.id);
         try {
-            await axios.put(`${API_URL}/orders/delivery-management/${deliveryModalPO.id}/delivery-details`,deliveryForm,getAuthHeader());
+            await axios.put(`${API_URL}/orders/delivery-management/${deliveryModalPO.id}/delivery-details`, deliveryForm, getAuthHeader());
             setDeliveryModalPO(null);
             fetchOrders();
-            showToast("Delivery details updated successfully.","success");
-        } catch (err: any) { showToast(err.response?.data?.message || "Failed to save delivery details.","error"); } 
+            showToast("Delivery details updated successfully.", "success");
+        } catch (err: any) { showToast(err.response?.data?.message || "Failed to save delivery details.", "error"); } 
         finally { setActionLoading(null); }
     };
 
-    const submitLocationUpdate=async () => {
+    const submitLocationUpdate = async () => {
         if (!newLocation) return;
         setActionLoading(deliveryModalPO.id);
         try {
-            const payload={ latitude: newLocation.lat,longitude: newLocation.lng,placeName: newLocation.placeName };
-            await axios.post(`${API_URL}/orders/delivery-management/${deliveryModalPO.id}/location`,payload,getAuthHeader());
+            const payload = { latitude: newLocation.lat, longitude: newLocation.lng, placeName: newLocation.placeName };
+            await axios.post(`${API_URL}/orders/delivery-management/${deliveryModalPO.id}/location`, payload, getAuthHeader());
             
             // Refresh locations list instantly
-            const res=await axios.get(`${API_URL}/orders/${deliveryModalPO.id}/locations`,getAuthHeader());
+            const res = await axios.get(`${API_URL}/orders/${deliveryModalPO.id}/locations`, getAuthHeader());
             setOrderLocations(res.data);
             setNewLocation(null);
-            showToast("Location updated on map.","success");
+            showToast("Location updated on map.", "success");
         } catch (err: any) { 
-            showToast(err.response?.data?.message || "Failed to update location.","error"); 
+            showToast(err.response?.data?.message || "Failed to update location.", "error"); 
         } finally { 
             setActionLoading(null); 
         }
     };
 
-    const openInvoiceModal=async (order: any) => {
+    const openInvoiceModal = async (order: any) => {
         setActionLoading(order.id);
         try {
-            const res=await axios.get(`${API_URL}/orders/${order.id}/invoice`);
+            const res = await axios.get(`${API_URL}/orders/${order.id}/invoice`);
             setInvoiceData(res.data);
             setInvoiceModalPO(order);
-        } catch (err: any) { showToast("Failed to generate invoice data.","error"); } 
+        } catch (err: any) { showToast("Failed to generate invoice data.", "error"); } 
         finally { setActionLoading(null); }
     };
 
-    const handlePrintInvoice=() => {
-        const printContent=document.getElementById('printable-invoice');
+    const handlePrintInvoice = () => {
+        const printContent = document.getElementById('printable-invoice');
         if (!printContent) return;
         
-        const originalContents=document.body.innerHTML;
-        document.body.innerHTML=printContent.innerHTML;
+        const originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContent.innerHTML;
         window.print();
-        document.body.innerHTML=originalContents;
+        document.body.innerHTML = originalContents;
         window.location.reload(); 
     };
 
-    const getStatusBadge=(status: string) => {
+    const getStatusBadge = (status: string) => {
         switch (status) {
             case 'PENDING': return <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-full text-xs font-bold">Pending Payment</span>;
             case 'VALIDATING': return <span className="px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full text-xs font-bold">Validating</span>;
@@ -246,39 +246,39 @@ export default function DeliveryManagerDashboard() {
         }
     };
 
-    const handleResolveComplaint=async () => {
+    const handleResolveComplaint = async () => {
         if (!resolveModalId) return;
         try {
-            await axios.put(`${API_URL}/orders/delivery-management/complaints/${resolveModalId}/resolve`,{},getAuthHeader());
+            await axios.put(`${API_URL}/orders/delivery-management/complaints/${resolveModalId}/resolve`, {}, getAuthHeader());
             fetchOrders();
-            showToast("Complaint marked as resolved.","success");
-        } catch (err: any) { showToast(err.response?.data?.message || "Failed to resolve complaint.","error"); }
+            showToast("Complaint marked as resolved.", "success");
+        } catch (err: any) { showToast(err.response?.data?.message || "Failed to resolve complaint.", "error"); }
         finally { setResolveModalId(null); }
     };
 
     // --- NEW: PROCESS REFUND ACTION ---
-    const handleProcessRefund=async () => {
+    const handleProcessRefund = async () => {
         if (!refundModalId) return;
         setActionLoading(refundModalId);
         try {
-            const res=await processRefund(refundModalId);
+            const res = await processRefund(refundModalId);
             fetchOrders();
-            showToast(res.message,"success");
+            showToast(res.message, "success");
         } catch (err: any) { 
-            showToast(err.response?.data?.message || "Failed to process refund.","error"); 
+            showToast(err.response?.data?.message || "Failed to process refund.", "error"); 
         } finally {
             setActionLoading(null);
             setRefundModalId(null);
         }
     };
 
-    const displayOrders=activeTab === 'ORDERS' ? orders.filter(o => !o.hasOpenComplaints) : orders.filter(o => o.hasOpenComplaints);
+    const displayOrders = activeTab === 'ORDERS' ? orders.filter(o => !o.hasOpenComplaints) : orders.filter(o => o.hasOpenComplaints);
 
     return (
         <div className="min-h-screen bg-[#0B1F33] text-white p-8 relative">
             <AnimatePresence>
                 {toast && (
-                    <motion.div initial={{ opacity: 0,y: -50 }} animate={{ opacity: 1,y: 0 }} exit={{ opacity: 0,y: -50 }} className={`fixed top-6 right-6 z-[100] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl font-bold text-white ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
+                    <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -50 }} className={`fixed top-6 right-6 z-[100] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl font-bold text-white ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
                         {toast.type === 'success' ? <CheckCircle2 size={24} /> : <AlertTriangle size={24} />}
                         {toast.message}
                     </motion.div>
@@ -289,7 +289,7 @@ export default function DeliveryManagerDashboard() {
                 <div className="flex justify-between items-end mb-8 border-b border-white/10 pb-6">
                     <div>
                         <h1 className="font-display text-4xl font-bold tracking-wide flex items-center gap-3"><Truck className="text-[#D4AF37]" size={36} /> Delivery Manager</h1>
-                        <p className="text-gray-400 mt-2">Validate orders,manage delivery routing,and resolve customer complaints.</p>
+                        <p className="text-gray-400 mt-2">Validate orders, manage delivery routing, and resolve customer complaints.</p>
                     </div>
                 </div>
 
@@ -318,7 +318,7 @@ export default function DeliveryManagerDashboard() {
                             ) : (
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     {displayOrders.map(order => (
-                                        <motion.div initial={{ opacity: 0,y: 20 }} animate={{ opacity: 1,y: 0 }} key={order.id} className={`bg-[#121212] border ${order.hasOpenComplaints ? 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]' : 'border-white/5'} rounded-3xl p-6 flex flex-col`}>
+                                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key={order.id} className={`bg-[#121212] border ${order.hasOpenComplaints ? 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]' : 'border-white/5'} rounded-3xl p-6 flex flex-col`}>
                                             <div className="flex justify-between items-start mb-6 border-b border-white/5 pb-4">
                                                 <div>
                                                     <div className="text-xs text-gray-500 font-bold mb-1">{order.orderNumber}</div>
@@ -351,7 +351,7 @@ export default function DeliveryManagerDashboard() {
                                                                 <div className="mb-4">
                                                                     <span className="text-[10px] uppercase font-bold text-gray-500 mb-1 block">Photo Evidence</span>
                                                                     <div className="rounded-xl overflow-hidden border border-white/10 bg-black max-w-xs cursor-pointer hover:border-orange-500/50 transition-colors"
-                                                                        onClick={() => window.open(c.imageUrl,'_blank')}
+                                                                        onClick={() => window.open(c.imageUrl, '_blank')}
                                                                     >
                                                                         <img src={c.imageUrl} alt="Complaint Evidence" className="w-full h-auto object-cover max-h-48" />
                                                                     </div>
@@ -400,13 +400,13 @@ export default function DeliveryManagerDashboard() {
                                                 </button>
 
                                                 {order.orderStatus === 'PENDING' && (
-                                                    <button onClick={() => promptStatusUpdate(order.id,'VALIDATING')} disabled={actionLoading === order.id} className="px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500 text-yellow-400 hover:text-black border border-yellow-500/30 rounded-xl text-sm font-bold transition-colors shadow-lg">
+                                                    <button onClick={() => promptStatusUpdate(order.id, 'VALIDATING')} disabled={actionLoading === order.id} className="px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500 text-yellow-400 hover:text-black border border-yellow-500/30 rounded-xl text-sm font-bold transition-colors shadow-lg">
                                                         Begin Validation
                                                     </button>
                                                 )}
 
                                                 {order.orderStatus === 'VALIDATING' && (
-                                                    <button onClick={() => promptStatusUpdate(order.id,'CONFIRMED')} disabled={actionLoading === order.id} className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-bold transition-colors shadow-lg">
+                                                    <button onClick={() => promptStatusUpdate(order.id, 'CONFIRMED')} disabled={actionLoading === order.id} className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-bold transition-colors shadow-lg">
                                                         Confirm Order
                                                     </button>
                                                 )}
@@ -418,13 +418,13 @@ export default function DeliveryManagerDashboard() {
                                                 )}
 
                                                 {order.orderStatus === 'CONFIRMED' && (
-                                                    <button onClick={() => promptStatusUpdate(order.id,'DELIVERING')} disabled={actionLoading === order.id} className="px-4 py-2 bg-[#D4AF37] hover:bg-yellow-500 text-black rounded-xl text-sm font-bold shadow-glow transition-colors">
+                                                    <button onClick={() => promptStatusUpdate(order.id, 'DELIVERING')} disabled={actionLoading === order.id} className="px-4 py-2 bg-[#D4AF37] hover:bg-yellow-500 text-black rounded-xl text-sm font-bold shadow-glow transition-colors">
                                                         Distribute / Dispatch
                                                     </button>
                                                 )}
 
                                                 {order.orderStatus === 'DELIVERING' && (
-                                                    <button onClick={() => promptStatusUpdate(order.id,'DELIVERED')} disabled={actionLoading === order.id} className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-bold shadow-lg transition-colors">
+                                                    <button onClick={() => promptStatusUpdate(order.id, 'DELIVERED')} disabled={actionLoading === order.id} className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-bold shadow-lg transition-colors">
                                                         Mark as Delivered
                                                     </button>
                                                 )}
@@ -459,7 +459,7 @@ export default function DeliveryManagerDashboard() {
                                 ) : (
                                     <div className="grid grid-cols-1 gap-6">
                                         {aiWorkflows.map(workflow => (
-                                            <motion.div initial={{ opacity: 0,y: 20 }} animate={{ opacity: 1,y: 0 }} key={workflow.id} className="bg-[#121212] border border-orange-500/30 rounded-3xl p-6">
+                                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key={workflow.id} className="bg-[#121212] border border-orange-500/30 rounded-3xl p-6">
                                                 <div className="flex justify-between items-start mb-4 border-b border-white/10 pb-4">
                                                     <div>
                                                         <div className="text-xs font-bold text-orange-400 mb-1 tracking-widest uppercase">ID: {workflow.id} • {new Date(workflow.createdAt).toLocaleString()}</div>
@@ -478,20 +478,20 @@ export default function DeliveryManagerDashboard() {
                                                 <div className="mb-6">
                                                     <h4 className="text-sm font-bold text-orange-400 uppercase mb-2">Proposed Resolution Payload</h4>
                                                     <div className="bg-black/80 p-4 rounded-xl border border-orange-500/30 font-mono text-xs text-green-400 whitespace-pre-wrap overflow-x-auto">
-                                                        {workflow.proposedPayload ? JSON.stringify(JSON.parse(workflow.proposedPayload),null,2) : "No payload generated."}
+                                                        {workflow.proposedPayload ? JSON.stringify(JSON.parse(workflow.proposedPayload), null, 2) : "No payload generated."}
                                                     </div>
                                                 </div>
 
                                                 <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                                                     <button 
-                                                        onClick={() => handleReviewAI(workflow.id,'REJECTED',workflow.proposedPayload)} 
+                                                        onClick={() => handleReviewAI(workflow.id, 'REJECTED', workflow.proposedPayload)} 
                                                         disabled={actionLoading === workflow.id}
                                                         className="px-6 py-2 bg-red-500/10 text-red-400 font-bold rounded-xl hover:bg-red-500/20 transition-all border border-red-500/20"
                                                     >
                                                         Reject Action
                                                     </button>
                                                     <button 
-                                                        onClick={() => handleReviewAI(workflow.id,'APPROVED',workflow.proposedPayload)} 
+                                                        onClick={() => handleReviewAI(workflow.id, 'APPROVED', workflow.proposedPayload)} 
                                                         disabled={actionLoading === workflow.id}
                                                         className="px-6 py-2 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center gap-2"
                                                     >
@@ -513,9 +513,9 @@ export default function DeliveryManagerDashboard() {
                 <AnimatePresence>
                     {confirmModal.isOpen && (
                         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setConfirmModal({ isOpen: false,orderId: null,newStatus: '' })}></motion.div>
-                            <motion.div initial={{ opacity: 0,scale: 0.95,y: 20 }} animate={{ opacity: 1,scale: 1,y: 0 }} exit={{ opacity: 0,scale: 0.95,y: 20 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-sm w-full z-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center relative">
-                                <button onClick={() => setConfirmModal({ isOpen: false,orderId: null,newStatus: '' })} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><X size={20}/></button>
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setConfirmModal({ isOpen: false, orderId: null, newStatus: '' })}></motion.div>
+                            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-sm w-full z-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center relative">
+                                <button onClick={() => setConfirmModal({ isOpen: false, orderId: null, newStatus: '' })} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><X size={20}/></button>
                                 
                                 <div className="mx-auto w-16 h-16 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-full flex items-center justify-center mb-6">
                                     <HelpCircle size={32} />
@@ -527,11 +527,11 @@ export default function DeliveryManagerDashboard() {
                                 </p>
                                 
                                 <div className="flex gap-3">
-                                    <button onClick={() => setConfirmModal({ isOpen: false,orderId: null,newStatus: '' })} className="flex-1 px-4 py-3 rounded-xl font-bold bg-white/5 hover:bg-white/10 text-white transition-colors">
+                                    <button onClick={() => setConfirmModal({ isOpen: false, orderId: null, newStatus: '' })} className="flex-1 px-4 py-3 rounded-xl font-bold bg-white/5 hover:bg-white/10 text-white transition-colors">
                                         Cancel
                                     </button>
                                     <button onClick={executeStatusUpdate} className="flex-1 px-4 py-3 rounded-xl font-bold bg-blue-500 hover:bg-blue-600 text-white shadow-lg transition-colors">
-                                        Yes,Update
+                                        Yes, Update
                                     </button>
                                 </div>
                             </motion.div>
@@ -546,7 +546,7 @@ export default function DeliveryManagerDashboard() {
                     {invoiceModalPO && invoiceData && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setInvoiceModalPO(null)}></motion.div>
-                            <motion.div initial={{ opacity: 0,scale: 0.95 }} animate={{ opacity: 1,scale: 1 }} exit={{ opacity: 0,scale: 0.95 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-2xl w-full z-10 max-h-[90vh] overflow-y-auto">
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-2xl w-full z-10 max-h-[90vh] overflow-y-auto">
                                 <div className="flex justify-between items-center mb-6">
                                     <h2 className="text-2xl font-bold flex items-center gap-3"><FileText className="text-[#D4AF37]"/> Receipt / Invoice</h2>
                                     <div className="flex gap-3">
@@ -582,7 +582,7 @@ export default function DeliveryManagerDashboard() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200">
-                                            {invoiceData.items?.map((item: any,idx: number) => (
+                                            {invoiceData.items?.map((item: any, idx: number) => (
                                                 <tr key={idx}>
                                                     <td className="py-4"><div className="font-bold text-gray-900">{item.productName}</div><div className="text-sm text-gray-500">{item.variantName}</div></td>
                                                     <td className="py-4 text-center text-gray-800 font-bold">{item.quantity}</td>
@@ -614,7 +614,7 @@ export default function DeliveryManagerDashboard() {
                     {deliveryModalPO && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => !actionLoading && setDeliveryModalPO(null)}></motion.div>
-                            <motion.div initial={{ opacity: 0,scale: 0.95 }} animate={{ opacity: 1,scale: 1 }} exit={{ opacity: 0,scale: 0.95 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-lg w-full z-10 max-h-[90vh] overflow-y-auto">
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-lg w-full z-10 max-h-[90vh] overflow-y-auto">
                                 <div className="flex justify-between items-center mb-6">
                                     <h2 className="text-2xl font-bold flex items-center gap-3"><Edit className="text-blue-400"/> Manage Delivery Details</h2>
                                     <button onClick={() => setDeliveryModalPO(null)} className="text-gray-500 hover:text-white"><X size={24} /></button>
@@ -622,29 +622,29 @@ export default function DeliveryManagerDashboard() {
                                 <div className="space-y-4">
                                     <div>
                                         <label className="text-xs text-gray-500 uppercase font-bold mb-2 block">Tracking / Delivery Number</label>
-                                        <input type="text" value={deliveryForm.deliveryNumber} onChange={e => setDeliveryForm({...deliveryForm,deliveryNumber: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
+                                        <input type="text" value={deliveryForm.deliveryNumber} onChange={e => setDeliveryForm({...deliveryForm, deliveryNumber: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <label className="text-xs text-gray-500 uppercase font-bold mb-2 block">Est. Date <span className="text-red-400">*</span></label>
-                                            <input type="date" min={new Date().toISOString().split('T')[0]} value={deliveryForm.estimatedDeliveryDate} onChange={e => setDeliveryForm({...deliveryForm,estimatedDeliveryDate: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
+                                            <input type="date" min={new Date().toISOString().split('T')[0]} value={deliveryForm.estimatedDeliveryDate} onChange={e => setDeliveryForm({...deliveryForm, estimatedDeliveryDate: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
                                         </div>
                                         <div>
                                             <label className="text-xs text-gray-500 uppercase font-bold mb-2 block">Est. Time</label>
-                                            <input type="text" placeholder="e.g. 14:00 - 16:00" value={deliveryForm.estimatedDeliveryTime} onChange={e => setDeliveryForm({...deliveryForm,estimatedDeliveryTime: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
+                                            <input type="text" placeholder="e.g. 14:00 - 16:00" value={deliveryForm.estimatedDeliveryTime} onChange={e => setDeliveryForm({...deliveryForm, estimatedDeliveryTime: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
                                         </div>
                                     </div>
                                     <div>
                                         <label className="text-xs text-gray-500 uppercase font-bold mb-2 block">Assigned Driver Name</label>
-                                        <input type="text" value={deliveryForm.assignedDriverName} onChange={e => setDeliveryForm({...deliveryForm,assignedDriverName: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
+                                        <input type="text" value={deliveryForm.assignedDriverName} onChange={e => setDeliveryForm({...deliveryForm, assignedDriverName: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
                                     </div>
                                     <div>
                                         <label className="text-xs text-gray-500 uppercase font-bold mb-2 block">Driver Contact Info</label>
-                                        <input type="text" value={deliveryForm.assignedDriverContact} onChange={e => setDeliveryForm({...deliveryForm,assignedDriverContact: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
+                                        <input type="text" value={deliveryForm.assignedDriverContact} onChange={e => setDeliveryForm({...deliveryForm, assignedDriverContact: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none" />
                                     </div>
                                     <div>
                                         <label className="text-xs text-gray-500 uppercase font-bold mb-2 block">Delivery Notes (Visible to Customer)</label>
-                                        <textarea rows={3} value={deliveryForm.deliveryNotes} onChange={e => setDeliveryForm({...deliveryForm,deliveryNotes: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none"></textarea>
+                                        <textarea rows={3} value={deliveryForm.deliveryNotes} onChange={e => setDeliveryForm({...deliveryForm, deliveryNotes: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-400 outline-none"></textarea>
                                     </div>
                                 </div>
                                 {/* --- NEW MAP UI INSIDE MODAL --- */}
@@ -656,20 +656,20 @@ export default function DeliveryManagerDashboard() {
                                         
                                         <div className="h-64 w-full rounded-xl overflow-hidden border border-white/10 relative z-0">
                                             {/* Centered roughly around Colombo/Malabe */}
-                                            <MapContainer center={[6.9271,79.8612]} zoom={11} style={{ height: '100%',width: '100%',zIndex: 1 }}>
+                                            <MapContainer center={[6.9271, 79.8612]} zoom={11} style={{ height: '100%', width: '100%', zIndex: 1 }}>
                                                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                                                 <LocationPicker />
                                                 
                                                 {/* Existing History Pins */}
-                                                {orderLocations.map((loc,i) => (
-                                                    <Marker key={i} position={[loc.latitude,loc.longitude]}>
+                                                {orderLocations.map((loc, i) => (
+                                                    <Marker key={i} position={[loc.latitude, loc.longitude]}>
                                                         <Popup>{loc.placeName} <br/> <span className="text-xs text-gray-500">{new Date(loc.timestamp).toLocaleTimeString()}</span></Popup>
                                                     </Marker>
                                                 ))}
 
                                                 {/* New Pin Being Dropped */}
                                                 {newLocation && (
-                                                    <Marker position={[newLocation.lat,newLocation.lng]}>
+                                                    <Marker position={[newLocation.lat, newLocation.lng]}>
                                                         <Popup>New Pin: {newLocation.placeName}</Popup>
                                                     </Marker>
                                                 )}
@@ -689,7 +689,7 @@ export default function DeliveryManagerDashboard() {
                                         {/* Tracking History List */}
                                         {orderLocations.length > 0 && (
                                             <div className="mt-4 max-h-32 overflow-y-auto space-y-2 custom-scrollbar border border-white/5 rounded-xl p-2 bg-black/20">
-                                                {orderLocations.map((loc,i) => (
+                                                {orderLocations.map((loc, i) => (
                                                     <div key={i} className="flex justify-between items-center p-2 rounded-lg text-xs border border-white/5 bg-[#1A1A1A]">
                                                         <span className="text-gray-300 truncate pr-2 flex-1">📍 {loc.placeName}</span>
                                                         <span className="text-gray-500 shrink-0">{new Date(loc.timestamp).toLocaleString()}</span>
@@ -717,7 +717,7 @@ export default function DeliveryManagerDashboard() {
                     {resolveModalId && (
                         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setResolveModalId(null)}></motion.div>
-                            <motion.div initial={{ opacity: 0,scale: 0.95,y: 20 }} animate={{ opacity: 1,scale: 1,y: 0 }} exit={{ opacity: 0,scale: 0.95,y: 20 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-sm w-full z-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center relative">
+                            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-sm w-full z-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center relative">
                                 <button onClick={() => setResolveModalId(null)} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><X size={20}/></button>
                                 <div className="mx-auto w-16 h-16 bg-green-500/10 border border-green-500/30 text-green-400 rounded-full flex items-center justify-center mb-6">
                                     <CheckCircle size={32} />
@@ -726,7 +726,7 @@ export default function DeliveryManagerDashboard() {
                                 <p className="text-gray-400 text-sm mb-8">Are you sure you want to mark this complaint as resolved?</p>
                                 <div className="flex gap-3">
                                     <button onClick={() => setResolveModalId(null)} className="flex-1 px-4 py-3 rounded-xl font-bold bg-white/5 hover:bg-white/10 text-white transition-colors">Cancel</button>
-                                    <button onClick={handleResolveComplaint} className="flex-1 px-4 py-3 rounded-xl font-bold bg-green-500 hover:bg-green-600 text-white shadow-lg transition-colors">Yes,Resolve</button>
+                                    <button onClick={handleResolveComplaint} className="flex-1 px-4 py-3 rounded-xl font-bold bg-green-500 hover:bg-green-600 text-white shadow-lg transition-colors">Yes, Resolve</button>
                                 </div>
                             </motion.div>
                         </div>
@@ -740,7 +740,7 @@ export default function DeliveryManagerDashboard() {
                     {refundModalId && (
                         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setRefundModalId(null)}></motion.div>
-                            <motion.div initial={{ opacity: 0,scale: 0.95,y: 20 }} animate={{ opacity: 1,scale: 1,y: 0 }} exit={{ opacity: 0,scale: 0.95,y: 20 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-sm w-full z-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center relative">
+                            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-sm w-full z-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center relative">
                                 <button onClick={() => setRefundModalId(null)} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><X size={20}/></button>
                                 <div className="mx-auto w-16 h-16 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-full flex items-center justify-center mb-6">
                                     <Banknote size={32} />
@@ -749,7 +749,7 @@ export default function DeliveryManagerDashboard() {
                                 <p className="text-gray-400 text-sm mb-8">Confirm that funds have been transferred back to the customer's card.</p>
                                 <div className="flex gap-3">
                                     <button onClick={() => setRefundModalId(null)} className="flex-1 px-4 py-3 rounded-xl font-bold bg-white/5 hover:bg-white/10 text-white transition-colors">Cancel</button>
-                                    <button onClick={handleProcessRefund} className="flex-1 px-4 py-3 rounded-xl font-bold bg-blue-500 hover:bg-blue-600 text-white shadow-lg transition-colors">Yes,Process</button>
+                                    <button onClick={handleProcessRefund} className="flex-1 px-4 py-3 rounded-xl font-bold bg-blue-500 hover:bg-blue-600 text-white shadow-lg transition-colors">Yes, Process</button>
                                 </div>
                             </motion.div>
                         </div>
