@@ -1,5 +1,5 @@
-import { useState,useEffect } from 'react';
-import { motion,AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Users,
     Search,
@@ -42,34 +42,34 @@ export default function MainAdminDashboard() {
     // MAIN DASHBOARD STATE
     // ============================================================
 
-    const [activeTab,setActiveTab]=useState<'USERS' | 'STOREFRONT' | 'REPORTS'>('USERS');
+    const [activeTab, setActiveTab] = useState<'USERS' | 'STOREFRONT' | 'REPORTS'>('USERS');
 
     // Kept as true to preserve previous loading behavior.
-    const [isLoading,setIsLoading]=useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [toast,setToast]=useState<{ message: string,type: 'success' | 'error' } | null>(null);
+    const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
 
     // ============================================================
     // USER MANAGEMENT STATE
     // ============================================================
 
     // Filters
-    const [users,setUsers]=useState<any[]>([]);
-    const [searchTerm,setSearchTerm]=useState('');
-    const [roleFilter,setRoleFilter]=useState('');
-    const [statusFilter,setStatusFilter]=useState('');
+    const [users, setUsers] = useState<any[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [roleFilter, setRoleFilter] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
 
     // Modals
-    const [isCreateModalOpen,setIsCreateModalOpen]=useState(false);
-    const [historyModalData,setHistoryModalData]=useState<{
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [historyModalData, setHistoryModalData] = useState<{
         userId: number,
         name: string,
         events: any[]
     } | null>(null);
 
-    const [editModalUser,setEditModalUser]=useState<any | null>(null);
+    const [editModalUser, setEditModalUser] = useState<any | null>(null);
 
-    const [staffForm,setStaffForm]=useState({
+    const [staffForm, setStaffForm] = useState({
         fullName: '',
         email: '',
         phoneNumber: '',
@@ -81,12 +81,12 @@ export default function MainAdminDashboard() {
     // STOREFRONT CMS STATE
     // ============================================================
 
-    const [banners,setBanners]=useState<any[]>([]);
+    const [banners, setBanners] = useState<any[]>([]);
 
-    const [isBannerModalOpen,setIsBannerModalOpen]=useState(false);
-    const [deleteBannerId,setDeleteBannerId]=useState<number | null>(null);
+    const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
+    const [deleteBannerId, setDeleteBannerId] = useState<number | null>(null);
 
-    const [bannerForm,setBannerForm]=useState({
+    const [bannerForm, setBannerForm] = useState({
         title: '',
         subtitle: '',
         discount: '',
@@ -100,15 +100,15 @@ export default function MainAdminDashboard() {
     // REPORTS STATE
     // ============================================================
 
-    const [reportData,setReportData]=useState<any | null>(null);
+    const [reportData, setReportData] = useState<any | null>(null);
 
     // ============================================================
     // TOAST
     // ============================================================
 
-    const showToast=(message: string,type: 'success' | 'error') => {
-        setToast({ message,type });
-        setTimeout(() => setToast(null),4000);
+    const showToast = (message: string, type: 'success' | 'error') => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 4000);
     };
 
     // ============================================================
@@ -116,39 +116,39 @@ export default function MainAdminDashboard() {
     // ============================================================
 
     useEffect(() => {
-        if(activeTab === 'USERS') {
-            const delayDebounceFn=setTimeout(() => fetchUsers(),500);
+        if (activeTab === 'USERS') {
+            const delayDebounceFn = setTimeout(() => fetchUsers(), 500);
 
             return () => clearTimeout(delayDebounceFn);
-        } else if(activeTab === 'STOREFRONT') {
+        } else if (activeTab === 'STOREFRONT') {
             fetchBanners();
         }
-    },[searchTerm,roleFilter,statusFilter,activeTab]);
+    }, [searchTerm, roleFilter, statusFilter, activeTab]);
 
     // ============================================================
     // USER MANAGEMENT API
     // ============================================================
 
-    const fetchUsers=async () => {
+    const fetchUsers = async () => {
         setIsLoading(true);
 
         try {
-            const data=await getUsers(searchTerm,roleFilter,statusFilter);
+            const data = await getUsers(searchTerm, roleFilter, statusFilter);
             setUsers(data);
         } catch (err: any) {
-            showToast("Failed to load users.","error");
+            showToast("Failed to load users.", "error");
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleCreateStaff=async (e: React.FormEvent) => {
+    const handleCreateStaff = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
             await createStaffAccount(staffForm);
 
-            showToast("Staff account created securely.","success");
+            showToast("Staff account created securely.", "success");
 
             setIsCreateModalOpen(false);
 
@@ -169,16 +169,16 @@ export default function MainAdminDashboard() {
         }
     };
 
-    const handleUpdateUser=async (e: React.FormEvent) => {
+    const handleUpdateUser = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            await updateUserStatusRole(editModalUser.id,{
+            await updateUserStatusRole(editModalUser.id, {
                 role: editModalUser.role,
                 accountStatus: editModalUser.accountStatus
             });
 
-            showToast("User privileges updated.","success");
+            showToast("User privileges updated.", "success");
 
             setEditModalUser(null);
 
@@ -193,9 +193,9 @@ export default function MainAdminDashboard() {
         }
     };
 
-    const handleViewHistory=async (user: any) => {
+    const handleViewHistory = async (user: any) => {
         try {
-            const events=await getSecurityHistory(user.id);
+            const events = await getSecurityHistory(user.id);
 
             setHistoryModalData({
                 userId: user.id,
@@ -203,7 +203,7 @@ export default function MainAdminDashboard() {
                 events
             });
         } catch (err: any) {
-            showToast("Failed to load audit logs.","error");
+            showToast("Failed to load audit logs.", "error");
         }
     };
 
@@ -211,25 +211,25 @@ export default function MainAdminDashboard() {
     // STOREFRONT CMS API
     // ============================================================
 
-    const fetchBanners=async () => {
+    const fetchBanners = async () => {
         setIsLoading(true);
 
         try {
             setBanners(await getBanners());
         } catch (err) {
-            showToast("Failed to load banners.","error");
+            showToast("Failed to load banners.", "error");
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleCreateBanner=async (e: React.FormEvent) => {
+    const handleCreateBanner = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
             await createBanner(bannerForm);
 
-            showToast("Banner published.","success");
+            showToast("Banner published.", "success");
 
             setIsBannerModalOpen(false);
 
@@ -245,19 +245,19 @@ export default function MainAdminDashboard() {
 
             fetchBanners();
         } catch (err) {
-            showToast("Failed to publish.","error");
+            showToast("Failed to publish.", "error");
         }
     };
 
-    const confirmDeleteBanner=async () => {
-        if(!deleteBannerId) return;
+    const confirmDeleteBanner = async () => {
+        if (!deleteBannerId) return;
 
         try {
             await deleteBanner(deleteBannerId);
-            showToast("Banner removed.","success");
+            showToast("Banner removed.", "success");
             fetchBanners();
         } catch (err) {
-            showToast("Failed to remove.","error");
+            showToast("Failed to remove.", "error");
         } finally {
             setDeleteBannerId(null);
         }
@@ -267,7 +267,7 @@ export default function MainAdminDashboard() {
     // BI REPORTS API
     // ============================================================
 
-    const handleGenerateReport=async (
+    const handleGenerateReport = async (
         type: 'FINANCE' | 'LOGISTICS' | 'LOYALTY' | 'INVENTORY'
     ) => {
         setIsLoading(true);
@@ -275,25 +275,25 @@ export default function MainAdminDashboard() {
         try {
             let data;
 
-            if(type === 'FINANCE') {
-                data=await getFinancialReport();
+            if (type === 'FINANCE') {
+                data = await getFinancialReport();
             }
 
-            if(type === 'LOGISTICS') {
-                data=await getLogisticsReport();
+            if (type === 'LOGISTICS') {
+                data = await getLogisticsReport();
             }
 
-            if(type === 'LOYALTY') {
-                data=await getLoyaltyReport();
+            if (type === 'LOYALTY') {
+                data = await getLoyaltyReport();
             }
 
-            if(type === 'INVENTORY') {
-                data=await getInventoryReport();
+            if (type === 'INVENTORY') {
+                data = await getInventoryReport();
             }
 
             setReportData(data);
         } catch (err) {
-            showToast("Failed to generate report.","error");
+            showToast("Failed to generate report.", "error");
         } finally {
             setIsLoading(false);
         }
@@ -313,9 +313,9 @@ export default function MainAdminDashboard() {
             <AnimatePresence>
                 {toast && (
                     <motion.div
-                        initial={{ opacity: 0,y: -50 }}
-                        animate={{ opacity: 1,y: 0 }}
-                        exit={{ opacity: 0,y: -50 }}
+                        initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -50 }}
                         className={`fixed top-6 right-6 z-[100] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl font-bold text-white ${
                             toast.type === 'success'
                                 ? 'bg-green-600'
@@ -352,7 +352,7 @@ export default function MainAdminDashboard() {
                         </h1>
 
                         <p className="text-gray-400 mt-2">
-                            Centralized authentication,role assignment,and security auditing.
+                            Centralized authentication, role assignment, and security auditing.
                         </p>
                     </div>
 
@@ -430,7 +430,7 @@ export default function MainAdminDashboard() {
 
                                 <input
                                     type="text"
-                                    placeholder="Search by name,email,or phone..."
+                                    placeholder="Search by name, email, or phone..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className="w-full bg-black/50 border border-white/10 rounded-xl py-2 pl-12 pr-4 focus:outline-none focus:border-red-500 text-sm"
@@ -840,9 +840,9 @@ export default function MainAdminDashboard() {
                         />
 
                         <motion.div
-                            initial={{ opacity: 0,scale: 0.95 }}
-                            animate={{ opacity: 1,scale: 1 }}
-                            exit={{ opacity: 0,scale: 0.95 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
                             className="bg-[#121212] border border-red-500/30 rounded-3xl p-8 max-w-md w-full z-10 shadow-[0_20px_60px_rgba(220,38,38,0.2)]"
                         >
 
@@ -1006,9 +1006,9 @@ export default function MainAdminDashboard() {
                         />
 
                         <motion.div
-                            initial={{ opacity: 0,scale: 0.95 }}
-                            animate={{ opacity: 1,scale: 1 }}
-                            exit={{ opacity: 0,scale: 0.95 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
                             className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-md w-full z-10"
                         >
 
@@ -1138,9 +1138,9 @@ export default function MainAdminDashboard() {
                         />
 
                         <motion.div
-                            initial={{ opacity: 0,y: 20 }}
-                            animate={{ opacity: 1,y: 0 }}
-                            exit={{ opacity: 0,y: 20 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 20 }}
                             className="bg-[#121212] border border-blue-500/30 rounded-3xl p-8 max-w-2xl w-full z-10 max-h-[80vh] flex flex-col"
                         >
 
@@ -1177,7 +1177,7 @@ export default function MainAdminDashboard() {
                                     </p>
 
                                 ) : (
-                                    historyModalData.events.map((evt,idx) => (
+                                    historyModalData.events.map((evt, idx) => (
 
                                         <div
                                             key={idx}
@@ -1228,9 +1228,9 @@ export default function MainAdminDashboard() {
                         />
 
                         <motion.div
-                            initial={{ opacity: 0,scale: 0.95,y: 20 }}
-                            animate={{ opacity: 1,scale: 1,y: 0 }}
-                            exit={{ opacity: 0,scale: 0.95,y: 20 }}
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             className="bg-[#121212] border border-[#D4AF37]/30 rounded-3xl p-8 max-w-lg w-full z-10 shadow-2xl max-h-[90vh] overflow-y-auto"
                         >
 
@@ -1422,9 +1422,9 @@ export default function MainAdminDashboard() {
                         />
 
                         <motion.div
-                            initial={{ opacity: 0,scale: 0.95,y: 20 }}
-                            animate={{ opacity: 1,scale: 1,y: 0 }}
-                            exit={{ opacity: 0,scale: 0.95,y: 20 }}
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             className="bg-[#121212] border border-white/10 rounded-3xl p-8 max-w-sm w-full z-10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center relative"
                         >
                             <button
@@ -1456,7 +1456,7 @@ export default function MainAdminDashboard() {
                                     onClick={confirmDeleteBanner}
                                     className="flex-1 px-4 py-3 rounded-xl font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg transition-colors"
                                 >
-                                    Yes,Delete
+                                    Yes, Delete
                                 </button>
                             </div>
                         </motion.div>
@@ -1546,9 +1546,9 @@ export default function MainAdminDashboard() {
 
                                 <div className="space-y-4">
 
-                                    {Object.entries(reportData).map(([key,value]) => {
+                                    {Object.entries(reportData).map(([key, value]) => {
 
-                                        if(
+                                        if (
                                             key === 'reportName' ||
                                             key === 'generatedAt'
                                         ) {
@@ -1563,7 +1563,7 @@ export default function MainAdminDashboard() {
 
                                                 <span className="font-bold text-gray-700 capitalize">
                                                     {key
-                                                        .replace(/([A-Z])/g,' $1')
+                                                        .replace(/([A-Z])/g, ' $1')
                                                         .trim()}
                                                 </span>
 
@@ -1571,7 +1571,7 @@ export default function MainAdminDashboard() {
                                                     {typeof value === 'number' &&
                                                     (key.includes('Total') ||
                                                         key.includes('Rs'))
-                                                        ? `Rs. ${value.toLocaleString(undefined,{
+                                                        ? `Rs. ${value.toLocaleString(undefined, {
                                                             minimumFractionDigits: 2
                                                         })}`
                                                         : value?.toString()}
