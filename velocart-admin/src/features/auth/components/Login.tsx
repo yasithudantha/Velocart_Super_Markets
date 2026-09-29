@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Mail,Lock,ArrowRight } from 'lucide-react';
-import { Link,useNavigate } from 'react-router-dom';
+import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import { loginUser,googleAuth } from '../api/authApi';
+import { loginUser, googleAuth } from '../api/authApi';
 
 interface LoginProps {
     onSwitchToRegister: () => void;
@@ -12,13 +12,13 @@ interface LoginProps {
 
 export default function Login({ onSwitchToRegister }: LoginProps) {
     const navigate=useNavigate();
-    const [formData,setFormData]=useState({ email: '',password: '' });
-    const [error,setError]=useState('');
-    const [successMessage,setSuccessMessage]=useState('');
-    const [isLoading,setIsLoading]=useState(false);
+    const [formData, setFormData]=useState({ email: '', password: '' });
+    const [error, setError]=useState('');
+    const [successMessage, setSuccessMessage]=useState('');
+    const [isLoading, setIsLoading]=useState(false);
 
     const handleChange=(e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData,[e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
         setError('');
     };
 
@@ -46,12 +46,12 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             const result=await loginUser(formData);
             
             // THE CRITICAL FIX: Storing the new secure Session Tokens!
-            localStorage.setItem('token',result.token);
-            localStorage.setItem('refreshToken',result.refreshToken);
-            localStorage.setItem('user',JSON.stringify(result.user));
+            localStorage.setItem('token', result.token);
+            localStorage.setItem('refreshToken', result.refreshToken);
+            localStorage.setItem('user', JSON.stringify(result.user));
 
             setSuccessMessage("Authentication successful. Redirecting...");
-            setTimeout(() => routeUser(result.user),1000); 
+            setTimeout(() => routeUser(result.user), 1000); 
         } catch (err: any) {
             setError(err.toString());
         } finally {
@@ -66,12 +66,12 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             const result=await googleAuth(credentialResponse.credential);
 
             // THE CRITICAL FIX: Storing the new secure Session Tokens!
-            localStorage.setItem('token',result.token);
-            localStorage.setItem('refreshToken',result.refreshToken);
-            localStorage.setItem('user',JSON.stringify(result.user));
+            localStorage.setItem('token', result.token);
+            localStorage.setItem('refreshToken', result.refreshToken);
+            localStorage.setItem('user', JSON.stringify(result.user));
 
             setSuccessMessage("Google Authentication successful. Redirecting...");
-            setTimeout(() => routeUser(result.user),1000);
+            setTimeout(() => routeUser(result.user), 1000);
         } catch (err: any) {
             setError(err.toString());
         } finally {
@@ -79,14 +79,14 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         }
     };
 
-    const containerVariants: Variants={
-        hidden: { opacity: 0,scale: 0.95 },
-        show: { opacity: 1,scale: 1,transition: { duration: 0.5,ease: "easeOut" } }
+    const containerVariants: Variants = {
+        hidden: { opacity: 0, scale: 0.95 },
+        show: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } }
     };
 
-    const itemVariants: Variants={
-        hidden: { opacity: 0,y: 15 },
-        show: { opacity: 1,y: 0,transition: { type: "spring",stiffness: 300,damping: 24 } }
+    const itemVariants: Variants = {
+        hidden: { opacity: 0, y: 15 },
+        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
     };
 
     return (
