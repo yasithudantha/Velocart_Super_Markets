@@ -16,7 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final Color surfaceDark=const Color(0xFF121212);
   final Color primaryGold=const Color(0xFFD4AF37);
 
-  Map<String,dynamic>? profileData;
+  Map<String, dynamic>? profileData;
   bool isLoading=true;
   bool isEditing=false;
   bool isSaving=false;
@@ -26,8 +26,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // NEW: Security Zone States
   bool isSecuritySaving=false;
-  String newEmail='',emailCurrentPassword='';
-  String newPassword='',passwordCurrentPassword='';
+  String newEmail='', emailCurrentPassword='';
+  String newPassword='', passwordCurrentPassword='';
   String deleteCurrentPassword='';
 
   @override
@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (e.toString().contains("Unauthorized")) {
         _logout(); // Kick user out if token is invalid/expired
       } else {
-        _showSnackBar(e.toString(),Colors.redAccent);
+        _showSnackBar(e.toString(), Colors.redAccent);
         setState(() => isLoading=false);
       }
     }
@@ -57,13 +57,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _saveProfile() async {
     if (_nameController.text.trim().isEmpty || _phoneController.text.trim().isEmpty) {
-      _showSnackBar("Name and Phone cannot be empty.",Colors.redAccent);
+      _showSnackBar("Name and Phone cannot be empty.", Colors.redAccent);
       return;
     }
 
     setState(() => isSaving=true);
     try {
-      final cleanedPhone=_phoneController.text.replaceAll(RegExp(r'\s+'),'');
+      final cleanedPhone=_phoneController.text.replaceAll(RegExp(r'\s+'), '');
       
       final msg=await UserApiService.updateUserProfile({
         'fullName': _nameController.text.trim(),
@@ -75,9 +75,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         profileData!['phoneNumber']=cleanedPhone;
         isEditing=false;
       });
-      _showSnackBar(msg,Colors.green);
+      _showSnackBar(msg, Colors.green);
     } catch (e) {
-      _showSnackBar(e.toString(),Colors.redAccent);
+      _showSnackBar(e.toString(), Colors.redAccent);
     } finally {
       setState(() => isSaving=false);
     }
@@ -89,24 +89,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       if (action == 'email') {
         if (newEmail.isEmpty || emailCurrentPassword.isEmpty) throw "Please fill all email change fields.";
-        final msg=await UserApiService.requestEmailChange({'newEmail': newEmail,'currentPassword': emailCurrentPassword});
-        _showSnackBar(msg,Colors.green);
+        final msg=await UserApiService.requestEmailChange({'newEmail': newEmail, 'currentPassword': emailCurrentPassword});
+        _showSnackBar(msg, Colors.green);
       } else if (action == 'password') {
         if (newPassword.isEmpty || passwordCurrentPassword.isEmpty) throw "Please fill all password fields.";
-        final msg=await UserApiService.changePassword({'newPassword': newPassword,'currentPassword': passwordCurrentPassword});
-        _showSnackBar(msg,Colors.green);
+        final msg=await UserApiService.changePassword({'newPassword': newPassword, 'currentPassword': passwordCurrentPassword});
+        _showSnackBar(msg, Colors.green);
       } else if (action == 'delete') {
         if (deleteCurrentPassword.isEmpty) throw "Password required to delete account.";
         final confirm=await _showDeleteConfirmation();
         if (confirm == true) {
           final msg=await UserApiService.deleteAccount({'currentPassword': deleteCurrentPassword});
-          _showSnackBar(msg,Colors.green);
+          _showSnackBar(msg, Colors.green);
           _logout();
           return;
         }
       }
     } catch (e) {
-      _showSnackBar(e.toString().replaceAll('Exception: ',''),Colors.redAccent);
+      _showSnackBar(e.toString().replaceAll('Exception: ', ''), Colors.redAccent);
     } finally {
       setState(() => isSecuritySaving=false);
     }
@@ -118,14 +118,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: surfaceDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: const Text("Delete Account?",style: TextStyle(color: Colors.redAccent)),
-        content: const Text("This action is permanent and cannot be undone. All data and loyalty points will be lost.",style: TextStyle(color: Colors.white70)),
+        title: const Text("Delete Account?", style: TextStyle(color: Colors.redAccent)),
+        content: const Text("This action is permanent and cannot be undone. All data and loyalty points will be lost.", style: TextStyle(color: Colors.white70)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx,false),child: const Text("Cancel",style: TextStyle(color: Colors.white54))),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("Cancel", style: TextStyle(color: Colors.white54))),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-            onPressed: () => Navigator.pop(ctx,true),
-            child: const Text("Yes,Delete",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Yes, Delete", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -146,13 +146,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _showSnackBar(String message,Color color) {
+  void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message,style: const TextStyle(color: Colors.white)),backgroundColor: color),
+      SnackBar(content: Text(message, style: const TextStyle(color: Colors.white)), backgroundColor: color),
     );
   }
 
-  Widget _buildInfoRow(String label,String value,IconData icon,TextEditingController? controller) {
+  Widget _buildInfoRow(String label, String value, IconData icon, TextEditingController? controller) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -165,20 +165,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: primaryGold.withOpacity(0.1),shape: BoxShape.circle),
-            child: Icon(icon,color: primaryGold,size: 20),
+            decoration: BoxDecoration(color: primaryGold.withOpacity(0.1), shape: BoxShape.circle),
+            child: Icon(icon, color: primaryGold, size: 20),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label.toUpperCase(),style: const TextStyle(color: Colors.white54,fontSize: 10,letterSpacing: 1)),
+                Text(label.toUpperCase(), style: const TextStyle(color: Colors.white54, fontSize: 10, letterSpacing: 1)),
                 const SizedBox(height: 4),
                 if (isEditing && controller != null)
                   TextField(
                     controller: controller,
-                    style: const TextStyle(color: Colors.white,fontSize: 14),
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: InputDecoration(
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(vertical: 4),
@@ -187,7 +187,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   )
                 else
-                  Text(value,style: const TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500)),
+                  Text(value, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
               ],
             ),
           ),
@@ -199,12 +199,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   InputDecoration _securityInputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.white38,fontSize: 12),
+      hintStyle: const TextStyle(color: Colors.white38, fontSize: 12),
       filled: true,
       fillColor: Colors.black45,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8),borderSide: BorderSide.none),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8),borderSide: BorderSide(color: primaryGold)),
-      contentPadding: const EdgeInsets.symmetric(vertical: 12,horizontal: 16),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: primaryGold)),
+      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       isDense: true,
     );
   }
@@ -219,10 +219,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: bgDark,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('My Workspace',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+        title: const Text('My Workspace', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout,color: Colors.redAccent),
+            icon: const Icon(Icons.logout, color: Colors.redAccent),
             onPressed: _logout,
           )
         ],
@@ -234,10 +234,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInfoRow('Full Name',profileData!['fullName'] ?? '',Icons.person_outline,_nameController),
-                  _buildInfoRow('Phone Number',profileData!['phoneNumber'] ?? '',Icons.phone_outlined,_phoneController),
-                  _buildInfoRow('Email Address',profileData!['email'] ?? '',Icons.mail_outline,null),
-                  _buildInfoRow('Account Status',profileData!['accountStatus'] ?? '',Icons.verified_user_outlined,null),
+                  _buildInfoRow('Full Name', profileData!['fullName'] ?? '', Icons.person_outline, _nameController),
+                  _buildInfoRow('Phone Number', profileData!['phoneNumber'] ?? '', Icons.phone_outlined, _phoneController),
+                  _buildInfoRow('Email Address', profileData!['email'] ?? '', Icons.mail_outline, null),
+                  _buildInfoRow('Account Status', profileData!['accountStatus'] ?? '', Icons.verified_user_outlined, null),
 
                   const SizedBox(height: 32),
 
@@ -251,14 +251,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: () {
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => const AddressManagerScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const AddressManagerScreen()));
                       },
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.map_outlined),
                           SizedBox(width: 8),
-                          Text('Manage Delivery Addresses',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+                          Text('Manage Delivery Addresses', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -301,8 +301,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   onPressed: isSaving ? null : _saveProfile,
                                   child: isSaving 
-                                      ? const SizedBox(height: 20,width: 20,child: CircularProgressIndicator(color: Colors.black,strokeWidth: 2))
-                                      : const Text('Save Changes',style: TextStyle(fontWeight: FontWeight.bold)),
+                                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2))
+                                      : const Text('Save Changes', style: TextStyle(fontWeight: FontWeight.bold)),
                                 ),
                               ),
                             ],
@@ -318,9 +318,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.edit,size: 18),
+                                Icon(Icons.edit, size: 18),
                                 SizedBox(width: 8),
-                                Text('Edit Profile',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+                                Text('Edit Profile', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ),
@@ -334,9 +334,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 20),
                   const Row(
                     children: [
-                      Icon(Icons.security,color: Color(0xFFD4AF37),size: 24),
+                      Icon(Icons.security, color: Color(0xFFD4AF37), size: 24),
                       SizedBox(width: 10),
-                      Text('Security & Privacy',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.white)),
+                      Text('Security & Privacy', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -344,14 +344,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   if (isGoogleUser)
                     Container(
                       padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(color: surfaceDark,borderRadius: BorderRadius.circular(15),border: Border.all(color: Colors.white10)),
+                      decoration: BoxDecoration(color: surfaceDark, borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white10)),
                       child: const Column(
                         children: [
-                          Icon(Icons.g_mobiledata,size: 48,color: Colors.white),
+                          Icon(Icons.g_mobiledata, size: 48, color: Colors.white),
                           SizedBox(height: 10),
-                          Text("Secured by Google",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16)),
+                          Text("Secured by Google", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                           SizedBox(height: 5),
-                          Text("Your account authentication and email are managed securely by Google. Passwords cannot be changed here.",textAlign: TextAlign.center,style: TextStyle(color: Colors.white54,fontSize: 12)),
+                          Text("Your account authentication and email are managed securely by Google. Passwords cannot be changed here.", textAlign: TextAlign.center, style: TextStyle(color: Colors.white54, fontSize: 12)),
                         ],
                       ),
                     )
@@ -360,21 +360,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(color: surfaceDark,borderRadius: BorderRadius.circular(15),border: Border.all(color: Colors.white10)),
+                      decoration: BoxDecoration(color: surfaceDark, borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white10)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Change Email Address",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+                          const Text("Change Email Address", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 12),
                           TextField(
-                            style: const TextStyle(color: Colors.white,fontSize: 14),
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('New Email Address'),
                             onChanged: (val) => newEmail=val,
                           ),
                           const SizedBox(height: 8),
                           TextField(
                             obscureText: true,
-                            style: const TextStyle(color: Colors.white,fontSize: 14),
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('Current Password (Required)'),
                             onChanged: (val) => emailCurrentPassword=val,
                           ),
@@ -382,9 +382,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.white10,foregroundColor: Colors.white,elevation: 0),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.white10, foregroundColor: Colors.white, elevation: 0),
                               onPressed: isSecuritySaving ? null : () => _handleSecurityAction('email'),
-                              child: const Text("Request Change",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold)),
+                              child: const Text("Request Change", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                             ),
                           )
                         ],
@@ -395,22 +395,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.only(bottom: 24),
-                      decoration: BoxDecoration(color: surfaceDark,borderRadius: BorderRadius.circular(15),border: Border.all(color: Colors.white10)),
+                      decoration: BoxDecoration(color: surfaceDark, borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white10)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Change Password",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+                          const Text("Change Password", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 12),
                           TextField(
                             obscureText: true,
-                            style: const TextStyle(color: Colors.white,fontSize: 14),
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('Current Password'),
                             onChanged: (val) => passwordCurrentPassword=val,
                           ),
                           const SizedBox(height: 8),
                           TextField(
                             obscureText: true,
-                            style: const TextStyle(color: Colors.white,fontSize: 14),
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('New Password'),
                             onChanged: (val) => newPassword=val,
                           ),
@@ -418,9 +418,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.white10,foregroundColor: Colors.white,elevation: 0),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.white10, foregroundColor: Colors.white, elevation: 0),
                               onPressed: isSecuritySaving ? null : () => _handleSecurityAction('password'),
-                              child: const Text("Update Password",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold)),
+                              child: const Text("Update Password", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                             ),
                           )
                         ],
@@ -431,24 +431,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Danger Zone (Delete Account) - Available to all users
                   Container(
                     padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(color: Colors.red.withOpacity(0.05),borderRadius: BorderRadius.circular(15),border: Border.all(color: Colors.red.withOpacity(0.2))),
+                    decoration: BoxDecoration(color: Colors.red.withOpacity(0.05), borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.red.withOpacity(0.2))),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.warning_amber_rounded,color: Colors.redAccent,size: 18),
+                            Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 18),
                             SizedBox(width: 8),
-                            Text("Danger Zone",style: TextStyle(color: Colors.redAccent,fontWeight: FontWeight.bold)),
+                            Text("Danger Zone", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        const Text("Deleting your account is permanent and cannot be undone.",style: TextStyle(color: Colors.redAccent,fontSize: 12)),
+                        const Text("Deleting your account is permanent and cannot be undone.", style: TextStyle(color: Colors.redAccent, fontSize: 12)),
                         const SizedBox(height: 12),
                         if (!isGoogleUser) ...[
                           TextField(
                             obscureText: true,
-                            style: const TextStyle(color: Colors.white,fontSize: 14),
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('Enter password to confirm'),
                             onChanged: (val) => deleteCurrentPassword=val,
                           ),
@@ -457,14 +457,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent,foregroundColor: Colors.white,elevation: 0),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white, elevation: 0),
                             onPressed: isSecuritySaving ? null : () {
                               if (isGoogleUser) {
                                 deleteCurrentPassword="GOOGLE_USER_BYPASS"; // Backend normally bypasses pass check for OAuth users
                               }
                               _handleSecurityAction('delete');
                             },
-                            child: const Text("Delete Account",style: TextStyle(fontWeight: FontWeight.bold)),
+                            child: const Text("Delete Account", style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         )
                       ],
