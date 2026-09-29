@@ -11,7 +11,7 @@ services:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # To initialize the db locally with a dump,you can uncomment below
+      # To initialize the db locally with a dump, you can uncomment below
       # - ./init-scripts:/docker-entrypoint-initdb.d
     profiles:
       - backend
@@ -85,7 +85,7 @@ services:
       - 1.1.1.1
     environment:
       - OLLAMA_HOST=http://ollama-service:11434
-    entrypoint: ["sh","-c","sleep 10 && ollama pull llama3.1"]
+    entrypoint: ["sh", "-c", "sleep 10 && ollama pull llama3.1"]
 
 volumes:
   pgdata:
