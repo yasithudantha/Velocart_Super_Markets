@@ -18,14 +18,14 @@ namespace velocart_system.API.Migrations
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
-#pragma warning disable 612,618
+#pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion","8.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength",63);
+                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCart",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -46,7 +46,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("ShoppingCarts");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCartItem",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCartItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,7 +75,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("ShoppingCartItems");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Catalog.Models.PriceHistory",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Catalog.Models.PriceHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -107,7 +107,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("PriceHistories");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Catalog.Models.Promotion",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Catalog.Models.Promotion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -151,7 +151,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("Promotions");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.Order",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -217,7 +217,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.OrderItem",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -254,7 +254,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Reviews.Models.Review",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Reviews.Models.Review", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -287,7 +287,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.Address",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -337,7 +337,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.Category",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -364,7 +364,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.Product",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -403,7 +403,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.ProductImage",b =>
+            modelBuilder.Entity("velocart_system.API.Models.ProductImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -428,7 +428,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("ProductImages");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.ProductVariant",b =>
+            modelBuilder.Entity("velocart_system.API.Models.ProductVariant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -471,7 +471,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("ProductVariants");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.User",b =>
+            modelBuilder.Entity("velocart_system.API.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -581,9 +581,9 @@ namespace velocart_system.API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCart",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCart", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.User","User")
+                    b.HasOne("velocart_system.API.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -592,15 +592,15 @@ namespace velocart_system.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCartItem",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCartItem", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.ProductVariant","Variant")
+                    b.HasOne("velocart_system.API.Models.ProductVariant", "Variant")
                         .WithMany()
                         .HasForeignKey("ProductVariantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("velocart_system.API.Features.Cart.Models.ShoppingCart","Cart")
+                    b.HasOne("velocart_system.API.Features.Cart.Models.ShoppingCart", "Cart")
                         .WithMany("Items")
                         .HasForeignKey("ShoppingCartId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -611,9 +611,9 @@ namespace velocart_system.API.Migrations
                     b.Navigation("Variant");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Catalog.Models.PriceHistory",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Catalog.Models.PriceHistory", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.ProductVariant","Variant")
+                    b.HasOne("velocart_system.API.Models.ProductVariant", "Variant")
                         .WithMany()
                         .HasForeignKey("ProductVariantId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -622,9 +622,9 @@ namespace velocart_system.API.Migrations
                     b.Navigation("Variant");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.Order",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.Order", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.User","User")
+                    b.HasOne("velocart_system.API.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -633,15 +633,15 @@ namespace velocart_system.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.OrderItem",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.OrderItem", b =>
                 {
-                    b.HasOne("velocart_system.API.Features.Orders.Models.Order","Order")
+                    b.HasOne("velocart_system.API.Features.Orders.Models.Order", "Order")
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("velocart_system.API.Models.ProductVariant","Variant")
+                    b.HasOne("velocart_system.API.Models.ProductVariant", "Variant")
                         .WithMany()
                         .HasForeignKey("ProductVariantId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -652,9 +652,9 @@ namespace velocart_system.API.Migrations
                     b.Navigation("Variant");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.Address",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Address", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.User","User")
+                    b.HasOne("velocart_system.API.Models.User", "User")
                         .WithMany("Addresses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -663,9 +663,9 @@ namespace velocart_system.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.Category",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Category", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.Category","ParentCategory")
+                    b.HasOne("velocart_system.API.Models.Category", "ParentCategory")
                         .WithMany("SubCategories")
                         .HasForeignKey("ParentCategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -673,9 +673,9 @@ namespace velocart_system.API.Migrations
                     b.Navigation("ParentCategory");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.Product",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Product", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.Category","Category")
+                    b.HasOne("velocart_system.API.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -684,9 +684,9 @@ namespace velocart_system.API.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.ProductImage",b =>
+            modelBuilder.Entity("velocart_system.API.Models.ProductImage", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.Product","Product")
+                    b.HasOne("velocart_system.API.Models.Product", "Product")
                         .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -695,9 +695,9 @@ namespace velocart_system.API.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.ProductVariant",b =>
+            modelBuilder.Entity("velocart_system.API.Models.ProductVariant", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.Product","Product")
+                    b.HasOne("velocart_system.API.Models.Product", "Product")
                         .WithMany("Variants")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -706,35 +706,35 @@ namespace velocart_system.API.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCart",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Cart.Models.ShoppingCart", b =>
                 {
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.Order",b =>
+            modelBuilder.Entity("velocart_system.API.Features.Orders.Models.Order", b =>
                 {
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.Category",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Category", b =>
                 {
                     b.Navigation("Products");
 
                     b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.Product",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Product", b =>
                 {
                     b.Navigation("Images");
 
                     b.Navigation("Variants");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.User",b =>
+            modelBuilder.Entity("velocart_system.API.Models.User", b =>
                 {
                     b.Navigation("Addresses");
                 });
-#pragma warning restore 612,618
+#pragma warning restore 612, 618
         }
     }
 }

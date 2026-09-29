@@ -1,27 +1,28 @@
-import { useEffect,useState } from 'react';
-import { useSearchParams,useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle,XCircle,Loader2,ArrowRight } from 'lucide-react';
+import type { Variants } from 'framer-motion';
+import { CheckCircle, XCircle, Loader2, ArrowRight } from 'lucide-react';
 import { verifyEmail } from '../api/authApi';
 
 export default function VerifyEmail() {
-    const [searchParams]=useSearchParams();
-    const navigate=useNavigate();
-    const token=searchParams.get('token');
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const token = searchParams.get('token');
 
-    const [status,setStatus]=useState<'loading' | 'success' | 'error'>('loading');
-    const [message,setMessage]=useState('Verifying your digital identity...');
+    const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+    const [message, setMessage] = useState('Verifying your digital identity...');
 
     useEffect(() => {
-        if(!token) {
+        if (!token) {
             setStatus('error');
             setMessage('No verification token provided in the URL.');
             return;
         }
 
-        const verify=async () => {
+        const verify = async () => {
             try {
-                const result=await verifyEmail(token);
+                const result = await verifyEmail(token);
                 setStatus('success');
                 setMessage(result.message);
             } catch (err: any) {
@@ -31,11 +32,11 @@ export default function VerifyEmail() {
         };
 
         verify();
-    },[token]);
+    }, [token]);
 
-    const containerVariants={
-        hidden: { opacity: 0,scale: 0.95 },
-        show: { opacity: 1,scale: 1,transition: { duration: 0.5 } }
+    const containerVariants: Variants = {
+        hidden: { opacity: 0, scale: 0.95 },
+        show: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
     };
 
     return (

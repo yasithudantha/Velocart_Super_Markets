@@ -12,23 +12,23 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final Color bgDark=const Color(0xFF050505);
-  final Color surfaceDark=const Color(0xFF121212);
-  final Color primaryGold=const Color(0xFFD4AF37);
+  final Color bgDark = const Color(0xFF050505);
+  final Color surfaceDark = const Color(0xFF121212);
+  final Color primaryGold = const Color(0xFFD4AF37);
 
   Map<String, dynamic>? profileData;
-  bool isLoading=true;
-  bool isEditing=false;
-  bool isSaving=false;
+  bool isLoading = true;
+  bool isEditing = false;
+  bool isSaving = false;
 
-  final TextEditingController _nameController=TextEditingController();
-  final TextEditingController _phoneController=TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   // NEW: Security Zone States
-  bool isSecuritySaving=false;
-  String newEmail='', emailCurrentPassword='';
-  String newPassword='', passwordCurrentPassword='';
-  String deleteCurrentPassword='';
+  bool isSecuritySaving = false;
+  String newEmail = '', emailCurrentPassword = '';
+  String newPassword = '', passwordCurrentPassword = '';
+  String deleteCurrentPassword = '';
 
   @override
   void initState() {
@@ -38,19 +38,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchProfile() async {
     try {
-      final data=await UserApiService.getUserProfile();
+      final data = await UserApiService.getUserProfile();
       setState(() {
-        profileData=data;
-        _nameController.text=data['fullName'] ?? '';
-        _phoneController.text=data['phoneNumber'] ?? '';
-        isLoading=false;
+        profileData = data;
+        _nameController.text = data['fullName'] ?? '';
+        _phoneController.text = data['phoneNumber'] ?? '';
+        isLoading = false;
       });
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
         _logout(); // Kick user out if token is invalid/expired
       } else {
         _showSnackBar(e.toString(), Colors.redAccent);
-        setState(() => isLoading=false);
+        setState(() => isLoading = false);
       }
     }
   }
@@ -61,45 +61,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    setState(() => isSaving=true);
+    setState(() => isSaving = true);
     try {
-      final cleanedPhone=_phoneController.text.replaceAll(RegExp(r'\s+'), '');
+      final cleanedPhone = _phoneController.text.replaceAll(RegExp(r'\s+'), '');
       
-      final msg=await UserApiService.updateUserProfile({
+      final msg = await UserApiService.updateUserProfile({
         'fullName': _nameController.text.trim(),
         'phoneNumber': cleanedPhone,
       });
 
       setState(() {
-        profileData!['fullName']=_nameController.text.trim();
-        profileData!['phoneNumber']=cleanedPhone;
-        isEditing=false;
+        profileData!['fullName'] = _nameController.text.trim();
+        profileData!['phoneNumber'] = cleanedPhone;
+        isEditing = false;
       });
       _showSnackBar(msg, Colors.green);
     } catch (e) {
       _showSnackBar(e.toString(), Colors.redAccent);
     } finally {
-      setState(() => isSaving=false);
+      setState(() => isSaving = false);
     }
   }
 
   // NEW: Handle Security Actions
   Future<void> _handleSecurityAction(String action) async {
-    setState(() => isSecuritySaving=true);
+    setState(() => isSecuritySaving = true);
     try {
       if (action == 'email') {
         if (newEmail.isEmpty || emailCurrentPassword.isEmpty) throw "Please fill all email change fields.";
-        final msg=await UserApiService.requestEmailChange({'newEmail': newEmail, 'currentPassword': emailCurrentPassword});
+        final msg = await UserApiService.requestEmailChange({'newEmail': newEmail, 'currentPassword': emailCurrentPassword});
         _showSnackBar(msg, Colors.green);
       } else if (action == 'password') {
         if (newPassword.isEmpty || passwordCurrentPassword.isEmpty) throw "Please fill all password fields.";
-        final msg=await UserApiService.changePassword({'newPassword': newPassword, 'currentPassword': passwordCurrentPassword});
+        final msg = await UserApiService.changePassword({'newPassword': newPassword, 'currentPassword': passwordCurrentPassword});
         _showSnackBar(msg, Colors.green);
       } else if (action == 'delete') {
         if (deleteCurrentPassword.isEmpty) throw "Password required to delete account.";
-        final confirm=await _showDeleteConfirmation();
+        final confirm = await _showDeleteConfirmation();
         if (confirm == true) {
-          final msg=await UserApiService.deleteAccount({'currentPassword': deleteCurrentPassword});
+          final msg = await UserApiService.deleteAccount({'currentPassword': deleteCurrentPassword});
           _showSnackBar(msg, Colors.green);
           _logout();
           return;
@@ -108,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       _showSnackBar(e.toString().replaceAll('Exception: ', ''), Colors.redAccent);
     } finally {
-      setState(() => isSecuritySaving=false);
+      setState(() => isSecuritySaving = false);
     }
   }
 
@@ -133,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _logout() async {
-    final prefs=await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     await prefs.remove('velocart_token');
     await prefs.remove('velocart_user');
     
@@ -211,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isGoogleUser=profileData != null && (profileData!['authProvider'] == 'GOOGLE' || (profileData!['passwordHash'] == null && profileData!['profilePictureUrl'] != null));
+    bool isGoogleUser = profileData != null && (profileData!['authProvider'] == 'GOOGLE' || (profileData!['passwordHash'] == null && profileData!['profilePictureUrl'] != null));
 
     return Scaffold(
       backgroundColor: bgDark,
@@ -282,9 +282,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      isEditing=false;
-                                      _nameController.text=profileData!['fullName'];
-                                      _phoneController.text=profileData!['phoneNumber'];
+                                      isEditing = false;
+                                      _nameController.text = profileData!['fullName'];
+                                      _phoneController.text = profileData!['phoneNumber'];
                                     });
                                   },
                                   child: const Text('Cancel'),
@@ -314,7 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               elevation: 0,
                             ),
-                            onPressed: () => setState(() => isEditing=true),
+                            onPressed: () => setState(() => isEditing = true),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -369,14 +369,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           TextField(
                             style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('New Email Address'),
-                            onChanged: (val) => newEmail=val,
+                            onChanged: (val) => newEmail = val,
                           ),
                           const SizedBox(height: 8),
                           TextField(
                             obscureText: true,
                             style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('Current Password (Required)'),
-                            onChanged: (val) => emailCurrentPassword=val,
+                            onChanged: (val) => emailCurrentPassword = val,
                           ),
                           const SizedBox(height: 12),
                           Align(
@@ -405,14 +405,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             obscureText: true,
                             style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('Current Password'),
-                            onChanged: (val) => passwordCurrentPassword=val,
+                            onChanged: (val) => passwordCurrentPassword = val,
                           ),
                           const SizedBox(height: 8),
                           TextField(
                             obscureText: true,
                             style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('New Password'),
-                            onChanged: (val) => newPassword=val,
+                            onChanged: (val) => newPassword = val,
                           ),
                           const SizedBox(height: 12),
                           Align(
@@ -450,7 +450,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             obscureText: true,
                             style: const TextStyle(color: Colors.white, fontSize: 14),
                             decoration: _securityInputDecoration('Enter password to confirm'),
-                            onChanged: (val) => deleteCurrentPassword=val,
+                            onChanged: (val) => deleteCurrentPassword = val,
                           ),
                           const SizedBox(height: 12),
                         ],
@@ -460,7 +460,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white, elevation: 0),
                             onPressed: isSecuritySaving ? null : () {
                               if (isGoogleUser) {
-                                deleteCurrentPassword="GOOGLE_USER_BYPASS"; // Backend normally bypasses pass check for OAuth users
+                                deleteCurrentPassword = "GOOGLE_USER_BYPASS"; // Backend normally bypasses pass check for OAuth users
                               }
                               _handleSecurityAction('delete');
                             },

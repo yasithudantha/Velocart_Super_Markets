@@ -15,20 +15,20 @@ namespace velocart_system.API.Migrations
                 name: "StorefrontBanners",
                 columns: table => new
                 {
-                    Id=table.Column<int>(type: "integer",nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title=table.Column<string>(type: "character varying(100)",maxLength: 100,nullable: false),
-                    Subtitle=table.Column<string>(type: "character varying(200)",maxLength: 200,nullable: false),
-                    Discount=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
-                    Timer=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
-                    Label=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
-                    Image=table.Column<string>(type: "text",nullable: false),
-                    Accent=table.Column<string>(type: "character varying(100)",maxLength: 100,nullable: false),
-                    IsActive=table.Column<bool>(type: "boolean",nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Subtitle = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Discount = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Timer = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Label = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Image = table.Column<string>(type: "text", nullable: false),
+                    Accent = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StorefrontBanners",x => x.Id);
+                    table.PrimaryKey("PK_StorefrontBanners", x => x.Id);
                 });
         }
 

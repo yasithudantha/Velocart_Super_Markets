@@ -4,7 +4,7 @@ using velocart_system.API.Models;
 
 namespace velocart_system.API.Features.Inventory.Models
 {
-    public enum ReservationStatus { Active,Consumed,Released }
+    public enum ReservationStatus { Active, Consumed, Released }
 
     public class StockReservation
     {
@@ -13,17 +13,17 @@ namespace velocart_system.API.Features.Inventory.Models
 
         [Required]
         public int ProductVariantId { get; set; }
-        public ProductVariant ProductVariant { get; set; }=null!;
+        public ProductVariant ProductVariant { get; set; } = null!;
 
         public int UserId { get; set; } // Customer holding the stock
 
         [Required]
         public int Quantity { get; set; }
 
-        public DateTime ReservedAt { get; set; }=DateTime.UtcNow;
+        public DateTime ReservedAt { get; set; } = DateTime.UtcNow;
         public DateTime ExpiresAt { get; set; } // Timeout to auto-release stock
 
         [Required]
-        public ReservationStatus Status { get; set; }=ReservationStatus.Active;
+        public ReservationStatus Status { get; set; } = ReservationStatus.Active;
     }
 }

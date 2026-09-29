@@ -1,40 +1,10 @@
-# Secrets
-.env
-.env.*
-*.secret
-
-# Node / React
 node_modules/
-dist/
-build/
-.npm/
-
-# .NET / C#
+venv/
+__pycache__/
+.env
+.env.local
 bin/
 obj/
-TestResults/
-*.user
-*.suo
-.vs/
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-venv/
-.venv/
-
-# Flutter / Dart
-.dart_tool/
-.packages
-build/
-.pub/
-
-# Database
 *.dump
-*.sql
-pgdata/
-
-# OS Files
-.DS_Store
-Thumbs.db
+.dart_tool/
+build/

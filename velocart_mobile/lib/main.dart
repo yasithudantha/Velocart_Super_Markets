@@ -17,7 +17,7 @@ class VelocartApp extends StatefulWidget {
 }
 
 class _VelocartAppState extends State<VelocartApp> {
-  Widget _initialScreen=const Scaffold(body: Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))));
+  Widget _initialScreen = const Scaffold(body: Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))));
 
   @override
   void initState() {
@@ -26,14 +26,14 @@ class _VelocartAppState extends State<VelocartApp> {
   }
 
   Future<void> _checkLoginStatus() async {
-    final prefs=await SharedPreferences.getInstance();
-    final token=prefs.getString('velocart_token');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('velocart_token');
 
-    if(token != null && token.isNotEmpty) {
-      CatalogApi.jwtToken=token; // Inject token globally
-      setState(() => _initialScreen=const CatalogScreen());
+    if (token != null && token.isNotEmpty) {
+      CatalogApi.jwtToken = token; // Inject token globally
+      setState(() => _initialScreen = const CatalogScreen());
     } else {
-      setState(() => _initialScreen=const LoginScreen());
+      setState(() => _initialScreen = const LoginScreen());
     }
   }
 
@@ -43,7 +43,7 @@ class _VelocartAppState extends State<VelocartApp> {
       title: 'Velocart SmartMart',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Inter',
+        fontFamily: 'Inter', 
         useMaterial3: true,
       ),
       home: VideoSplashScreen(),

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useEffect } from 'react';
-import { BrowserRouter as Router,Routes,Route,Navigate,useNavigate,useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import LandingPage from './features/landing/components/LandingPage';
 import Register from './features/auth/components/Register';
 import Login from './features/auth/components/Login';
@@ -26,62 +26,62 @@ import MainAdminDashboard from './features/admin/components/MainAdminDashboard';
 // FEATURE 5: IDLE TIMEOUT ENGINE
 // ==========================================
 function SessionGuard({ children }: { children: ReactNode }) {
-  const navigate=useNavigate();
-  const location=useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>;
     
-    const handleActivity=() => {
+    const handleActivity = () => {
       clearTimeout(timeoutId);
       // 30 Minute Idle Timeout
-      timeoutId=setTimeout(() => {
-        if(localStorage.getItem('token')) {
+      timeoutId = setTimeout(() => {
+        if (localStorage.getItem('token')) {
           localStorage.clear();
-          navigate('/login?session=idle',{ replace: true });
+          navigate('/login?session=idle', { replace: true });
         }
-      },30 * 60 * 1000); 
+      }, 30 * 60 * 1000); 
     };
 
     // Listeners for activity
-    const events=['mousemove','keydown','click','scroll','touchstart'];
-    events.forEach(event => window.addEventListener(event,handleActivity));
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    events.forEach(event => window.addEventListener(event, handleActivity));
     handleActivity(); // Initialize
 
     return () => {
-      events.forEach(event => window.removeEventListener(event,handleActivity));
+      events.forEach(event => window.removeEventListener(event, handleActivity));
       clearTimeout(timeoutId);
     };
-  },[navigate,location.pathname]);
+  }, [navigate, location.pathname]);
 
   return children;
 }
 
 function PrivateRoute({ children }: { children: ReactNode }) {
-  const token=localStorage.getItem('token');
-  const location=useLocation();
-  if(!token) return <Navigate to="/login" state={{ from: location }} replace />;
+  const token = localStorage.getItem('token');
+  const location = useLocation();
+  if (!token) return <Navigate to="/login" state={{ from: location }} replace />;
   return children;
 }
 
-function AdminRoute({ children,allowedRoles }: { children: ReactNode,allowedRoles: string[] }) {
-  const token=localStorage.getItem('token');
-  const userStr=localStorage.getItem('user');
-  const location=useLocation();
+function AdminRoute({ children, allowedRoles }: { children: ReactNode, allowedRoles: string[] }) {
+  const token = localStorage.getItem('token');
+  const userStr = localStorage.getItem('user');
+  const location = useLocation();
 
-  if(!token || !userStr) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!token || !userStr) return <Navigate to="/login" state={{ from: location }} replace />;
 
-  const user=JSON.parse(userStr);
-  const userRole=String(user.role || user.Role || '').toUpperCase();
+  const user = JSON.parse(userStr);
+  const userRole = String(user.role || user.Role || '').toUpperCase();
   
-  if(!allowedRoles.includes(userRole)) {
+  if (!allowedRoles.includes(userRole)) {
       return <Navigate to="/catalog" replace />;
   }
   return children;
 }
 
 function LoginWrapper() {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   return <Login onSwitchToRegister={() => navigate('/register')} />;
 }
 
@@ -111,30 +111,30 @@ function App() {
           <Route path="/orders" element={<PrivateRoute><OrderHistory /></PrivateRoute>} />
 
           {/* SECURE ADMIN ROUTES */}
-          <Route path="/admin/catalog" element={<AdminRoute allowedRoles={['ADMIN','PRODUCTMANAGER']}><AdminCatalog /></AdminRoute>} />
-          <Route path="/admin/products/new" element={<AdminRoute allowedRoles={['ADMIN','PRODUCTMANAGER']}><AdminProductCreator /></AdminRoute>} />
+          <Route path="/admin/catalog" element={<AdminRoute allowedRoles={['ADMIN', 'PRODUCTMANAGER']}><AdminCatalog /></AdminRoute>} />
+          <Route path="/admin/products/new" element={<AdminRoute allowedRoles={['ADMIN', 'PRODUCTMANAGER']}><AdminProductCreator /></AdminRoute>} />
           
           <Route path="/admin/purchase-orders" element={
-            <AdminRoute allowedRoles={['ADMIN','PRODUCTMANAGER']}>
+            <AdminRoute allowedRoles={['ADMIN', 'PRODUCTMANAGER']}>
                 <PurchaseOrderManager />
             </AdminRoute>
           } />
 
           <Route path="/admin/delivery-management" element={
-            <AdminRoute allowedRoles={['ADMIN','DELIVERYMANAGER']}>
+            <AdminRoute allowedRoles={['ADMIN', 'DELIVERYMANAGER']}>
                 <DeliveryManagerDashboard />
             </AdminRoute>
           } />
 
           <Route path="/admin/inventory" element={
-            <AdminRoute allowedRoles={['ADMIN','PRODUCTMANAGER']}>
+            <AdminRoute allowedRoles={['ADMIN', 'PRODUCTMANAGER']}>
                 <RealTimeInventoryDashboard />
             </AdminRoute>
           } />
 
           {/* THE NEW PROMOTION MANAGER ROUTE */}
           <Route path="/admin/promotions" element={
-            <AdminRoute allowedRoles={['ADMIN','PROMOTIONMANAGER']}>
+            <AdminRoute allowedRoles={['ADMIN', 'PROMOTIONMANAGER']}>
                 <PromotionManagerDashboard />
             </AdminRoute>
           } />

@@ -30,9 +30,9 @@ namespace velocart_system.API.Features.Loyalty.Models
         [Required]
         public int RemainingPoints { get; set; }
 
-        public bool IsExpired { get; set; }=false;
+        public bool IsExpired { get; set; } = false;
 
-        public DateTime EarnedAt { get; set; }=DateTime.UtcNow;
+        public DateTime EarnedAt { get; set; } = DateTime.UtcNow;
         public DateTime ExpiresAt { get; set; } 
     }
 }

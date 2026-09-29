@@ -3,32 +3,32 @@ import { motion } from 'framer-motion';
 import { LayoutDashboard, History, AlertTriangle, DollarSign, Package, AlertOctagon, ArrowUpRight, ArrowDownRight, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL='http://localhost:5176/api';
+const API_URL = 'http://localhost:5176/api';
 
-const getAuthHeader=() => ({
+const getAuthHeader = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 });
 
 export default function RealTimeInventoryDashboard() {
-    const [activeTab, setActiveTab]=useState<'OVERVIEW' | 'LEDGER'>('OVERVIEW');
-    const [dashboardData, setDashboardData]=useState<any>(null);
-    const [ledgerData, setLedgerData]=useState<any[]>([]);
-    const [isLoading, setIsLoading]=useState(true);
-    const [error, setError]=useState('');
+    const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'LEDGER'>('OVERVIEW');
+    const [dashboardData, setDashboardData] = useState<any>(null);
+    const [ledgerData, setLedgerData] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         fetchData();
     }, [activeTab]);
 
-    const fetchData=async () => {
+    const fetchData = async () => {
         setIsLoading(true);
         setError('');
         try {
             if (activeTab === 'OVERVIEW') {
-                const response=await axios.get(`${API_URL}/inventory/dashboard`, getAuthHeader());
+                const response = await axios.get(`${API_URL}/inventory/dashboard`, getAuthHeader());
                 setDashboardData(response.data);
             } else {
-                const response=await axios.get(`${API_URL}/inventory/audit-ledger`, getAuthHeader());
+                const response = await axios.get(`${API_URL}/inventory/audit-ledger`, getAuthHeader());
                 setLedgerData(response.data);
             }
         } catch (err: any) {
@@ -38,7 +38,7 @@ export default function RealTimeInventoryDashboard() {
         }
     };
 
-    const getTransactionColor=(type: string) => {
+    const getTransactionColor = (type: string) => {
         switch (type) {
             case 'Received': return 'text-green-400 bg-green-500/10 border-green-500/20';
             case 'Sold': return 'text-blue-400 bg-blue-500/10 border-blue-500/20';

@@ -17,15 +17,15 @@ namespace velocart_system.API.Features.Loyalty.Models
         [JsonIgnore]
         public LoyaltyAccount? LoyaltyAccount { get; set; }
 
-        [Required,MaxLength(50)]
-        public string PreviousTierName { get; set; }=string.Empty;
+        [Required, MaxLength(50)]
+        public string PreviousTierName { get; set; } = string.Empty;
 
-        [Required,MaxLength(50)]
-        public string NewTierName { get; set; }=string.Empty;
+        [Required, MaxLength(50)]
+        public string NewTierName { get; set; } = string.Empty;
 
-        [Required,MaxLength(255)]
-        public string Reason { get; set; }=string.Empty; // e.g.,"Annual Review Downgrade","Points Threshold Reached"
+        [Required, MaxLength(255)]
+        public string Reason { get; set; } = string.Empty; // e.g., "Annual Review Downgrade", "Points Threshold Reached"
 
-        public DateTime ChangedAt { get; set; }=DateTime.UtcNow;
+        public DateTime ChangedAt { get; set; } = DateTime.UtcNow;
     }
 }

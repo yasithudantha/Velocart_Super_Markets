@@ -16,17 +16,17 @@ namespace velocart_system.API.Migrations
                 name: "OrderLocations",
                 columns: table => new
                 {
-                    Id=table.Column<int>(type: "integer",nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OrderId=table.Column<int>(type: "integer",nullable: false),
-                    Latitude=table.Column<double>(type: "double precision",nullable: false),
-                    Longitude=table.Column<double>(type: "double precision",nullable: false),
-                    PlaceName=table.Column<string>(type: "character varying(255)",maxLength: 255,nullable: false),
-                    Timestamp=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Longitude = table.Column<double>(type: "double precision", nullable: false),
+                    PlaceName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderLocations",x => x.Id);
+                    table.PrimaryKey("PK_OrderLocations", x => x.Id);
                     table.ForeignKey(
                         name: "FK_OrderLocations_Orders_OrderId",
                         column: x => x.OrderId,

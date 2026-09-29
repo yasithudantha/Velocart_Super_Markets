@@ -10,19 +10,19 @@ namespace velocart_system.API.Features.Taxes.Models
         [Key]
         public int Id { get; set; }
 
-        [Required,MaxLength(100)]
-        public string Name { get; set; }=string.Empty; // e.g.,"Standard VAT","Beverage Tax"
+        [Required, MaxLength(100)]
+        public string Name { get; set; } = string.Empty; // e.g., "Standard VAT", "Beverage Tax"
 
-        [Column(TypeName="decimal(5,2)")]
+        [Column(TypeName = "decimal(5,2)")]
         public decimal RatePercentage { get; set; }
 
-        public DateTime StartDate { get; set; }=DateTime.UtcNow;
+        public DateTime StartDate { get; set; } = DateTime.UtcNow;
         public DateTime? EndDate { get; set; }
 
-        public bool IsActive { get; set; }=true;
-        public DateTime CreatedAt { get; set; }=DateTime.UtcNow;
+        public bool IsActive { get; set; } = true;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public List<TaxRuleProduct> TaxRuleProducts { get; set; }=new List<TaxRuleProduct>();
-        public List<TaxRuleCategory> TaxRuleCategories { get; set; }=new List<TaxRuleCategory>();
+        public List<TaxRuleProduct> TaxRuleProducts { get; set; } = new List<TaxRuleProduct>();
+        public List<TaxRuleCategory> TaxRuleCategories { get; set; } = new List<TaxRuleCategory>();
     }
 }

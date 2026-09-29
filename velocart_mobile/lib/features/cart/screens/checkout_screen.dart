@@ -16,18 +16,18 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  String deliveryAddress='';
-  TextEditingController addressController=TextEditingController();
-  bool isEditingAddress=false;
-  bool isLoadingData=true;
+  String deliveryAddress = '';
+  TextEditingController addressController = TextEditingController();
+  bool isEditingAddress = false;
+  bool isLoadingData = true;
 
-  int userPointsBalance=0;
-  int pointsToRedeem=0;
+  int userPointsBalance = 0;
+  int pointsToRedeem = 0;
 
-  String paymentMethod='CARD';
-  String idempotencyKey='';
-  String gatewayStatus='';
-  bool isCheckingOut=false;
+  String paymentMethod = 'CARD';
+  String idempotencyKey = '';
+  String gatewayStatus = '';
+  bool isCheckingOut = false;
   Map<String, dynamic>? checkoutSuccess;
 
   @override
@@ -38,32 +38,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   void _generateIdempotencyKey() {
-    final rand=Random();
-    idempotencyKey='${DateTime.now().millisecondsSinceEpoch}-${rand.nextInt(999999)}';
+    final rand = Random();
+    idempotencyKey = '${DateTime.now().millisecondsSinceEpoch}-${rand.nextInt(999999)}';
   }
 
   Future<void> _fetchUserData() async {
     try {
-      final prefs=await SharedPreferences.getInstance();
-      final token=prefs.getString('velocart_token');
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('velocart_token');
 
-      final addressRes=await http.get(Uri.parse('${AuthApiService.baseUrl}/Address'), headers: {'Authorization': 'Bearer $token'});
+      final addressRes = await http.get(Uri.parse('${AuthApiService.baseUrl}/Address'), headers: {'Authorization': 'Bearer $token'});
       if (addressRes.statusCode == 200) {
-        final List addresses=jsonDecode(addressRes.body);
+        final List addresses = jsonDecode(addressRes.body);
         if (addresses.isNotEmpty) {
-           final def=addresses.firstWhere((a) => a['isDefault'] == true, orElse: () => addresses[0]);
-           deliveryAddress="${def['streetLine1']}${def['streetLine2'] != null ? ', ' + def['streetLine2'] : ''}, ${def['city']}, ${def['postalCode']}, ${def['country']}";
+           final def = addresses.firstWhere((a) => a['isDefault'] == true, orElse: () => addresses[0]);
+           deliveryAddress = "${def['streetLine1']}${def['streetLine2'] != null ? ', ' + def['streetLine2'] : ''}, ${def['city']}, ${def['postalCode']}, ${def['country']}";
         }
       }
-      addressController.text=deliveryAddress;
+      addressController.text = deliveryAddress;
 
-      final loyaltyRes=await http.get(Uri.parse('${AuthApiService.baseUrl}/Loyalty/dashboard'), headers: {'Authorization': 'Bearer $token'});
+      final loyaltyRes = await http.get(Uri.parse('${AuthApiService.baseUrl}/Loyalty/dashboard'), headers: {'Authorization': 'Bearer $token'});
       if (loyaltyRes.statusCode == 200) {
-        userPointsBalance=jsonDecode(loyaltyRes.body)['currentPointsBalance'] ?? 0;
+        userPointsBalance = jsonDecode(loyaltyRes.body)['currentPointsBalance'] ?? 0;
       }
-      setState(() => isLoadingData=false);
+      setState(() => isLoadingData = false);
     } catch (e) {
-      setState(() => isLoadingData=false);
+      setState(() => isLoadingData = false);
     }
   }
 
@@ -127,15 +127,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Future<void> _handlePlaceOrder({bool force=false}) async {
-    setState(() => isCheckingOut=true);
+  Future<void> _handlePlaceOrder({bool force = false}) async {
+    setState(() => isCheckingOut = true);
     
     if (paymentMethod == 'CARD') {
-      setState(() => gatewayStatus="Connecting to secure payment gateway...");
+      setState(() => gatewayStatus = "Connecting to secure payment gateway...");
     }
 
     try {
-      final responseData=await CatalogApi.checkoutOrder(
+      final responseData = await CatalogApi.checkoutOrder(
         deliveryAddress: deliveryAddress.isEmpty ? "123 Default Street, Colombo" : deliveryAddress,
         expectedTotal: widget.cartData['grandTotal'],
         forceCheckout: force,
@@ -146,14 +146,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // PRESERVED LOGIC: Catching the 409 Conflict
       if (responseData['statusCode'] == 409) {
-        setState(() { isCheckingOut=false; gatewayStatus=''; });
+        setState(() { isCheckingOut = false; gatewayStatus = ''; });
         _generateIdempotencyKey(); 
         _showPriceConflictDialog(responseData);
         return;
       }
 
       if (responseData['stripeUrl'] != null && responseData['stripeUrl'].toString().isNotEmpty) {
-        final Uri stripeUri=Uri.parse(responseData['stripeUrl']);
+        final Uri stripeUri = Uri.parse(responseData['stripeUrl']);
         if (!await launchUrl(stripeUri, mode: LaunchMode.externalApplication)) {
           throw 'Could not launch secure payment gateway.';
         }
@@ -162,12 +162,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
 
       setState(() {
-        checkoutSuccess=responseData;
-        isCheckingOut=false;
-        gatewayStatus='';
+        checkoutSuccess = responseData;
+        isCheckingOut = false;
+        gatewayStatus = '';
       });
     } catch (e) {
-      setState(() { isCheckingOut=false; gatewayStatus=''; });
+      setState(() { isCheckingOut = false; gatewayStatus = ''; });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red));
     }
   }
@@ -242,8 +242,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     }
 
-    double finalTotal=(widget.cartData['grandTotal'] ?? 0.0) - pointsToRedeem;
-    if (finalTotal < 0) finalTotal=0;
+    double finalTotal = (widget.cartData['grandTotal'] ?? 0.0) - pointsToRedeem;
+    if (finalTotal < 0) finalTotal = 0;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -267,7 +267,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   children: [
                     const Text("Delivery Address", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     TextButton(
-                      onPressed: () => setState(() => isEditingAddress=!isEditingAddress),
+                      onPressed: () => setState(() => isEditingAddress = !isEditingAddress),
                       child: Text(isEditingAddress ? "Save" : "Edit", style: const TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
                     )
                   ],
@@ -282,7 +282,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFD4AF37)))
                       ),
-                      onChanged: (val) => deliveryAddress=val,
+                      onChanged: (val) => deliveryAddress = val,
                     )
                   : Text(deliveryAddress.isEmpty ? "No address saved. Please edit." : deliveryAddress, style: const TextStyle(color: Colors.black87)),
               ],
@@ -314,15 +314,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           contentPadding: const EdgeInsets.symmetric(horizontal: 10)
                         ),
                         onChanged: (val) {
-                          int parsed=int.tryParse(val) ?? 0;
-                          setState(() => pointsToRedeem=parsed > userPointsBalance ? userPointsBalance : parsed);
+                          int parsed = int.tryParse(val) ?? 0;
+                          setState(() => pointsToRedeem = parsed > userPointsBalance ? userPointsBalance : parsed);
                         },
                       ),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[200], foregroundColor: Colors.black),
-                      onPressed: () => setState(() => pointsToRedeem=userPointsBalance),
+                      onPressed: () => setState(() => pointsToRedeem = userPointsBalance),
                       child: const Text("MAX"),
                     )
                   ],
@@ -348,7 +348,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   children: [
                     Expanded(
                       child: InkWell(
-                        onTap: () => setState(() => paymentMethod='CARD'),
+                        onTap: () => setState(() => paymentMethod = 'CARD'),
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(color: paymentMethod == 'CARD' ? const Color(0xFFD4AF37).withOpacity(0.1) : Colors.transparent, border: Border.all(color: paymentMethod == 'CARD' ? const Color(0xFFD4AF37) : Colors.grey.shade300), borderRadius: BorderRadius.circular(10)),
@@ -359,7 +359,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: InkWell(
-                        onTap: () => setState(() => paymentMethod='COD'),
+                        onTap: () => setState(() => paymentMethod = 'COD'),
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(color: paymentMethod == 'COD' ? const Color(0xFFD4AF37).withOpacity(0.1) : Colors.transparent, border: Border.all(color: paymentMethod == 'COD' ? const Color(0xFFD4AF37) : Colors.grey.shade300), borderRadius: BorderRadius.circular(10)),
