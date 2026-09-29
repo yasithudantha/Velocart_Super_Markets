@@ -11,7 +11,7 @@ class LoyaltyApiService {
     return 'http://localhost:5176/api';
   }
 
-  static Future<Map<String,String>> _getAuthHeaders() async {
+  static Future<Map<String, String>> _getAuthHeaders() async {
     final prefs=await SharedPreferences.getInstance();
     final token=prefs.getString('velocart_token') ?? '';
     return {
@@ -20,9 +20,9 @@ class LoyaltyApiService {
     };
   }
 
-  static Future<Map<String,dynamic>> getDashboard() async {
+  static Future<Map<String, dynamic>> getDashboard() async {
     final headers=await _getAuthHeaders();
-    final response=await http.get(Uri.parse('$baseUrl/loyalty/dashboard'),headers: headers);
+    final response=await http.get(Uri.parse('$baseUrl/loyalty/dashboard'), headers: headers);
     
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
