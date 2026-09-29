@@ -96,23 +96,23 @@ namespace velocart_system.API.Migrations
                 name: "LoyaltyAccounts",
                 columns: table => new
                 {
-                    Id=table.Column<int>(type: "integer",nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId=table.Column<int>(type: "integer",nullable: false),
-                    LoyaltyIdNumber=table.Column<string>(type: "character varying(20)",maxLength: 20,nullable: false),
-                    Tier=table.Column<string>(type: "character varying(20)",maxLength: 20,nullable: false),
-                    TotalPointsEarned=table.Column<int>(type: "integer",nullable: false),
-                    TotalPointsRedeemed=table.Column<int>(type: "integer",nullable: false),
-                    CurrentPointsBalance=table.Column<int>(type: "integer",nullable: false),
-                    TotalEligibleSpend=table.Column<decimal>(type: "numeric",nullable: false),
-                    Status=table.Column<string>(type: "character varying(20)",maxLength: 20,nullable: false),
-                    CreatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false),
-                    UpdatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false),
-                    ExpiryDate=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    LoyaltyIdNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Tier = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    TotalPointsEarned = table.Column<int>(type: "integer", nullable: false),
+                    TotalPointsRedeemed = table.Column<int>(type: "integer", nullable: false),
+                    CurrentPointsBalance = table.Column<int>(type: "integer", nullable: false),
+                    TotalEligibleSpend = table.Column<decimal>(type: "numeric", nullable: false),
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LoyaltyAccounts",x => x.Id);
+                    table.PrimaryKey("PK_LoyaltyAccounts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LoyaltyAccounts_Users_UserId",
                         column: x => x.UserId,
@@ -125,20 +125,20 @@ namespace velocart_system.API.Migrations
                 name: "LoyaltyTransactions",
                 columns: table => new
                 {
-                    Id=table.Column<int>(type: "integer",nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    LoyaltyAccountId=table.Column<int>(type: "integer",nullable: false),
-                    OrderId=table.Column<int>(type: "integer",nullable: true),
-                    TransactionType=table.Column<string>(type: "character varying(50)",maxLength: 50,nullable: false),
-                    Points=table.Column<int>(type: "integer",nullable: false),
-                    BalanceBefore=table.Column<int>(type: "integer",nullable: false),
-                    BalanceAfter=table.Column<int>(type: "integer",nullable: false),
-                    Reason=table.Column<string>(type: "character varying(255)",maxLength: 255,nullable: false),
-                    CreatedAt=table.Column<DateTime>(type: "timestamp with time zone",nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LoyaltyAccountId = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<int>(type: "integer", nullable: true),
+                    TransactionType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Points = table.Column<int>(type: "integer", nullable: false),
+                    BalanceBefore = table.Column<int>(type: "integer", nullable: false),
+                    BalanceAfter = table.Column<int>(type: "integer", nullable: false),
+                    Reason = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LoyaltyTransactions",x => x.Id);
+                    table.PrimaryKey("PK_LoyaltyTransactions", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LoyaltyTransactions_LoyaltyAccounts_LoyaltyAccountId",
                         column: x => x.LoyaltyAccountId,

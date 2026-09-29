@@ -19,21 +19,21 @@ class CatalogScreen extends StatefulWidget {
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
-  List<Product> products=[];
-  List<Category> categories=[];
-  bool isLoading=true;
-  String error='';
+  List<Product> products = [];
+  List<Category> categories = [];
+  bool isLoading = true;
+  String error = '';
 
   // Filter States
-  String searchTerm='';
+  String searchTerm = '';
   int? selectedCategory;
-  String sortBy='relevance';
-  bool inStockOnly=false;
+  String sortBy = 'relevance';
+  bool inStockOnly = false;
 
   // Controllers for strict validation
-  TextEditingController minPriceCtrl=TextEditingController();
-  TextEditingController maxPriceCtrl=TextEditingController();
-  TextEditingController brandCtrl=TextEditingController();
+  TextEditingController minPriceCtrl = TextEditingController();
+  TextEditingController maxPriceCtrl = TextEditingController();
+  TextEditingController brandCtrl = TextEditingController();
 
   Timer? _debounce;
 
@@ -45,26 +45,26 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
   Future<void> _fetchInitialData() async {
     try {
-      final fetchedCategories=await CatalogApi.getCategories();
-      setState(() => categories=fetchedCategories);
+      final fetchedCategories = await CatalogApi.getCategories();
+      setState(() => categories = fetchedCategories);
       _fetchProducts();
     } catch (e) {
-      setState(() { error=e.toString(); isLoading=false; });
+      setState(() { error = e.toString(); isLoading = false; });
     }
   }
 
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce=Timer(const Duration(milliseconds: 500), () {
-      setState(() => searchTerm=query);
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      setState(() => searchTerm = query);
       _fetchProducts();
     });
   }
 
   Future<void> _fetchProducts() async {
-    setState(() { isLoading=true; error=''; });
+    setState(() { isLoading = true; error = ''; });
     try {
-      final fetchedProducts=await CatalogApi.getProducts(
+      final fetchedProducts = await CatalogApi.getProducts(
         search: searchTerm,
         categoryId: selectedCategory,
         minPrice: minPriceCtrl.text,
@@ -73,9 +73,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
         inStockOnly: inStockOnly,
         sortBy: sortBy,
       );
-      setState(() { products=fetchedProducts; isLoading=false; });
+      setState(() { products = fetchedProducts; isLoading = false; });
     } catch (e) {
-      setState(() { error=e.toString(); isLoading=false; });
+      setState(() { error = e.toString(); isLoading = false; });
     }
   }
 
@@ -90,12 +90,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
           builder: (BuildContext context, StateSetter setModalState) {
 
             // 100% STRICT VALIDATION LOGIC
-            bool hasPriceError=false;
+            bool hasPriceError = false;
             if (minPriceCtrl.text.isNotEmpty && maxPriceCtrl.text.isNotEmpty) {
-              double? min=double.tryParse(minPriceCtrl.text);
-              double? max=double.tryParse(maxPriceCtrl.text);
+              double? min = double.tryParse(minPriceCtrl.text);
+              double? max = double.tryParse(maxPriceCtrl.text);
               if (min != null && max != null && min > max) {
-                hasPriceError=true;
+                hasPriceError = true;
               }
             }
 
@@ -116,7 +116,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       const DropdownMenuItem(value: null, child: Text("All Categories")),
                       ...categories.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name)))
                     ],
-                    onChanged: (val) => setModalState(() => selectedCategory=val),
+                    onChanged: (val) => setModalState(() => selectedCategory = val),
                   ),
                   const SizedBox(height: 15),
 
@@ -172,7 +172,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     title: const Text("In Stock Only", style: TextStyle(fontWeight: FontWeight.bold)),
                     activeColor: const Color(0xFFD4AF37),
                     value: inStockOnly,
-                    onChanged: (val) => setModalState(() => inStockOnly=val),
+                    onChanged: (val) => setModalState(() => inStockOnly = val),
                   ),
                   const SizedBox(height: 20),
 
@@ -278,18 +278,18 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     ),
                     itemCount: products.length,
                     itemBuilder: (context, index) {
-                      final product=products[index];
-                      final totalStock=product.variants.fold<int>(0, (sum, v) => sum + v.stockQuantity);
-                      final primaryImage=product.images.firstWhere((img) => img.isPrimary, orElse: () => product.images.isNotEmpty ? product.images.first : ProductImage(id: 0, imageUrl: 'https://via.placeholder.com/150', isPrimary: true)).imageUrl;
+                      final product = products[index];
+                      final totalStock = product.variants.fold<int>(0, (sum, v) => sum + v.stockQuantity);
+                      final primaryImage = product.images.firstWhere((img) => img.isPrimary, orElse: () => product.images.isNotEmpty ? product.images.first : ProductImage(id: 0, imageUrl: 'https://via.placeholder.com/150', isPrimary: true)).imageUrl;
 
-                      final cheapestVariant=product.variants.isNotEmpty 
+                      final cheapestVariant = product.variants.isNotEmpty 
                           ? product.variants.reduce((a, b) => (a.discountedPrice ?? a.originalPrice) < (b.discountedPrice ?? b.originalPrice) ? a : b) 
                           : null;
 
-                      final displayPrice=cheapestVariant?.discountedPrice ?? cheapestVariant?.originalPrice ?? 0.0;
-                      final originalPrice=cheapestVariant?.originalPrice ?? 0.0;
-                      final hasDiscount=cheapestVariant?.discountedPrice != null;
-                      final discountBadge=cheapestVariant?.discountLabel;
+                      final displayPrice = cheapestVariant?.discountedPrice ?? cheapestVariant?.originalPrice ?? 0.0;
+                      final originalPrice = cheapestVariant?.originalPrice ?? 0.0;
+                      final hasDiscount = cheapestVariant?.discountedPrice != null;
+                      final discountBadge = cheapestVariant?.discountLabel;
 
                       return GestureDetector(
                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailsScreen(productId: product.id))),

@@ -18,14 +18,14 @@ namespace velocart_system.API.Migrations
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
-#pragma warning disable 612,618
+#pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion","8.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength",63);
+                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("velocart_system.API.Models.Address",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,7 +71,7 @@ namespace velocart_system.API.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.User",b =>
+            modelBuilder.Entity("velocart_system.API.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,9 +142,9 @@ namespace velocart_system.API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.Address",b =>
+            modelBuilder.Entity("velocart_system.API.Models.Address", b =>
                 {
-                    b.HasOne("velocart_system.API.Models.User","User")
+                    b.HasOne("velocart_system.API.Models.User", "User")
                         .WithMany("Addresses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -153,11 +153,11 @@ namespace velocart_system.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("velocart_system.API.Models.User",b =>
+            modelBuilder.Entity("velocart_system.API.Models.User", b =>
                 {
                     b.Navigation("Addresses");
                 });
-#pragma warning restore 612,618
+#pragma warning restore 612, 618
         }
     }
 }

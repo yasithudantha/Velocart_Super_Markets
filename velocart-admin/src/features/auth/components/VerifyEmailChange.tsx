@@ -1,26 +1,26 @@
-import { useEffect,useState } from 'react';
-import { useSearchParams,useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle,XCircle,Loader2,ArrowRight } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, ArrowRight } from 'lucide-react';
 import axios from 'axios'; // We can just use a direct axios call for this single endpoint
 
 export default function VerifyEmailChange() {
-    const [searchParams]=useSearchParams();
-    const navigate=useNavigate();
-    const token=searchParams.get('token');
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const token = searchParams.get('token');
 
-    const [status,setStatus]=useState<'loading' | 'success' | 'error'>('loading');
-    const [message,setMessage]=useState('Verifying your new email address...');
+    const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+    const [message, setMessage] = useState('Verifying your new email address...');
 
     useEffect(() => {
-        if(!token) {
+        if (!token) {
             setStatus('error'); setMessage('No verification token provided.'); return;
         }
 
-        const verify=async () => {
+        const verify = async () => {
             try {
                 // Call the C# endpoint we verified earlier!
-                const result=await axios.get(`http://localhost:5176/api/User/verify-email-change?token=${token}`);
+                const result = await axios.get(`http://localhost:5176/api/User/verify-email-change?token=${token}`);
                 setStatus('success');
                 setMessage(result.data.message);
                 
@@ -32,7 +32,7 @@ export default function VerifyEmailChange() {
             }
         };
         verify();
-    },[token]);
+    }, [token]);
 
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background">

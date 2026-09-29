@@ -11,15 +11,15 @@ namespace velocart_system.API.Features.Inventory.Models
         
         [Required]
         public int PurchaseOrderId { get; set; }
-        public PurchaseOrder PurchaseOrder { get; set; }=null!;
+        public PurchaseOrder PurchaseOrder { get; set; } = null!;
 
-        public DateTime ReceivedDate { get; set; }=DateTime.UtcNow;
+        public DateTime ReceivedDate { get; set; } = DateTime.UtcNow;
         
         [MaxLength(255)]
-        public string ReceivedBy { get; set; }=string.Empty; 
+        public string ReceivedBy { get; set; } = string.Empty; 
         
-        public string Notes { get; set; }=string.Empty;
+        public string Notes { get; set; } = string.Empty;
 
-        public ICollection<GoodsReceiptItem> Items { get; set; }=new List<GoodsReceiptItem>();
+        public ICollection<GoodsReceiptItem> Items { get; set; } = new List<GoodsReceiptItem>();
     }
 }

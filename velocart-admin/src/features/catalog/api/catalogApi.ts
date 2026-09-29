@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_URL='http://localhost:5176/api';
+const API_URL = 'http://localhost:5176/api';
 
 // Helper to inject JWT token into requests
-const getAuthHeaders=() => {
-    const token=localStorage.getItem('token'); // Assuming you store the JWT here after login
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('token'); // Assuming you store the JWT here after login
     return {
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -23,59 +23,59 @@ export interface ProductFilters {
     sortBy?: string;
 }
 
-export const getCategories=async () => {
+export const getCategories = async () => {
     try {
-        const response=await axios.get(`${API_URL}/catalog/categories`);
+        const response = await axios.get(`${API_URL}/catalog/categories`);
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to fetch categories.";
     }
 };
 
-export const getProducts=async (filters: ProductFilters) => {
+export const getProducts = async (filters: ProductFilters) => {
     try {
-        const params=new URLSearchParams();
-        if(filters.categoryId) params.append('categoryId',filters.categoryId.toString());
-        if(filters.search) params.append('search',filters.search);
-        if(filters.minPrice) params.append('minPrice',filters.minPrice);
-        if(filters.maxPrice) params.append('maxPrice',filters.maxPrice);
-        if(filters.brand) params.append('brand',filters.brand);
-        if(filters.inStockOnly) params.append('inStockOnly','true');
-        if(filters.sortBy) params.append('sortBy',filters.sortBy);
+        const params = new URLSearchParams();
+        if (filters.categoryId) params.append('categoryId', filters.categoryId.toString());
+        if (filters.search) params.append('search', filters.search);
+        if (filters.minPrice) params.append('minPrice', filters.minPrice);
+        if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+        if (filters.brand) params.append('brand', filters.brand);
+        if (filters.inStockOnly) params.append('inStockOnly', 'true');
+        if (filters.sortBy) params.append('sortBy', filters.sortBy);
 
-        const response=await axios.get(`${API_URL}/catalog/products?${params.toString()}`);
+        const response = await axios.get(`${API_URL}/catalog/products?${params.toString()}`);
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to fetch products.";
     }
 };
 
-export const getProductById=async (id: number) => {
+export const getProductById = async (id: number) => {
     try {
-        const response=await axios.get(`${API_URL}/catalog/products/${id}`);
+        const response = await axios.get(`${API_URL}/catalog/products/${id}`);
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to fetch product details.";
     }
 };
 
-// SECURED: Removed userId,added auth headers
-export const addToCart=async (productVariantId: number,quantity: number) => {
+// SECURED: Removed userId, added auth headers
+export const addToCart = async (productVariantId: number, quantity: number) => {
     try {
-        const response=await axios.post(`${API_URL}/cart/add`,{ 
-            productVariantId,
+        const response = await axios.post(`${API_URL}/cart/add`, { 
+            productVariantId, 
             quantity 
-        },getAuthHeaders());
+        }, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to add to cart.";
     }
 };
 
-// SECURED: Removed userId from URL,added auth headers
-export const getCart=async () => {
+// SECURED: Removed userId from URL, added auth headers
+export const getCart = async () => {
     try {
-        const response=await axios.get(`${API_URL}/cart`,getAuthHeaders());
+        const response = await axios.get(`${API_URL}/cart`, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to fetch cart.";
@@ -83,9 +83,9 @@ export const getCart=async () => {
 };
 
 // SECURED: Added auth headers
-export const updateCartItem=async (cartItemId: number,quantity: number) => {
+export const updateCartItem = async (cartItemId: number, quantity: number) => {
     try {
-        const response=await axios.put(`${API_URL}/cart/update/${cartItemId}`,{ quantity },getAuthHeaders());
+        const response = await axios.put(`${API_URL}/cart/update/${cartItemId}`, { quantity }, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to update cart item.";
@@ -93,53 +93,53 @@ export const updateCartItem=async (cartItemId: number,quantity: number) => {
 };
 
 // SECURED: Added auth headers
-export const removeCartItem=async (cartItemId: number) => {
+export const removeCartItem = async (cartItemId: number) => {
     try {
-        const response=await axios.delete(`${API_URL}/cart/remove/${cartItemId}`,getAuthHeaders());
+        const response = await axios.delete(`${API_URL}/cart/remove/${cartItemId}`, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to remove cart item.";
     }
 };
 
-export const checkoutOrder=async (deliveryAddress: string,expectedTotal: number=0,paymentMethod: string="CARD",idempotencyKey: string="",pointsToRedeem: number=0) => {
+export const checkoutOrder = async (deliveryAddress: string, expectedTotal: number = 0, paymentMethod: string = "CARD", idempotencyKey: string = "", pointsToRedeem: number = 0) => {
     try {
-        const response=await axios.post(`${API_URL}/orders/checkout`,{ 
-            deliveryAddress,
+        const response = await axios.post(`${API_URL}/orders/checkout`, { 
+            deliveryAddress, 
             deliveryMethod: "STANDARD",
             expectedTotal,
             forceCheckout: true,
             paymentMethod,
             idempotencyKey,
             pointsToRedeem // FIX: Pass loyalty points to C#
-        },getAuthHeaders());
+        }, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error; 
     }
 };
 
-// SECURED: Removed userId from URL,added auth headers
-export const getOrderHistory=async () => {
+// SECURED: Removed userId from URL, added auth headers
+export const getOrderHistory = async () => {
     try {
-        const response=await axios.get(`${API_URL}/orders/history`,getAuthHeaders());
+        const response = await axios.get(`${API_URL}/orders/history`, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error.response?.data || "Failed to fetch order history.";
     }
 };
 
-export const submitComplaint=async (orderId: number,subject: string,description: string,imageFile?: File | null) => {
+export const submitComplaint = async (orderId: number, subject: string, description: string, imageFile?: File | null) => {
     try {
-        const formData=new FormData();
-        formData.append('subject',subject);
-        formData.append('description',description);
-        if(imageFile) {
-            formData.append('image',imageFile);
+        const formData = new FormData();
+        formData.append('subject', subject);
+        formData.append('description', description);
+        if (imageFile) {
+            formData.append('image', imageFile);
         }
 
-        const token=localStorage.getItem('token');
-        const response=await axios.post(`${API_URL}/orders/${orderId}/complaints`,formData,{
+        const token = localStorage.getItem('token');
+        const response = await axios.post(`${API_URL}/orders/${orderId}/complaints`, formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data' // Required for files
@@ -151,23 +151,23 @@ export const submitComplaint=async (orderId: number,subject: string,description:
     }
 };
 
-// SECURED: Removed userId from payload,added auth headers
-export const submitReview=async (productId: number,rating: number,comment: string) => {
+// SECURED: Removed userId from payload, added auth headers
+export const submitReview = async (productId: number, rating: number, comment: string) => {
     try {
-        const response=await axios.post(`${API_URL}/reviews`,{ 
-            productId,
-            rating,
+        const response = await axios.post(`${API_URL}/reviews`, { 
+            productId, 
+            rating, 
             comment 
-        },getAuthHeaders());
+        }, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to submit review.";
     }
 };
 
-export const getProductReviews=async (productId: number) => {
+export const getProductReviews = async (productId: number) => {
     try {
-        const response=await axios.get(`${API_URL}/reviews/product/${productId}`);
+        const response = await axios.get(`${API_URL}/reviews/product/${productId}`);
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to fetch product reviews.";
@@ -175,9 +175,9 @@ export const getProductReviews=async (productId: number) => {
 };
 
 // NEW: SMART REORDER
-export const reorderItems=async (orderId: number) => {
+export const reorderItems = async (orderId: number) => {
     try {
-        const response=await axios.post(`${API_URL}/orders/${orderId}/reorder`,{},getAuthHeaders());
+        const response = await axios.post(`${API_URL}/orders/${orderId}/reorder`, {}, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error.response?.data || "Failed to reorder items.";
@@ -185,9 +185,9 @@ export const reorderItems=async (orderId: number) => {
 };
 
 // NEW: CANCEL ORDER
-export const cancelOrder=async (orderId: number) => {
+export const cancelOrder = async (orderId: number) => {
     try {
-        const response=await axios.put(`${API_URL}/orders/${orderId}/cancel`,{},getAuthHeaders());
+        const response = await axios.put(`${API_URL}/orders/${orderId}/cancel`, {}, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error.response?.data || "Failed to cancel order.";
@@ -195,9 +195,9 @@ export const cancelOrder=async (orderId: number) => {
 };
 
 // NEW: CHOOSE REFUND METHOD
-export const chooseRefundMethod=async (complaintId: number,refundMethod: string) => {
+export const chooseRefundMethod = async (complaintId: number, refundMethod: string) => {
     try {
-        const response=await axios.put(`${API_URL}/orders/complaints/${complaintId}/choose-refund`,{ refundMethod },getAuthHeaders());
+        const response = await axios.put(`${API_URL}/orders/complaints/${complaintId}/choose-refund`, { refundMethod }, getAuthHeaders());
         return response.data;
     } catch (error: any) {
         throw error.response?.data?.message || "Failed to submit refund choice.";

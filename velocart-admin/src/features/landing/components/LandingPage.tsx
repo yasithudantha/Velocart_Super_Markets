@@ -1,4 +1,4 @@
-import { useEffect,useMemo,useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     AnimatePresence,
     motion,
@@ -16,6 +16,7 @@ import {
     CheckCircle2,
     ChefHat,
     ChevronRight,
+    Clock3,
     CreditCard,
     Heart,
     Layers3,
@@ -46,7 +47,7 @@ import { getBanners } from "../../admin/api/mainAdminApi";
 // TYPES
 // ==========================================================
 
-type Product={
+type Product = {
     id: number;
     name: string;
     category: string;
@@ -57,7 +58,7 @@ type Product={
     badge?: string;
 };
 
-type Shelf={
+type Shelf = {
     id: string;
     label: string;
     icon: React.ReactNode;
@@ -68,7 +69,7 @@ type Shelf={
 // DATA
 // ==========================================================
 
-const shelves: Shelf[]=[
+const shelves: Shelf[] = [
     {
         id: "fresh",
         label: "Fresh Market",
@@ -171,7 +172,7 @@ const shelves: Shelf[]=[
     },
 ];
 
-const shopSteps=[
+const shopSteps = [
     {
         id: "search",
         number: "01",
@@ -182,13 +183,13 @@ const shopSteps=[
         id: "discover",
         number: "02",
         title: "Discover",
-        description: "Explore products,categories and intelligent recommendations.",
+        description: "Explore products, categories and intelligent recommendations.",
     },
     {
         id: "compare",
         number: "03",
         title: "Compare",
-        description: "Compare brands,prices,discounts and availability.",
+        description: "Compare brands, prices, discounts and availability.",
     },
     {
         id: "cart",
@@ -200,11 +201,11 @@ const shopSteps=[
         id: "checkout",
         number: "05",
         title: "Checkout",
-        description: "Review delivery,rewards and secure payment.",
+        description: "Review delivery, rewards and secure payment.",
     },
 ];
 
-const aiSteps=[
+const aiSteps = [
     {
         title: "Understand",
         description: "Understands the customer's natural-language request.",
@@ -215,7 +216,7 @@ const aiSteps=[
     },
     {
         title: "Check",
-        description: "Checks availability,price and relevant promotions.",
+        description: "Checks availability, price and relevant promotions.",
     },
     {
         title: "Compare",
@@ -231,7 +232,7 @@ const aiSteps=[
     },
 ];
 
-const recognitions=[
+const recognitions = [
     {
     title: "Microsoft Imagine Cup",
     issuer: "Microsoft",
@@ -259,7 +260,7 @@ const recognitions=[
 // ANIMATION
 // ==========================================================
 
-const staggerContainer: any={
+const staggerContainer = {
     hidden: {},
     show: {
         transition: {
@@ -268,7 +269,7 @@ const staggerContainer: any={
     },
 };
 
-const fadeUp: any={
+const fadeUp = {
     hidden: {
         opacity: 0,
         y: 34,
@@ -278,12 +279,12 @@ const fadeUp: any={
         y: 0,
         transition: {
             duration: 0.7,
-            ease: [0.22,1,0.36,1] as any,
+            ease: [0.22, 1, 0.36, 1] as any,
         },
     },
 };
 
-const fadeScale: any={
+const fadeScale = {
     hidden: {
         opacity: 0,
         scale: 0.94,
@@ -293,7 +294,7 @@ const fadeScale: any={
         scale: 1,
         transition: {
             duration: 0.75,
-            ease: [0.22,1,0.36,1] as any,
+            ease: [0.22, 1, 0.36, 1] as any,
         },
     },
 };
@@ -303,52 +304,52 @@ const fadeScale: any={
 // ==========================================================
 
 export default function LandingPage() {
-    const navigate=useNavigate();
-    const prefersReducedMotion=useReducedMotion();
+    const navigate = useNavigate();
+    const prefersReducedMotion = useReducedMotion();
 
-    const { scrollYProgress }=useScroll();
+    const { scrollYProgress } = useScroll();
 
-    const yHero=useTransform(
+    const yHero = useTransform(
         scrollYProgress,
-        [0,0.35],
-        ["0%",prefersReducedMotion ? "0%" : "24%"]
+        [0, 0.35],
+        ["0%", prefersReducedMotion ? "0%" : "24%"]
     );
 
-    const opacityHero=useTransform(
+    const opacityHero = useTransform(
         scrollYProgress,
-        [0,0.18],
-        [1,0]
+        [0, 0.18],
+        [1, 0]
     );
 
-    const heroScale=useTransform(
+    const heroScale = useTransform(
         scrollYProgress,
-        [0,0.2],
-        [1,prefersReducedMotion ? 1 : 1.05]
+        [0, 0.2],
+        [1, prefersReducedMotion ? 1 : 1.05]
     );
 
-    const [promotions,setPromotions]=useState<any[]>([]);
+    const [promotions, setPromotions] = useState<any[]>([]);
 
     useEffect(() => {
-        const fetchBanners=async () => {
+        const fetchBanners = async () => {
             try {
-                const data=await getBanners();
+                const data = await getBanners();
                 setPromotions(data);
-            } catch (err) { console.error("Failed to load banners",err); }
+            } catch (err) { console.error("Failed to load banners", err); }
         };
         fetchBanners();
-    },[]);
+    }, []);
 
-    const [isNavScrolled,setIsNavScrolled]=useState(false);
-    const [mobileMenuOpen,setMobileMenuOpen]=useState(false);
-    const [selectedShelf,setSelectedShelf]=useState("fresh");
-    const [selectedProduct,setSelectedProduct]=useState<Product | null>(null);
-    const [cartCount,setCartCount]=useState(0);
-    const [cartToast,setCartToast]=useState("");
-    const [activeShopStep,setActiveShopStep]=useState(0);
-    const [activeAiStep,setActiveAiStep]=useState(0);
-    const [showFilm,setShowFilm]=useState(false);
+    const [isNavScrolled, setIsNavScrolled] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [selectedShelf, setSelectedShelf] = useState("fresh");
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [cartCount, setCartCount] = useState(0);
+    const [cartToast, setCartToast] = useState("");
+    const [activeShopStep, setActiveShopStep] = useState(0);
+    const [activeAiStep, setActiveAiStep] = useState(0);
+    const [showFilm, setShowFilm] = useState(false);
 
-    const [countdown,setCountdown]=useState({
+    const [countdown, setCountdown] = useState({
         hours: 2,
         minutes: 14,
         seconds: 36,
@@ -359,104 +360,104 @@ export default function LandingPage() {
     // ------------------------------------------------------
 
     useEffect(() => {
-        const handleScroll=() => {
+        const handleScroll = () => {
             setIsNavScrolled(window.scrollY > 50);
         };
 
-        window.addEventListener("scroll",handleScroll);
+        window.addEventListener("scroll", handleScroll);
 
         return () => {
-            window.removeEventListener("scroll",handleScroll);
+            window.removeEventListener("scroll", handleScroll);
         };
-    },[]);
+    }, []);
 
     // ------------------------------------------------------
     // AI AUTO PROGRESSION
     // ------------------------------------------------------
 
     useEffect(() => {
-        if(prefersReducedMotion) return;
+        if (prefersReducedMotion) return;
 
-        const interval=setInterval(() => {
+        const interval = setInterval(() => {
             setActiveAiStep((current) => (current + 1) % aiSteps.length);
-        },2200);
+        }, 2200);
 
         return () => clearInterval(interval);
-    },[prefersReducedMotion]);
+    }, [prefersReducedMotion]);
 
     // ------------------------------------------------------
     // SHOPPING WORKFLOW AUTO PROGRESSION
     // ------------------------------------------------------
 
     useEffect(() => {
-        if(prefersReducedMotion) return;
+        if (prefersReducedMotion) return;
 
-        const interval=setInterval(() => {
+        const interval = setInterval(() => {
             setActiveShopStep((current) => (current + 1) % shopSteps.length);
-        },2800);
+        }, 2800);
 
         return () => clearInterval(interval);
-    },[prefersReducedMotion]);
+    }, [prefersReducedMotion]);
 
     // ------------------------------------------------------
     // FLASH DEAL COUNTDOWN
     // ------------------------------------------------------
 
     useEffect(() => {
-        const interval=setInterval(() => {
+        const interval = setInterval(() => {
             setCountdown((current) => {
-                let hours=current.hours;
-                let minutes=current.minutes;
-                let seconds=current.seconds - 1;
+                let hours = current.hours;
+                let minutes = current.minutes;
+                let seconds = current.seconds - 1;
 
-                if(seconds < 0) {
-                    seconds=59;
+                if (seconds < 0) {
+                    seconds = 59;
                     minutes -= 1;
                 }
 
-                if(minutes < 0) {
-                    minutes=59;
+                if (minutes < 0) {
+                    minutes = 59;
                     hours -= 1;
                 }
 
-                if(hours < 0) {
-                    hours=2;
-                    minutes=14;
-                    seconds=36;
+                if (hours < 0) {
+                    hours = 2;
+                    minutes = 14;
+                    seconds = 36;
                 }
 
-                return { hours,minutes,seconds };
+                return { hours, minutes, seconds };
             });
-        },1000);
+        }, 1000);
 
         return () => clearInterval(interval);
-    },[]);
+    }, []);
 
     // ------------------------------------------------------
     // ACTIVE SHELF PRODUCTS
     // ------------------------------------------------------
 
-    const activeShelf=useMemo(() => {
+    const activeShelf = useMemo(() => {
         return shelves.find((shelf) => shelf.id === selectedShelf) ?? shelves[0];
-    },[selectedShelf]);
+    }, [selectedShelf]);
 
     // ------------------------------------------------------
     // ADD TO CART
     // ------------------------------------------------------
 
-    const handleAddToCart=(productName: string) => {
+    const handleAddToCart = (productName: string) => {
         setCartCount((current) => current + 1);
         setCartToast(`${productName} added to cart`);
 
         window.setTimeout(() => {
             setCartToast("");
-        },2200);
+        }, 2200);
 
         // Connect this function to your existing Cart API/context
         // when integrating with the production cart workflow.
     };
 
-    const scrollToSection=(id: string) => {
+    const scrollToSection = (id: string) => {
         document.getElementById(id)?.scrollIntoView({
             behavior: "smooth",
         });
@@ -482,8 +483,8 @@ export default function LandingPage() {
             ================================================== */}
 
             <motion.nav
-                initial={{ y: -90,opacity: 0 }}
-                animate={{ y: 0,opacity: 1 }}
+                initial={{ y: -90, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8 }}
                 className="fixed left-0 top-0 z-[100] w-full px-4 pt-4 sm:px-6 lg:px-8"
             >
@@ -619,12 +620,12 @@ export default function LandingPage() {
                         >
                             <div className="space-y-1">
                                 {[
-                                    ["ai","Velo AI"],
-                                    ["shopping","Smart Shopping"],
-                                    ["promotions","Promotions"],
-                                    ["rewards","VelocityFamily"],
-                                    ["ecosystem","Ecosystem"],
-                                ].map(([id,label]) => (
+                                    ["ai", "Velo AI"],
+                                    ["shopping", "Smart Shopping"],
+                                    ["promotions", "Promotions"],
+                                    ["rewards", "VelocityFamily"],
+                                    ["ecosystem", "Ecosystem"],
+                                ].map(([id, label]) => (
                                     <button
                                         key={id}
                                         onClick={() =>
@@ -762,11 +763,11 @@ export default function LandingPage() {
                             className="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4"
                         >
                             {[
-                                ["AI Shopping",<Bot size={15} />],
-                                ["Smart Deals",<Zap size={15} />],
-                                ["Secure Pay",<ShieldCheck size={15} />],
-                                ["Fast Delivery",<Truck size={15} />],
-                            ].map(([label,icon]) => (
+                                ["AI Shopping", <Bot size={15} />],
+                                ["Smart Deals", <Zap size={15} />],
+                                ["Secure Pay", <ShieldCheck size={15} />],
+                                ["Fast Delivery", <Truck size={15} />],
+                            ].map(([label, icon]) => (
                                 <div
                                     key={String(label)}
                                     className="rounded-xl border border-white/10 bg-black/25 px-3 py-3 text-xs font-semibold text-gray-300 backdrop-blur-xl"
@@ -783,15 +784,15 @@ export default function LandingPage() {
 
                 {/* Floating Product Preview */}
                 <motion.div
-                    initial={{ opacity: 0,x: -40 }}
+                    initial={{ opacity: 0, x: -40 }}
                     animate={{
                         opacity: 1,
                         x: 0,
-                        y: prefersReducedMotion ? 0 : [0,-12,0],
+                        y: prefersReducedMotion ? 0 : [0, -12, 0],
                     }}
                     transition={{
-                        opacity: { duration: 0.8,delay: 1.2 },
-                        x: { duration: 0.8,delay: 1.2 },
+                        opacity: { duration: 0.8, delay: 1.2 },
+                        x: { duration: 0.8, delay: 1.2 },
                         y: {
                             duration: 6,
                             repeat: Infinity,
@@ -825,15 +826,15 @@ export default function LandingPage() {
 
                 {/* Floating AI Preview */}
                 <motion.div
-                    initial={{ opacity: 0,x: 40 }}
+                    initial={{ opacity: 0, x: 40 }}
                     animate={{
                         opacity: 1,
                         x: 0,
-                        y: prefersReducedMotion ? 0 : [0,14,0],
+                        y: prefersReducedMotion ? 0 : [0, 14, 0],
                     }}
                     transition={{
-                        opacity: { duration: 0.8,delay: 1.4 },
-                        x: { duration: 0.8,delay: 1.4 },
+                        opacity: { duration: 0.8, delay: 1.4 },
+                        x: { duration: 0.8, delay: 1.4 },
                         y: {
                             duration: 7,
                             repeat: Infinity,
@@ -891,7 +892,7 @@ export default function LandingPage() {
                     <motion.div
                         initial="hidden"
                         whileInView="show"
-                        viewport={{ once: true,amount: 0.2 }}
+                        viewport={{ once: true, amount: 0.2 }}
                         variants={staggerContainer}
                         className="mb-16 max-w-3xl"
                     >
@@ -918,7 +919,7 @@ export default function LandingPage() {
                             className="mt-5 max-w-2xl text-base leading-7 text-gray-400 sm:text-lg"
                         >
                             Explore VeloCart like a digital supermarket.
-                            Click a shelf,discover products,compare
+                            Click a shelf, discover products, compare
                             options and build your cart through an
                             interactive shopping flow.
                         </motion.p>
@@ -926,8 +927,8 @@ export default function LandingPage() {
 
                     {/* Workflow */}
                     <div className="mb-12 grid gap-3 md:grid-cols-5">
-                        {shopSteps.map((step,index) => {
-                            const active=index === activeShopStep;
+                        {shopSteps.map((step, index) => {
+                            const active = index === activeShopStep;
 
                             return (
                                 <button
@@ -941,7 +942,7 @@ export default function LandingPage() {
                                             : "border-white/8 bg-white/[0.02] hover:bg-white/[0.04]"
                                     }`}
                                 >
-                                    <div className="mb-6 flex items-center">
+                                    <div className="mb-6 flex items-center justify-between">
                                         <span className="text-xs font-black tracking-[0.2em] text-[#D4AF37]">
                                             {step.number}
                                         </span>
@@ -1036,7 +1037,7 @@ export default function LandingPage() {
 
                                 <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
                                     {activeShelf.products.map(
-                                        (product,index) => (
+                                        (product, index) => (
                                             <motion.div
                                                 key={product.id}
                                                 layout
@@ -1206,7 +1207,7 @@ export default function LandingPage() {
                             </div>
 
                             <div className="space-y-4">
-                                {shopSteps.map((step,index) => {
+                                {shopSteps.map((step, index) => {
                                     const active =
                                         index === activeShopStep;
 
@@ -1337,8 +1338,8 @@ export default function LandingPage() {
                                 className="mt-6 max-w-xl text-base leading-7 text-gray-400 sm:text-lg"
                             >
                                 Velo AI understands what the customer
-                                actually wants,searches the supermarket,
-                                checks availability,compares products,
+                                actually wants, searches the supermarket,
+                                checks availability, compares products,
                                 proposes alternatives and prepares the
                                 shopping experience.
                             </motion.p>
@@ -1384,7 +1385,7 @@ export default function LandingPage() {
 
                             <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#0F1117]/85 p-5 shadow-2xl backdrop-blur-2xl sm:p-7">
 
-                                <div className="mb-6 flex items-center">
+                                <div className="mb-6 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 shadow-[0_0_30px_rgba(59,130,246,0.25)]">
                                             <Sparkles
@@ -1436,7 +1437,7 @@ export default function LandingPage() {
                                         {/* AI Pipeline */}
                                         <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
                                             {aiSteps.map(
-                                                (step,index) => {
+                                                (step, index) => {
                                                     const active =
                                                         index ===
                                                         activeAiStep;
@@ -1484,7 +1485,7 @@ export default function LandingPage() {
 
                                         {/* Recommendation */}
                                         <div className="mt-4 rounded-2xl border border-[#D4AF37]/15 bg-[#D4AF37]/5 p-4">
-                                            <div className="mb-3 flex items-center">
+                                            <div className="mb-3 flex items-center justify-between">
                                                 <div>
                                                     <div className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37]">
                                                         Recommendation
@@ -1565,7 +1566,7 @@ export default function LandingPage() {
                             </h2>
 
                             <p className="mt-4 max-w-2xl text-base leading-7 text-gray-400">
-                                Flash deals,category campaigns,member
+                                Flash deals, category campaigns, member
                                 benefits and personalized promotions —
                                 displayed as a dynamic promotional layer
                                 across the storefront.
@@ -1581,7 +1582,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="grid gap-6 lg:grid-cols-3">
-                        {promotions.map((deal,index) => (
+                        {promotions.map((deal, index) => (
                             <motion.article
                                 key={deal.title}
                                 initial={{
@@ -1657,7 +1658,7 @@ export default function LandingPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center border-t border-white/6 p-5">
+                                <div className="flex items-center justify-between border-t border-white/6 p-5">
                                     <div className="flex items-center gap-2 text-xs text-gray-500">
                                         <BadgeCheck
                                             size={14}
@@ -1727,8 +1728,8 @@ export default function LandingPage() {
                                 variants={fadeUp}
                                 className="mt-5 max-w-xl text-base leading-7 text-gray-400 sm:text-lg"
                             >
-                                Earn points,progress through loyalty
-                                tiers,unlock benefits and turn everyday
+                                Earn points, progress through loyalty
+                                tiers, unlock benefits and turn everyday
                                 shopping into long-term value.
                             </motion.p>
 
@@ -1887,10 +1888,10 @@ export default function LandingPage() {
                             {/* Tier progression */}
                             <div className="mt-7 grid grid-cols-3 gap-3">
                                 {[
-                                    ["Silver","0+"],
-                                    ["Gold","Current"],
-                                    ["Platinum","Next"],
-                                ].map(([tier,status]) => (
+                                    ["Silver", "0+"],
+                                    ["Gold", "Current"],
+                                    ["Platinum", "Next"],
+                                ].map(([tier, status]) => (
                                     <div
                                         key={tier}
                                         className={`rounded-2xl border p-4 text-center ${
@@ -1934,7 +1935,7 @@ export default function LandingPage() {
 
                         <p className="max-w-2xl text-base leading-7 text-gray-400">
                             VeloCart combines protected account workflows,
-                            verified users,secure payment processing and
+                            verified users, secure payment processing and
                             transparent order states into one dependable
                             customer journey.
                         </p>
@@ -1967,7 +1968,7 @@ export default function LandingPage() {
                                 title: "Multiple Options",
                                 desc: "Flexible payment choices.",
                             },
-                        ].map((item,index) => (
+                        ].map((item, index) => (
                             <motion.div
                                 key={item.title}
                                 initial={{
@@ -2090,7 +2091,7 @@ export default function LandingPage() {
                             </h2>
 
                             <p className="mt-5 text-base leading-7 text-gray-400 sm:text-lg">
-                                From confirmation to delivery,every order
+                                From confirmation to delivery, every order
                                 moves through a structured workflow so
                                 customers can understand where their order
                                 is and what happens next.
@@ -2103,7 +2104,7 @@ export default function LandingPage() {
                                     "Delivery Assigned",
                                     "Out for Delivery",
                                     "Delivered",
-                                ].map((step,index) => (
+                                ].map((step, index) => (
                                     <div
                                         key={step}
                                         className="flex items-center gap-4"
@@ -2160,7 +2161,7 @@ export default function LandingPage() {
                         </h2>
 
                         <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gray-400 sm:text-lg">
-                            Move naturally between desktop,tablet and mobile
+                            Move naturally between desktop, tablet and mobile
                             while keeping your shopping journey connected.
                         </p>
                     </div>
@@ -2196,7 +2197,7 @@ export default function LandingPage() {
                                     <div className="border-r border-white/6 p-5">
                                         <div className="h-4 w-24 rounded bg-white/10" />
                                         <div className="mt-7 space-y-3">
-                                            {[1,2,3,4,5].map(
+                                            {[1, 2, 3, 4, 5].map(
                                                 (item) => (
                                                     <div
                                                         key={item}
@@ -2209,7 +2210,7 @@ export default function LandingPage() {
 
                                     <div className="p-5">
                                         <div className="grid grid-cols-3 gap-3">
-                                            {[1,2,3].map(
+                                            {[1, 2, 3].map(
                                                 (item) => (
                                                     <div
                                                         key={item}
@@ -2257,7 +2258,7 @@ export default function LandingPage() {
                                     </div>
 
                                     <div className="mt-3 grid grid-cols-2 gap-2">
-                                        {[1,2,3,4].map(
+                                        {[1, 2, 3, 4].map(
                                             (item) => (
                                                 <div
                                                     key={item}
@@ -2330,7 +2331,7 @@ export default function LandingPage() {
 
                             <p className="mt-4 max-w-2xl text-base leading-7 text-gray-400">
                                 Products are designed as interactive digital
-                                objects with quick actions,detailed previews,
+                                objects with quick actions, detailed previews,
                                 wishlist behavior and smooth cart transitions.
                             </p>
                         </div>
@@ -2521,7 +2522,7 @@ export default function LandingPage() {
                                 },
                                 {
                                     title: "Rewards",
-                                    desc: "Points,tiers and benefits.",
+                                    desc: "Points, tiers and benefits.",
                                     icon: <Star size={17} />,
                                     className:
                                         "left-1/2 top-0 -translate-x-1/2",
@@ -2582,7 +2583,7 @@ export default function LandingPage() {
                                 ],
                                 [
                                     "Rewards",
-                                    "Points,tiers and benefits.",
+                                    "Points, tiers and benefits.",
                                     <Star size={17} />,
                                 ],
                                 [
@@ -2590,7 +2591,7 @@ export default function LandingPage() {
                                     "Clear order and delivery progress.",
                                     <Truck size={17} />,
                                 ],
-                            ].map(([title,desc,icon]) => (
+                            ].map(([title, desc, icon]) => (
                                 <div
                                     key={String(title)}
                                     className="rounded-2xl border border-white/8 bg-[#101010] p-5"
@@ -2635,7 +2636,7 @@ export default function LandingPage() {
 
                             <p className="mt-4 max-w-2xl text-base leading-7 text-gray-400">
                                 Showcase VeloCart's verified awards,
-                                certifications,university achievements,
+                                certifications, university achievements,
                                 competitions and technology recognitions in
                                 a premium credibility layer.
                             </p>
@@ -2647,7 +2648,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="mt-12 grid gap-5 md:grid-cols-3">
-                        {recognitions.map((recognition,index) => (
+                        {recognitions.map((recognition, index) => (
                             <motion.div
                                 key={`${recognition.title}-${index}`}
                                 initial={{
@@ -2717,7 +2718,7 @@ export default function LandingPage() {
                         </h2>
 
                         <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gray-400 sm:text-lg">
-                            Products,AI,promotions,loyalty,payments and
+                            Products, AI, promotions, loyalty, payments and
                             delivery work together as one continuous digital
                             commerce experience.
                         </p>
@@ -2728,15 +2729,15 @@ export default function LandingPage() {
 
                         <div className="relative grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {[
-                                ["AI Agent",<Bot />],
-                                ["Products",<ShoppingBag />],
-                                ["Promotions",<Zap />],
-                                ["Loyalty Rewards",<StarIcon />],
-                                ["Smart Cart",<ShoppingCart />],
-                                ["Payments",<CreditCard />],
-                                ["Delivery",<Truck />],
-                                ["VelocityFamily",<Star />],
-                            ].map(([label,icon],index) => (
+                                ["AI Agent", <Bot />],
+                                ["Products", <ShoppingBag />],
+                                ["Promotions", <Zap />],
+                                ["Loyalty Rewards", <StarIcon />],
+                                ["Smart Cart", <ShoppingCart />],
+                                ["Payments", <CreditCard />],
+                                ["Delivery", <Truck />],
+                                ["VelocityFamily", <Star />],
+                            ].map(([label, icon], index) => (
                                 <motion.div
                                     key={String(label)}
                                     initial={{
@@ -2814,7 +2815,7 @@ export default function LandingPage() {
                     </h2>
 
                     <p className="mx-auto mt-8 max-w-2xl text-base leading-7 text-gray-400 sm:text-lg">
-                        Discover,plan,shop and manage your everyday
+                        Discover, plan, shop and manage your everyday
                         essentials through one intelligent ecosystem.
                     </p>
 

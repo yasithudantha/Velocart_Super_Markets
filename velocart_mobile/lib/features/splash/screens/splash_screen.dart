@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-// TODO: Import your actual next screen here (e.g.,LoginScreen or AuthWrapper)
+// TODO: Import your actual next screen here (e.g., LoginScreen or AuthWrapper)
 import '../../auth/screens/login_screen.dart'; 
 
 class VideoSplashScreen extends StatefulWidget {
@@ -12,17 +12,17 @@ class VideoSplashScreen extends StatefulWidget {
 
 class _VideoSplashScreenState extends State<VideoSplashScreen> {
   late VideoPlayerController _controller;
-  bool _isVideoInitialized=false;
+  bool _isVideoInitialized = false;
 
   @override
   void initState() {
     super.initState();
     
     // Initialize the video
-    _controller=VideoPlayerController.asset('assets/videos/Landing-video.mp4')
+    _controller = VideoPlayerController.asset('assets/videos/Landing-video.mp4')
       ..initialize().then((_) {
         setState(() {
-          _isVideoInitialized=true;
+          _isVideoInitialized = true;
         });
         _controller.setVolume(1.0); // Play audio if your video has it
         _controller.play();
@@ -30,7 +30,7 @@ class _VideoSplashScreenState extends State<VideoSplashScreen> {
 
     // Listen for when the 10-second video finishes
     _controller.addListener(() {
-      if(_controller.value.isInitialized && 
+      if (_controller.value.isInitialized && 
           !_controller.value.isPlaying && 
           _controller.value.position >= _controller.value.duration) {
         _navigateToNextScreen();
@@ -43,9 +43,9 @@ class _VideoSplashScreenState extends State<VideoSplashScreen> {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 800),
-        pageBuilder: (_,__,___) => const LoginScreen(),// <-- CHANGE TO YOUR NEXT SCREEN
-        transitionsBuilder: (_,animation,__,child) {
-          return FadeTransition(opacity: animation,child: child);
+        pageBuilder: (_, __, ___) => const LoginScreen(), // <-- CHANGE TO YOUR NEXT SCREEN
+        transitionsBuilder: (_, animation, __, child) {
+          return FadeTransition(opacity: animation, child: child);
         },
       ),
     );
@@ -60,12 +60,12 @@ class _VideoSplashScreenState extends State<VideoSplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,// Dark background for cinematic feel
+      backgroundColor: Colors.black, // Dark background for cinematic feel
       body: Center(
         child: _isVideoInitialized
             ? SizedBox.expand(
                 child: FittedBox(
-                  fit: BoxFit.cover,// Makes the video fill the entire screen
+                  fit: BoxFit.cover, // Makes the video fill the entire screen
                   child: SizedBox(
                     width: _controller.value.size.width,
                     height: _controller.value.size.height,
@@ -73,7 +73,7 @@ class _VideoSplashScreenState extends State<VideoSplashScreen> {
                   ),
                 ),
               )
-            : const CircularProgressIndicator(color: Color(0xFFD4AF37)),// Gold loading spinner just in case
+            : const CircularProgressIndicator(color: Color(0xFFD4AF37)), // Gold loading spinner just in case
       ),
     );
   }

@@ -9,25 +9,25 @@ class AddressManagerScreen extends StatefulWidget {
 }
 
 class _AddressManagerScreenState extends State<AddressManagerScreen> {
-  final Color bgDark=const Color(0xFF050505);
-  final Color surfaceDark=const Color(0xFF121212);
-  final Color primaryGold=const Color(0xFFD4AF37);
+  final Color bgDark = const Color(0xFF050505);
+  final Color surfaceDark = const Color(0xFF121212);
+  final Color primaryGold = const Color(0xFFD4AF37);
 
-  List<dynamic> addresses=[];
-  bool isLoading=true;
-  bool isFormOpen=false;
-  bool isSaving=false;
+  List<dynamic> addresses = [];
+  bool isLoading = true;
+  bool isFormOpen = false;
+  bool isSaving = false;
 
   int? editingId;
-  String addressType='Home';
-  bool isDefault=false;
+  String addressType = 'Home';
+  bool isDefault = false;
 
-  final _formKey=GlobalKey<FormState>();
-  final _street1Ctrl=TextEditingController();
-  final _street2Ctrl=TextEditingController();
-  final _cityCtrl=TextEditingController();
-  final _postalCtrl=TextEditingController();
-  final _countryCtrl=TextEditingController(text: 'Sri Lanka');
+  final _formKey = GlobalKey<FormState>();
+  final _street1Ctrl = TextEditingController();
+  final _street2Ctrl = TextEditingController();
+  final _cityCtrl = TextEditingController();
+  final _postalCtrl = TextEditingController();
+  final _countryCtrl = TextEditingController(text: 'Sri Lanka');
 
   @override
   void initState() {
@@ -36,47 +36,47 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
   }
 
   Future<void> _fetchAddresses() async {
-    setState(() => isLoading=true);
+    setState(() => isLoading = true);
     try {
-      final data=await AddressApiService.getAddresses();
-      setState(() => addresses=data);
+      final data = await AddressApiService.getAddresses();
+      setState(() => addresses = data);
     } catch (e) {
-      _showSnackBar(e.toString(),Colors.redAccent);
+      _showSnackBar(e.toString(), Colors.redAccent);
     } finally {
-      setState(() => isLoading=false);
+      setState(() => isLoading = false);
     }
   }
 
-  void _openForm([Map<String,dynamic>? addr]) {
+  void _openForm([Map<String, dynamic>? addr]) {
     setState(() {
-      if(addr != null) {
-        editingId=addr['id'];
-        addressType=addr['addressType'];
-        _street1Ctrl.text=addr['streetLine1'];
-        _street2Ctrl.text=addr['streetLine2'] ?? '';
-        _cityCtrl.text=addr['city'];
-        _postalCtrl.text=addr['postalCode'];
-        _countryCtrl.text=addr['country'];
-        isDefault=addr['isDefault'];
+      if (addr != null) {
+        editingId = addr['id'];
+        addressType = addr['addressType'];
+        _street1Ctrl.text = addr['streetLine1'];
+        _street2Ctrl.text = addr['streetLine2'] ?? '';
+        _cityCtrl.text = addr['city'];
+        _postalCtrl.text = addr['postalCode'];
+        _countryCtrl.text = addr['country'];
+        isDefault = addr['isDefault'];
       } else {
-        editingId=null;
-        addressType='Home';
+        editingId = null;
+        addressType = 'Home';
         _street1Ctrl.clear();
         _street2Ctrl.clear();
         _cityCtrl.clear();
         _postalCtrl.clear();
-        _countryCtrl.text='Sri Lanka';
-        isDefault=addresses.isEmpty; // Force default if it's their first address
+        _countryCtrl.text = 'Sri Lanka';
+        isDefault = addresses.isEmpty; // Force default if it's their first address
       }
-      isFormOpen=true;
+      isFormOpen = true;
     });
   }
 
   Future<void> _saveAddress() async {
-    if(!_formKey.currentState!.validate()) return;
-    setState(() => isSaving=true);
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => isSaving = true);
     
-    final payload={
+    final payload = {
       'addressType': addressType,
       'streetLine1': _street1Ctrl.text.trim(),
       'streetLine2': _street2Ctrl.text.trim(),
@@ -87,17 +87,17 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
     };
 
     try {
-      if(editingId != null) {
-        await AddressApiService.updateAddress(editingId!,payload);
+      if (editingId != null) {
+        await AddressApiService.updateAddress(editingId!, payload);
       } else {
         await AddressApiService.addAddress(payload);
       }
-      setState(() => isFormOpen=false);
+      setState(() => isFormOpen = false);
       _fetchAddresses();
     } catch (e) {
-      _showSnackBar(e.toString(),Colors.redAccent);
+      _showSnackBar(e.toString(), Colors.redAccent);
     } finally {
-      setState(() => isSaving=false);
+      setState(() => isSaving = false);
     }
   }
 
@@ -106,30 +106,30 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
       await AddressApiService.deleteAddress(id);
       _fetchAddresses();
     } catch (e) {
-      _showSnackBar(e.toString(),Colors.redAccent);
+      _showSnackBar(e.toString(), Colors.redAccent);
     }
   }
 
-  void _showSnackBar(String message,Color color) {
+  void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message,style: const TextStyle(color: Colors.white)),backgroundColor: color),
+      SnackBar(content: Text(message, style: const TextStyle(color: Colors.white)), backgroundColor: color),
     );
   }
 
   InputDecoration _glassInput(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.white54,fontSize: 12),
+      labelStyle: const TextStyle(color: Colors.white54, fontSize: 12),
       filled: true,
       fillColor: surfaceDark,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),borderSide: BorderSide.none),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),borderSide: BorderSide(color: primaryGold)),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: primaryGold)),
     );
   }
 
   IconData _getIcon(String type) {
-    if(type.toLowerCase()=='home') return Icons.home_outlined;
-    if(type.toLowerCase()=='office') return Icons.work_outline;
+    if (type.toLowerCase() == 'home') return Icons.home_outlined;
+    if (type.toLowerCase() == 'office') return Icons.work_outline;
     return Icons.location_on_outlined;
   }
 
@@ -147,21 +147,21 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
                   dropdownColor: surfaceDark,
                   style: const TextStyle(color: Colors.white),
                   decoration: _glassInput('Address Type'),
-                  items: ['Home','Office','Other'].map((String val) {
-                    return DropdownMenuItem(value: val,child: Text(val));
+                  items: ['Home', 'Office', 'Other'].map((String val) {
+                    return DropdownMenuItem(value: val, child: Text(val));
                   }).toList(),
-                  onChanged: (val) => setState(() => addressType=val!),
+                  onChanged: (val) => setState(() => addressType = val!),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
           SwitchListTile(
-            title: const Text('Set as Default Delivery Address',style: TextStyle(color: Colors.white,fontSize: 14)),
+            title: const Text('Set as Default Delivery Address', style: TextStyle(color: Colors.white, fontSize: 14)),
             activeColor: primaryGold,
             contentPadding: EdgeInsets.zero,
             value: isDefault,
-            onChanged: (val) => setState(() => isDefault=val),
+            onChanged: (val) => setState(() => isDefault = val),
           ),
           const SizedBox(height: 16),
           TextFormField(
@@ -218,7 +218,7 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
               onPressed: isSaving ? null : _saveAddress,
               child: isSaving 
                   ? const CircularProgressIndicator(color: Colors.black)
-                  : Text(editingId != null ? 'Update Address' : 'Save Address',style: const TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+                  : Text(editingId != null ? 'Update Address' : 'Save Address', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -227,15 +227,15 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
   }
 
   Widget _buildList() {
-    if(addresses.isEmpty) {
+    if (addresses.isEmpty) {
       return Center(
-        child: Text("No addresses found.\nAdd one for delivery.",textAlign: TextAlign.center,style: TextStyle(color: Colors.white.withOpacity(0.5))),
+        child: Text("No addresses found.\nAdd one for delivery.", textAlign: TextAlign.center, style: TextStyle(color: Colors.white.withOpacity(0.5))),
       );
     }
     return ListView.builder(
       itemCount: addresses.length,
-      itemBuilder: (context,index) {
-        final addr=addresses[index];
+      itemBuilder: (context, index) {
+        final addr = addresses[index];
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
@@ -252,16 +252,16 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(_getIcon(addr['addressType']),color: addr['isDefault'] ? primaryGold : Colors.white54,size: 20),
+                      Icon(_getIcon(addr['addressType']), color: addr['isDefault'] ? primaryGold : Colors.white54, size: 20),
                       const SizedBox(width: 8),
-                      Text(addr['addressType'],style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16)),
+                      Text(addr['addressType'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                     ],
                   ),
-                  if(addr['isDefault'])
+                  if (addr['isDefault'])
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
-                      decoration: BoxDecoration(color: primaryGold,borderRadius: BorderRadius.circular(20)),
-                      child: const Text('DEFAULT',style: TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold)),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(color: primaryGold, borderRadius: BorderRadius.circular(20)),
+                      child: const Text('DEFAULT', style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
                     ),
                 ],
               ),
@@ -269,9 +269,9 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
               Text(
                 "${addr['streetLine1']}\n"
                 "${addr['streetLine2'] != null && addr['streetLine2'].isNotEmpty ? addr['streetLine2'] + '\n' : ''}"
-                "${addr['city']},${addr['postalCode']}\n"
+                "${addr['city']}, ${addr['postalCode']}\n"
                 "${addr['country']}",
-                style: const TextStyle(color: Colors.white70,height: 1.5),
+                style: const TextStyle(color: Colors.white70, height: 1.5),
               ),
               const SizedBox(height: 12),
               Row(
@@ -279,13 +279,13 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
                 children: [
                   TextButton.icon(
                     onPressed: () => _openForm(addr),
-                    icon: const Icon(Icons.edit,size: 16,color: Colors.white54),
-                    label: const Text('Edit',style: TextStyle(color: Colors.white54)),
+                    icon: const Icon(Icons.edit, size: 16, color: Colors.white54),
+                    label: const Text('Edit', style: TextStyle(color: Colors.white54)),
                   ),
                   TextButton.icon(
                     onPressed: () => _deleteAddress(addr['id']),
-                    icon: const Icon(Icons.delete_outline,size: 16,color: Colors.redAccent),
-                    label: const Text('Delete',style: TextStyle(color: Colors.redAccent)),
+                    icon: const Icon(Icons.delete_outline, size: 16, color: Colors.redAccent),
+                    label: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
                   ),
                 ],
               )
@@ -304,9 +304,9 @@ class _AddressManagerScreenState extends State<AddressManagerScreen> {
         backgroundColor: bgDark,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: Text(isFormOpen ? (editingId != null ? 'Edit Address' : 'New Address') : 'Delivery Addresses',style: const TextStyle(color: Colors.white,fontSize: 18)),
+        title: Text(isFormOpen ? (editingId != null ? 'Edit Address' : 'New Address') : 'Delivery Addresses', style: const TextStyle(color: Colors.white, fontSize: 18)),
         leading: isFormOpen 
-            ? IconButton(icon: const Icon(Icons.close),onPressed: () => setState(() => isFormOpen=false))
+            ? IconButton(icon: const Icon(Icons.close), onPressed: () => setState(() => isFormOpen = false))
             : const BackButton(),
       ),
       body: isLoading

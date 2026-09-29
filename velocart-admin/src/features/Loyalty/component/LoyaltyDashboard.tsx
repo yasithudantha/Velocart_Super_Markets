@@ -1,22 +1,22 @@
-import { useEffect,useState } from 'react';
-import { Loader2,Award,Star,TrendingUp,CreditCard,Info,History } from 'lucide-react';
-import { getLoyaltyDashboard,type LoyaltyDashboardData } from '../api/loyaltyApi';
+import { useEffect, useState } from 'react';
+import { Loader2, Award, Star, TrendingUp, CreditCard, Package, Info, History } from 'lucide-react';
+import { getLoyaltyDashboard, type LoyaltyDashboardData } from '../api/loyaltyApi';
 import { getOrderHistory } from '../../catalog/api/catalogApi';
 
-const getAuthToken=() => localStorage.getItem('velocart_token') || localStorage.getItem('token') || '';
+const getAuthToken = () => localStorage.getItem('velocart_token') || localStorage.getItem('token') || '';
 
 export default function LoyaltyDashboard() {
-    const [dashboardData,setDashboardData]=useState<LoyaltyDashboardData | null>(null);
-    const [loyaltyOrders,setLoyaltyOrders]=useState<any[]>([]);
-    const [loading,setLoading]=useState<boolean>(true);
-    const [error,setError]=useState<string>('');
+    const [dashboardData, setDashboardData] = useState<LoyaltyDashboardData | null>(null);
+    const [loyaltyOrders, setLoyaltyOrders] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string>('');
 
     useEffect(() => {
-        const fetchAllData=async () => {
+        const fetchAllData = async () => {
             try {
-                const token=getAuthToken();
+                const token = getAuthToken();
                 // Fetch both dashboard and historical order data simultaneously
-                const [dashData,orderData]=await Promise.all([
+                const [dashData, orderData] = await Promise.all([
                     getLoyaltyDashboard(token),
                     getOrderHistory()
                 ]);
@@ -32,7 +32,7 @@ export default function LoyaltyDashboard() {
         };
 
         fetchAllData();
-    },[]);
+    }, []);
 
     if (loading) {
         return (
@@ -49,7 +49,7 @@ export default function LoyaltyDashboard() {
 
     if (!dashboardData) return null;
 
-    const getCardStyles=(tier: string) => {
+    const getCardStyles = (tier: string) => {
         switch (tier.toLowerCase()) {
             case 'gold': return 'bg-gradient-to-br from-[#D4AF37] via-[#AA7C11] to-[#5c430a] border-[#D4AF37]/50 text-white shadow-[0_0_30px_rgba(212,175,55,0.2)]';
             case 'platinum': return 'bg-gradient-to-br from-gray-300 via-gray-500 to-gray-800 border-gray-400/50 text-gray-900 shadow-[0_0_30px_rgba(255,255,255,0.1)]';
@@ -93,7 +93,7 @@ export default function LoyaltyDashboard() {
                     <div className="text-right">
                         <p className="text-xs uppercase tracking-widest opacity-80 mb-1">Valid Thru</p>
                         <p className="text-lg font-semibold tracking-wider font-mono">
-                            {new Date(dashboardData.expiryDate).toLocaleDateString('en-US',{ month: '2-digit',year: '2-digit' })}
+                            {new Date(dashboardData.expiryDate).toLocaleDateString('en-US', { month: '2-digit', year: '2-digit' })}
                         </p>
                     </div>
                 </div>
@@ -113,7 +113,7 @@ export default function LoyaltyDashboard() {
                     <div className="space-y-4 text-sm">
                         <div className="flex justify-between border-b border-white/10 pb-3"><span className="text-gray-400">Lifetime Earned</span><span className="font-semibold text-white">{dashboardData.totalPointsEarned.toLocaleString()}</span></div>
                         <div className="flex justify-between border-b border-white/10 pb-3"><span className="text-gray-400">Lifetime Redeemed</span><span className="font-semibold text-white">{dashboardData.totalPointsRedeemed.toLocaleString()}</span></div>
-                        <div className="flex justify-between pt-1"><span className="text-gray-400">Total Eligible Spend</span><span className="font-semibold text-primary">Rs. {dashboardData.totalEligibleSpend.toLocaleString(undefined,{ minimumFractionDigits: 2 })}</span></div>
+                        <div className="flex justify-between pt-1"><span className="text-gray-400">Total Eligible Spend</span><span className="font-semibold text-primary">Rs. {dashboardData.totalEligibleSpend.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
                     </div>
                 </div>
 
@@ -154,7 +154,7 @@ export default function LoyaltyDashboard() {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {loyaltyOrders.map((order,idx) => (
+                        {loyaltyOrders.map((order, idx) => (
                             <div key={idx} className="bg-black/50 p-4 rounded-xl border border-white/5 flex flex-wrap justify-between items-center gap-4 hover:border-white/20 transition-colors">
                                 <div>
                                     <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">{new Date(order.orderDate).toLocaleDateString()}</p>
@@ -175,10 +175,10 @@ export default function LoyaltyDashboard() {
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Info className="text-blue-400" size={20} /> Program Rules & Regulations</h3>
                 <div className="space-y-4 text-sm text-gray-400 leading-relaxed">
                     <p><strong>1. Earning Points:</strong> You earn 1 point for every Rs. 100 spent on eligible products. Promotional multipliers may apply.</p>
-                    <p><strong>2. Point Redemption:</strong> Points can be applied at checkout. Silver (Max 5% discount),Gold (Max 10% discount),Platinum (Max 5% discount,unrestricted points cap). 1 Point=Rs. 1.00.</p>
+                    <p><strong>2. Point Redemption:</strong> Points can be applied at checkout. Silver (Max 5% discount), Gold (Max 10% discount), Platinum (Max 5% discount, unrestricted points cap). 1 Point = Rs. 1.00.</p>
                     <p><strong>3. Expiration:</strong> Points expire strictly 365 days from the date they were earned. Use them before you lose them!</p>
                     <p><strong>4. Tier Evaluation:</strong> Your account tier is re-evaluated annually on the anniversary of your account creation based on total points earned during that year.</p>
-                    <p><strong>5. Reversals:</strong> If an order is cancelled,any loyalty points consumed during that transaction will be automatically restored to your available balance.</p>
+                    <p><strong>5. Reversals:</strong> If an order is cancelled, any loyalty points consumed during that transaction will be automatically restored to your available balance.</p>
                 </div>
             </div>
 

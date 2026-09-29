@@ -10,8 +10,8 @@ namespace velocart_system.API.Models
         [Key]
         public int Id { get; set; }
 
-        [Required,MaxLength(100)]
-        public string Name { get; set; }=string.Empty;
+        [Required, MaxLength(100)]
+        public string Name { get; set; } = string.Empty;
 
         [MaxLength(255)]
         public string? Description { get; set; }
@@ -23,7 +23,7 @@ namespace velocart_system.API.Models
         [JsonIgnore]
         public Category? ParentCategory { get; set; }
 
-        public ICollection<Category> SubCategories { get; set; }=new List<Category>();
-        public ICollection<Product> Products { get; set; }=new List<Product>();
+        public ICollection<Category> SubCategories { get; set; } = new List<Category>();
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

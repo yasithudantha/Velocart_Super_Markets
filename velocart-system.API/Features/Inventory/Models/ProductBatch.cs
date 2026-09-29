@@ -11,14 +11,14 @@ namespace velocart_system.API.Features.Inventory.Models
 
         [Required]
         public int ProductVariantId { get; set; }
-        public ProductVariant ProductVariant { get; set; }=null!;
+        public ProductVariant ProductVariant { get; set; } = null!;
 
-        [Required,MaxLength(50)]
-        public string BatchNumber { get; set; }=string.Empty;
+        [Required, MaxLength(50)]
+        public string BatchNumber { get; set; } = string.Empty;
 
         public DateTime ManufacturingDate { get; set; }
         public DateTime ExpiryDate { get; set; }
-        public DateTime ReceivedDate { get; set; }=DateTime.UtcNow;
+        public DateTime ReceivedDate { get; set; } = DateTime.UtcNow;
 
         [Required]
         public int InitialQuantity { get; set; }

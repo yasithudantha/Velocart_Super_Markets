@@ -11,19 +11,19 @@ interface LoginProps {
 }
 
 export default function Login({ onSwitchToRegister }: LoginProps) {
-    const navigate=useNavigate();
-    const [formData, setFormData]=useState({ email: '', password: '' });
-    const [error, setError]=useState('');
-    const [successMessage, setSuccessMessage]=useState('');
-    const [isLoading, setIsLoading]=useState(false);
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleChange=(e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setError('');
     };
 
-    const routeUser=(user: any) => {
-        const userRole=String(user.role || user.Role || '').toUpperCase();
+    const routeUser = (user: any) => {
+        const userRole = String(user.role || user.Role || '').toUpperCase();
         if (userRole === 'DELIVERYMANAGER') {
             navigate('/admin/delivery-management');
         } else if (userRole === 'PROMOTIONMANAGER') {
@@ -37,13 +37,13 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         }
     };
 
-    const handleSubmit=async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
         setIsLoading(true);
 
         try {
-            const result=await loginUser(formData);
+            const result = await loginUser(formData);
             
             // THE CRITICAL FIX: Storing the new secure Session Tokens!
             localStorage.setItem('token', result.token);
@@ -59,11 +59,11 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         }
     };
 
-   const handleGoogleSuccess=async (credentialResponse: any) => {
+   const handleGoogleSuccess = async (credentialResponse: any) => {
         setError('');
         setIsLoading(true);
         try {
-            const result=await googleAuth(credentialResponse.credential);
+            const result = await googleAuth(credentialResponse.credential);
 
             // THE CRITICAL FIX: Storing the new secure Session Tokens!
             localStorage.setItem('token', result.token);

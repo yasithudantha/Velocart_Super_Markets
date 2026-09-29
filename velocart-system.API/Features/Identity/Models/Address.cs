@@ -17,24 +17,24 @@ namespace velocart_system.API.Models
         [ForeignKey("UserId")]
         public User? User { get; set; }
 
-        [Required,MaxLength(50)]
-        public string AddressType { get; set; }="Home"; // e.g.,Home,Office,Other
+        [Required, MaxLength(50)]
+        public string AddressType { get; set; } = "Home"; // e.g., Home, Office, Other
 
-        [Required,MaxLength(150)]
-        public string StreetLine1 { get; set; }=string.Empty;
+        [Required, MaxLength(150)]
+        public string StreetLine1 { get; set; } = string.Empty;
 
         [MaxLength(150)]
         public string? StreetLine2 { get; set; } // Optional suite/apt number
 
-        [Required,MaxLength(100)]
-        public string City { get; set; }=string.Empty;
+        [Required, MaxLength(100)]
+        public string City { get; set; } = string.Empty;
 
-        [Required,MaxLength(20)]
-        public string PostalCode { get; set; }=string.Empty;
+        [Required, MaxLength(20)]
+        public string PostalCode { get; set; } = string.Empty;
 
-        [Required,MaxLength(100)]
-        public string Country { get; set; }="Sri Lanka"; // Default setting
+        [Required, MaxLength(100)]
+        public string Country { get; set; } = "Sri Lanka"; // Default setting
 
-        public bool IsDefault { get; set; }=false; // Primary delivery address marker
+        public bool IsDefault { get; set; } = false; // Primary delivery address marker
     }
 }

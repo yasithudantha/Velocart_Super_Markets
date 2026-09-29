@@ -12,16 +12,16 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-    const [step, setStep]=useState<'CART' | 'CHECKOUT' | 'RECEIPT'>('CART');
+    const [step, setStep] = useState<'CART' | 'CHECKOUT' | 'RECEIPT'>('CART');
     
-    const [cart, setCart]=useState<any>(null);
-    const [userProfile, setUserProfile]=useState<any>(null);
-    const [isLoading, setIsLoading]=useState(false);
-    const [updatingItemId, setUpdatingItemId]=useState<number | null>(null);
+    const [cart, setCart] = useState<any>(null);
+    const [userProfile, setUserProfile] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [updatingItemId, setUpdatingItemId] = useState<number | null>(null);
 
     // EXACT Address Structure matching your image
-    const [isEditingAddress, setIsEditingAddress]=useState(false);
-    const [addressForm, setAddressForm]=useState({
+    const [isEditingAddress, setIsEditingAddress] = useState(false);
+    const [addressForm, setAddressForm] = useState({
         streetLine1: '',
         streetLine2: '',
         city: '',
@@ -29,16 +29,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         country: 'Sri Lanka'
     });
 
-    const [paymentMethod, setPaymentMethod]=useState<'CARD' | 'COD'>('CARD');
-    const [idempotencyKey, setIdempotencyKey]=useState<string>('');
-    const [gatewayStatus, setGatewayStatus]=useState<string>('');
+    const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'COD'>('CARD');
+    const [idempotencyKey, setIdempotencyKey] = useState<string>('');
+    const [gatewayStatus, setGatewayStatus] = useState<string>('');
 
-    const [userPointsBalance, setUserPointsBalance]=useState<number>(0);
-    const [pointsToRedeem, setPointsToRedeem]=useState<number>(0);
+    const [userPointsBalance, setUserPointsBalance] = useState<number>(0);
+    const [pointsToRedeem, setPointsToRedeem] = useState<number>(0);
 
-    const [isCheckingOut, setIsCheckingOut]=useState(false);
-    const [checkoutSuccess, setCheckoutSuccess]=useState<any>(null);
-    const [checkoutError, setCheckoutError]=useState('');
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const [checkoutSuccess, setCheckoutSuccess] = useState<any>(null);
+    const [checkoutError, setCheckoutError] = useState('');
 
     useEffect(() => {
         if (isOpen) {
@@ -55,24 +55,24 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         }
     }, [isOpen]);
 
-    const fetchCart=async () => {
+    const fetchCart = async () => {
         setIsLoading(true);
         try { setCart(await getCart()); } catch (error) {} finally { setIsLoading(false); }
     };
 
-    const fetchUserLoyaltyPoints=async () => {
+    const fetchUserLoyaltyPoints = async () => {
         try {
-            const token=localStorage.getItem('token') || '';
-            const loyaltyData=await getLoyaltyDashboard(token);
+            const token = localStorage.getItem('token') || '';
+            const loyaltyData = await getLoyaltyDashboard(token);
             setUserPointsBalance(loyaltyData.currentPointsBalance || 23000); 
         } catch (error) {}
     };
 
-    const fetchProfileAndAddress=async () => { 
+    const fetchProfileAndAddress = async () => { 
         try { 
             setUserProfile(await getUserProfile()); 
-            const addresses=await getAddresses();
-            const targetAddress=addresses.find((a: any) => a.isDefault) || addresses[0];
+            const addresses = await getAddresses();
+            const targetAddress = addresses.find((a: any) => a.isDefault) || addresses[0];
             
             if (targetAddress) {
                 setAddressForm({
@@ -88,22 +88,22 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         } catch(e) {} 
     };
 
-    const getFormattedAddress=() => {
+    const getFormattedAddress = () => {
         return `${addressForm.streetLine1}${addressForm.streetLine2 ? ', ' + addressForm.streetLine2 : ''}, ${addressForm.city}, ${addressForm.postalCode}, ${addressForm.country}`;
     };
 
-    const handleUpdateQuantity=async (itemId: number, newQty: number, availableStock: number) => {
+    const handleUpdateQuantity = async (itemId: number, newQty: number, availableStock: number) => {
         if (newQty < 1 || newQty > availableStock) return;
         setUpdatingItemId(itemId);
         try { await updateCartItem(itemId, newQty); await fetchCart(); } catch (error) {} finally { setUpdatingItemId(null); }
     };
 
-    const handleRemoveItem=async (itemId: number) => {
+    const handleRemoveItem = async (itemId: number) => {
         setUpdatingItemId(itemId);
         try { await removeCartItem(itemId); await fetchCart(); } catch (error) {} finally { setUpdatingItemId(null); }
     };
 
-    const handleCheckout=async () => {
+    const handleCheckout = async () => {
         if (isEditingAddress) {
             setCheckoutError("Please save your delivery address before placing the order.");
             return;
@@ -114,9 +114,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         
         try {
             // Concatenate structured fields into the single string the C# backend expects
-            const finalDeliveryAddress=getFormattedAddress();
+            const finalDeliveryAddress = getFormattedAddress();
 
-            const response=await checkoutOrder(
+            const response = await checkoutOrder(
                 finalDeliveryAddress, 
                 cart.grandTotal, 
                 paymentMethod,
@@ -126,7 +126,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             
             if (response.stripeUrl) {
                 setGatewayStatus('Redirecting to Stripe Sandbox...');
-                window.location.href=response.stripeUrl; 
+                window.location.href = response.stripeUrl; 
                 return;
             }
 

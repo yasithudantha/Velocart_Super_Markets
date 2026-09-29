@@ -16,24 +16,24 @@ namespace velocart_system.API.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id=table.Column<int>(type: "integer",nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OrderNumber=table.Column<string>(type: "text",nullable: false),
-                    UserId=table.Column<int>(type: "integer",nullable: false),
-                    OrderDate=table.Column<DateTime>(type: "timestamp with time zone",nullable: false),
-                    Subtotal=table.Column<decimal>(type: "numeric",nullable: false),
-                    DiscountAmount=table.Column<decimal>(type: "numeric",nullable: false),
-                    TaxAmount=table.Column<decimal>(type: "numeric",nullable: false),
-                    DeliveryFee=table.Column<decimal>(type: "numeric",nullable: false),
-                    GrandTotal=table.Column<decimal>(type: "numeric",nullable: false),
-                    OrderStatus=table.Column<string>(type: "text",nullable: false),
-                    PaymentStatus=table.Column<string>(type: "text",nullable: false),
-                    DeliveryAddress=table.Column<string>(type: "text",nullable: false),
-                    DeliveryMethod=table.Column<string>(type: "text",nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OrderNumber = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Subtotal = table.Column<decimal>(type: "numeric", nullable: false),
+                    DiscountAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    TaxAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    DeliveryFee = table.Column<decimal>(type: "numeric", nullable: false),
+                    GrandTotal = table.Column<decimal>(type: "numeric", nullable: false),
+                    OrderStatus = table.Column<string>(type: "text", nullable: false),
+                    PaymentStatus = table.Column<string>(type: "text", nullable: false),
+                    DeliveryAddress = table.Column<string>(type: "text", nullable: false),
+                    DeliveryMethod = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders",x => x.Id);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Orders_Users_UserId",
                         column: x => x.UserId,
@@ -46,18 +46,18 @@ namespace velocart_system.API.Migrations
                 name: "OrderItems",
                 columns: table => new
                 {
-                    Id=table.Column<int>(type: "integer",nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OrderId=table.Column<int>(type: "integer",nullable: false),
-                    ProductVariantId=table.Column<int>(type: "integer",nullable: false),
-                    ProductName=table.Column<string>(type: "text",nullable: false),
-                    VariantName=table.Column<string>(type: "text",nullable: false),
-                    Quantity=table.Column<int>(type: "integer",nullable: false),
-                    UnitPrice=table.Column<decimal>(type: "numeric",nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    ProductVariantId = table.Column<int>(type: "integer", nullable: false),
+                    ProductName = table.Column<string>(type: "text", nullable: false),
+                    VariantName = table.Column<string>(type: "text", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderItems",x => x.Id);
+                    table.PrimaryKey("PK_OrderItems", x => x.Id);
                     table.ForeignKey(
                         name: "FK_OrderItems_Orders_OrderId",
                         column: x => x.OrderId,

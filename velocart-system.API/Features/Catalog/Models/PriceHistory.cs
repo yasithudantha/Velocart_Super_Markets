@@ -17,15 +17,15 @@ namespace velocart_system.API.Features.Catalog.Models
         [JsonIgnore]
         public ProductVariant? Variant { get; set; }
 
-        [Column(TypeName="decimal(18,2)")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal OldPrice { get; set; }
 
-        [Column(TypeName="decimal(18,2)")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal NewPrice { get; set; }
 
-        public DateTime ChangedAt { get; set; }=DateTime.UtcNow;
+        public DateTime ChangedAt { get; set; } = DateTime.UtcNow;
         
         [MaxLength(150)]
-        public string Reason { get; set; }=string.Empty; // e.g.,"Supplier cost increased"
+        public string Reason { get; set; } = string.Empty; // e.g., "Supplier cost increased"
     }
 }

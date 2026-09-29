@@ -8,18 +8,18 @@ namespace velocart_system.API.Features.Inventory.Models
         public int Id { get; set; }
         
         public int GoodsReceiptId { get; set; }
-        public GoodsReceipt GoodsReceipt { get; set; }=null!;
+        public GoodsReceipt GoodsReceipt { get; set; } = null!;
 
         public int PurchaseOrderItemId { get; set; }
-        public PurchaseOrderItem PurchaseOrderItem { get; set; }=null!;
+        public PurchaseOrderItem PurchaseOrderItem { get; set; } = null!;
 
         [Required]
         public int QuantityReceived { get; set; }
         
         [Required]
-        public int QuantityRejected { get; set; }=0; 
+        public int QuantityRejected { get; set; } = 0; 
         
         [MaxLength(255)]
-        public string RejectionReason { get; set; }=string.Empty;
+        public string RejectionReason { get; set; } = string.Empty;
     }
 }

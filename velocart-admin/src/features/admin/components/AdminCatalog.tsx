@@ -4,29 +4,29 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 
-const API_URL='http://localhost:5176/api';
-const getAuthHeaders=() => ({ headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+const API_URL = 'http://localhost:5176/api';
+const getAuthHeaders = () => ({ headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
 
 export default function AdminCatalog() {
-    const navigate=useNavigate();
-    const [products, setProducts]=useState<any[]>([]);
-    const [categories, setCategories]=useState<any[]>([]);
-    const [isLoading, setIsLoading]=useState(true);
-    const [searchTerm, setSearchTerm]=useState('');
+    const navigate = useNavigate();
+    const [products, setProducts] = useState<any[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    const [toast, setToast]=useState<{message: string, type: 'success' | 'error'} | null>(null);
-    const [deleteModal, setDeleteModal]=useState<{id: number, name: string} | null>(null);
-    const [editModal, setEditModal]=useState<any | null>(null);
-    const [isSaving, setIsSaving]=useState(false);
+    const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+    const [deleteModal, setDeleteModal] = useState<{id: number, name: string} | null>(null);
+    const [editModal, setEditModal] = useState<any | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         fetchProducts();
         axios.get(`${API_URL}/catalog/categories`).then(res => setCategories(res.data));
     }, []);
 
-    const fetchProducts=async () => {
+    const fetchProducts = async () => {
         try {
-            const res=await axios.get(`${API_URL}/admin/products`, getAuthHeaders());
+            const res = await axios.get(`${API_URL}/admin/products`, getAuthHeaders());
             setProducts(res.data);
         } catch (err) {
             showToast("Failed to fetch products", 'error');
@@ -35,12 +35,12 @@ export default function AdminCatalog() {
         }
     };
 
-    const showToast=(message: string, type: 'success' | 'error') => {
+    const showToast = (message: string, type: 'success' | 'error') => {
         setToast({ message, type });
         setTimeout(() => setToast(null), 4000);
     };
 
-    const confirmDelete=async () => {
+    const confirmDelete = async () => {
         if (!deleteModal) return;
         try {
             await axios.delete(`${API_URL}/admin/products/${deleteModal.id}`, getAuthHeaders());
@@ -53,7 +53,7 @@ export default function AdminCatalog() {
         }
     };
 
-    const handleEditSave=async (e: React.FormEvent) => {
+    const handleEditSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
         try {
@@ -76,7 +76,7 @@ export default function AdminCatalog() {
         }
     };
 
-    const filteredProducts=products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.brand.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.brand.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
         <div className="min-h-screen bg-[#F8F9FA] flex">
@@ -141,10 +141,10 @@ export default function AdminCatalog() {
                                         <h3 className="font-bold text-gray-900 mb-4 border-b pb-2">Variants (Prices & Stock)</h3>
                                         {editModal.variants.map((v:any, idx:number) => (
                                             <div key={idx} className="grid grid-cols-12 gap-3 mb-3 bg-gray-50 p-3 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-400">
-                                                <div className="col-span-3"><label className="block text-xs font-bold text-gray-500 mb-1">SKU</label><input disabled={v.id !== 0} type="text" value={v.sku || ''} onChange={(e) => {const nv=[...editModal.variants]; nv[idx].sku=e.target.value.toUpperCase(); setEditModal({...editModal, variants: nv});}} className="w-full px-2 py-1.5 border rounded-md text-sm outline-none disabled:opacity-50" /></div>
-                                                <div className="col-span-3"><label className="block text-xs font-bold text-gray-500 mb-1">Size/Type</label><input type="text" value={v.weightOrSize || ''} onChange={(e) => {const nv=[...editModal.variants]; nv[idx].weightOrSize=e.target.value; setEditModal({...editModal, variants: nv});}} className="w-full px-2 py-1.5 border rounded-md text-sm outline-none" /></div>
-                                                <div className="col-span-3"><label className="block text-xs font-bold text-gray-500 mb-1">Price</label><input type="number" value={v.price || ''} onChange={(e) => {const nv=[...editModal.variants]; nv[idx].price=e.target.value === '' ? '' : parseFloat(e.target.value); setEditModal({...editModal, variants: nv});}} className="w-full px-2 py-1.5 border rounded-md text-sm outline-none" /></div>
-                                                <div className="col-span-3"><label className="block text-xs font-bold text-gray-500 mb-1">Stock</label><input type="number" value={v.stockQuantity || ''} onChange={(e) => {const nv=[...editModal.variants]; nv[idx].stockQuantity=e.target.value === '' ? '' : parseInt(e.target.value); setEditModal({...editModal, variants: nv});}} className="w-full px-2 py-1.5 border rounded-md text-sm outline-none" /></div>
+                                                <div className="col-span-3"><label className="block text-xs font-bold text-gray-500 mb-1">SKU</label><input disabled={v.id !== 0} type="text" value={v.sku || ''} onChange={(e) => {const nv = [...editModal.variants]; nv[idx].sku = e.target.value.toUpperCase(); setEditModal({...editModal, variants: nv});}} className="w-full px-2 py-1.5 border rounded-md text-sm outline-none disabled:opacity-50" /></div>
+                                                <div className="col-span-3"><label className="block text-xs font-bold text-gray-500 mb-1">Size/Type</label><input type="text" value={v.weightOrSize || ''} onChange={(e) => {const nv = [...editModal.variants]; nv[idx].weightOrSize = e.target.value; setEditModal({...editModal, variants: nv});}} className="w-full px-2 py-1.5 border rounded-md text-sm outline-none" /></div>
+                                                <div className="col-span-3"><label className="block text-xs font-bold text-gray-500 mb-1">Price</label><input type="number" value={v.price || ''} onChange={(e) => {const nv = [...editModal.variants]; nv[idx].price = e.target.value === '' ? '' : parseFloat(e.target.value); setEditModal({...editModal, variants: nv});}} className="w-full px-2 py-1.5 border rounded-md text-sm outline-none" /></div>
+                                                <div className="col-span-3"><label className="block text-xs font-bold text-gray-500 mb-1">Stock</label><input type="number" value={v.stockQuantity || ''} onChange={(e) => {const nv = [...editModal.variants]; nv[idx].stockQuantity = e.target.value === '' ? '' : parseInt(e.target.value); setEditModal({...editModal, variants: nv});}} className="w-full px-2 py-1.5 border rounded-md text-sm outline-none" /></div>
                                             </div>
                                         ))}
                                     </div>

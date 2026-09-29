@@ -1,41 +1,42 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User,Mail,Lock,Phone,ArrowRight,ShieldCheck } from 'lucide-react';
+import type { Variants } from 'framer-motion';
+import { User, Mail, Lock, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import { registerUser,googleAuth,verifyEmail } from '../api/authApi';
+import { registerUser, googleAuth, verifyEmail } from '../api/authApi';
 
 export default function Register() {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     
     // Form States
-    const [formData,setFormData]=useState({ fullName: '',email: '',phoneNumber: '',password: '',confirmPassword: '' });
-    const [agreed,setAgreed]=useState(false);
+    const [formData, setFormData] = useState({ fullName: '', email: '', phoneNumber: '', password: '', confirmPassword: '' });
+    const [agreed, setAgreed] = useState(false);
     
     // UI States
-    const [error,setError]=useState('');
-    const [successMessage,setSuccessMessage]=useState('');
-    const [isLoading,setIsLoading]=useState(false);
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     
     // NEW: Verification State
-    const [isRegistered,setIsRegistered]=useState(false);
-    const [verificationToken,setVerificationToken]=useState('');
+    const [isRegistered, setIsRegistered] = useState(false);
+    const [verificationToken, setVerificationToken] = useState('');
 
-    const handleChange=(e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData,[e.target.name]: e.target.value });
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
         setError('');
     };
 
     // --- STEP 1: SUBMIT REGISTRATION ---
-    const handleSubmit=async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
 
-        if(formData.password !== formData.confirmPassword) {
+        if (formData.password !== formData.confirmPassword) {
             setError("Passwords do not match.");
             return;
         }
-        if(!agreed) {
+        if (!agreed) {
             setError("You must agree to the Terms & Privacy Policy.");
             return;
         }
@@ -43,17 +44,17 @@ export default function Register() {
         setIsLoading(true);
         try {
 
-            let cleanedPhone=formData.phoneNumber.replace(/\s/g,'');
-            if(cleanedPhone.startsWith('0')) {
-                cleanedPhone='+94' + cleanedPhone.substring(1);
+            let cleanedPhone = formData.phoneNumber.replace(/\s/g, '');
+            if (cleanedPhone.startsWith('0')) {
+                cleanedPhone = '+94' + cleanedPhone.substring(1);
             }
             // FIX: Added confirmPassword to match the backend DTO requirement
-            const dataToSubmit={
+            const dataToSubmit = {
                 fullName: formData.fullName,
                 email: formData.email,
                 phoneNumber: cleanedPhone,
                 password: formData.password,
-                confirmPassword: formData.confirmPassword,
+                confirmPassword: formData.confirmPassword, 
                 agreeToTerms: agreed,
                 agreeToPrivacyPolicy: agreed
             };
@@ -71,14 +72,14 @@ export default function Register() {
     };
 
     // --- STEP 2: SUBMIT VERIFICATION TOKEN ---
-    const handleVerify=async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
         setIsLoading(true);
         try {
             await verifyEmail(verificationToken.trim());
             setSuccessMessage("Email verified! Redirecting to login...");
-            setTimeout(() => navigate('/login'),2000);
+            setTimeout(() => navigate('/login'), 2000);
         } catch (err: any) {
             setError(err.toString());
         } finally {
@@ -87,13 +88,13 @@ export default function Register() {
     };
 
     // --- GOOGLE REGISTRATION (Fulfills requirement for BOTH methods) ---
-    const handleGoogleSuccess=async (credentialResponse: any) => {
+    const handleGoogleSuccess = async (credentialResponse: any) => {
         setError('');
         setIsLoading(true);
         try {
-            const result=await googleAuth(credentialResponse.credential);
-            localStorage.setItem('velocart_token',result.token);
-            localStorage.setItem('velocart_user',JSON.stringify(result.user));
+            const result = await googleAuth(credentialResponse.credential);
+            localStorage.setItem('velocart_token', result.token);
+            localStorage.setItem('velocart_user', JSON.stringify(result.user));
             navigate('/profile');
         } catch (err: any) {
             setError(err.toString());
@@ -101,9 +102,9 @@ export default function Register() {
         }
     };
 
-    const containerVariants: any={
-        hidden: { opacity: 0,scale: 0.95 },
-        show: { opacity: 1,scale: 1,transition: { duration: 0.5,ease: "easeOut" } }
+    const containerVariants: Variants = {
+        hidden: { opacity: 0, scale: 0.95 },
+        show: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } }
     };
 
     return (
@@ -199,7 +200,7 @@ export default function Register() {
                             <div className="flex items-start gap-3 mt-4">
                                 <input type="checkbox" id="terms" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setError(''); }} className="mt-1 w-4 h-4 rounded bg-black/50 border border-white/20 accent-primary" />
                                 <label htmlFor="terms" className="text-xs text-gray-400">
-                                    I agree to the <span onClick={() => window.open('/terms','_blank')} className="text-primary hover:underline cursor-pointer">Terms & Conditions</span> and <span onClick={() => window.open('/privacy','_blank')} className="text-primary hover:underline cursor-pointer">Privacy Policy</span>.
+                                    I agree to the <span onClick={() => window.open('/terms', '_blank')} className="text-primary hover:underline cursor-pointer">Terms & Conditions</span> and <span onClick={() => window.open('/privacy', '_blank')} className="text-primary hover:underline cursor-pointer">Privacy Policy</span>.
                                 </label>
                             </div>
 

@@ -21,11 +21,11 @@ namespace velocart_system.API.Features.Orders.Models
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
-        // The human-readable place name (e.g.,"Cross Road,Colombo")
+        // The human-readable place name (e.g., "Cross Road, Colombo")
         [MaxLength(255)]
-        public string PlaceName { get; set; }=string.Empty;
+        public string PlaceName { get; set; } = string.Empty;
 
         // When the package was at this location
-        public DateTime Timestamp { get; set; }=DateTime.UtcNow;
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }

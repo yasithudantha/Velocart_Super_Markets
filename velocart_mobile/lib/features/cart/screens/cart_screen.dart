@@ -11,7 +11,7 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   Map<String, dynamic>? cart;
-  bool isLoading=true;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -20,12 +20,12 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _fetchCart() async {
-    setState(() => isLoading=true);
+    setState(() => isLoading = true);
     try {
-      final data=await CatalogApi.getCart();
-      setState(() { cart=data; isLoading=false; });
+      final data = await CatalogApi.getCart();
+      setState(() { cart = data; isLoading = false; });
     } catch (e) {
-      setState(() => isLoading=false);
+      setState(() => isLoading = false);
     }
   }
 
@@ -33,8 +33,8 @@ class _CartScreenState extends State<CartScreen> {
     if (newQty < 1 || newQty > availableStock) return;
     try {
       setState(() {
-        var item=(cart!['items'] as List).firstWhere((i) => i['id'] == itemId);
-        item['quantity']=newQty;
+        var item = (cart!['items'] as List).firstWhere((i) => i['id'] == itemId);
+        item['quantity'] = newQty;
       });
       await CatalogApi.updateCartItem(itemId, newQty);
       _fetchCart(); 
@@ -57,8 +57,8 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     if (isLoading) return const Scaffold(backgroundColor: Colors.white, body: Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))));
 
-    final items=cart?['items'] as List? ?? [];
-    final hasAvailableItems=items.any((i) => i['isAvailable'] == true);
+    final items = cart?['items'] as List? ?? [];
+    final hasAvailableItems = items.any((i) => i['isAvailable'] == true);
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -84,8 +84,8 @@ class _CartScreenState extends State<CartScreen> {
               padding: const EdgeInsets.all(16),
               itemCount: items.length,
               itemBuilder: (context, index) {
-                final item=items[index];
-                final bool isAvailable=item['isAvailable'] ?? false;
+                final item = items[index];
+                final bool isAvailable = item['isAvailable'] ?? false;
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 16),
@@ -200,7 +200,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   onPressed: !hasAvailableItems ? null : () async {
                     // Navigate to Checkout and re-fetch if they came back from a 409 Conflict
-                    final shouldRefresh=await Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutScreen(cartData: cart!)));
+                    final shouldRefresh = await Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutScreen(cartData: cart!)));
                     if (shouldRefresh == true) _fetchCart();
                   },
                   child: const Text("Proceed to Checkout", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
