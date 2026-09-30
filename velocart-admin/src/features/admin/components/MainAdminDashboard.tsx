@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Users,
     Search,
-    Filter,
     ShieldAlert,
     KeyRound,
     UserPlus,
@@ -12,7 +11,6 @@ import {
     CheckCircle2,
     AlertTriangle,
     ShieldCheck,
-    Power,
     Presentation,
     BarChart3,
     Plus,
@@ -532,7 +530,6 @@ export default function MainAdminDashboard() {
                                                             <ShieldCheck
                                                                 size={14}
                                                                 className="text-red-500"
-                                                                title="Super Admin"
                                                             />
                                                         )}
 
