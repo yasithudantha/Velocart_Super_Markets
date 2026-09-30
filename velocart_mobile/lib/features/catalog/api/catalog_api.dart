@@ -6,7 +6,7 @@ import '../../auth/services/auth_api_service.dart';
 import 'dart:io';
 
 class CatalogApi {
-  static const String baseUrl = 'http://10.0.2.2:5176/api';
+  static const String baseUrl = 'https://velocart.up.railway.app/api';
   
   // NEW: Store the JWT token after login
   static String? jwtToken;
