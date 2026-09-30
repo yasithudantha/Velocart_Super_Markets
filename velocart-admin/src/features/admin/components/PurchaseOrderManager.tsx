@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Truck, Plus, Check, AlertTriangle, FileText, X, Calendar, PackageOpen, Loader2, Trash2, Edit2, Bot, Activity, CheckCircle2 } from 'lucide-react';
+import { Truck, Plus, Check, AlertTriangle, AlertCircle, FileText, X, Calendar, PackageOpen, Loader2, Trash2, Edit2, Bot, Activity, CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
 import { getPendingERPWorkflows, triggerERPAIWorkflow, updateWorkflowStatus, createPurchaseOrder } from '../api/inventoryApi';
 
