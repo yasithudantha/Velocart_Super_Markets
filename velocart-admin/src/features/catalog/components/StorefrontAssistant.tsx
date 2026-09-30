@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, ShoppingCart, Loader2, Bot, User, CheckCircle2 } from 'lucide-react';
+import { MessageSquare, X, Send, ShoppingCart, Loader2, Bot,  CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5176/api';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5176') + '/api';
 
 interface ProposedItem {
     ProductVariantId: number;
