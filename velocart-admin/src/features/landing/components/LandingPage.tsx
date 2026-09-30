@@ -4,8 +4,7 @@ import {
     motion,
     useReducedMotion,
     useScroll,
-    useTransform,
-} from "framer-motion";
+    useTransform} from "framer-motion";
 import {
     ArrowRight,
     ArrowUpRight,
@@ -16,7 +15,6 @@ import {
     CheckCircle2,
     ChefHat,
     ChevronRight,
-    Clock3,
     CreditCard,
     Heart,
     Layers3,
@@ -38,8 +36,7 @@ import {
     Truck,
     User,
     X,
-    Zap,
-} from "lucide-react";
+    Zap} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getBanners } from "../../admin/api/mainAdminApi";
 
@@ -82,8 +79,7 @@ const shelves: Shelf[] = [
                 price: 1850,
                 unit: "1 KG",
                 image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035594/chicken-breast.jpg",
-                badge: "High Protein",
-            },
+                badge: "High Protein"},
             {
                 id: 2,
                 name: "Organic Avocado",
@@ -92,18 +88,15 @@ const shelves: Shelf[] = [
                 oldPrice: 1020,
                 unit: "500 G",
                 image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035593/avocado.jpg",
-                badge: "Deal",
-            },
+                badge: "Deal"},
             {
                 id: 3,
                 name: "Fresh Broccoli",
                 category: "Fresh",
                 price: 690,
                 unit: "500 G",
-                image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035594/broccoli.jpg",
-            },
-        ],
-    },
+                image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035594/broccoli.jpg"},
+        ]},
     {
         id: "pantry",
         label: "Pantry",
@@ -116,26 +109,22 @@ const shelves: Shelf[] = [
                 price: 2450,
                 unit: "5 KG",
                 image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035594/rice.jpg",
-                badge: "Popular",
-            },
+                badge: "Popular"},
             {
                 id: 5,
                 name: "Artisanal Pasta",
                 category: "Pantry",
                 price: 790,
                 unit: "500 G",
-                image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035595/pasta.jpg",
-            },
+                image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035595/pasta.jpg"},
             {
                 id: 6,
                 name: "Extra Virgin Olive Oil",
                 category: "Pantry",
                 price: 2850,
                 unit: "750 ML",
-                image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035595/olive-oil.jpg",
-            },
-        ],
-    },
+                image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035595/olive-oil.jpg"},
+        ]},
     {
         id: "beverages",
         label: "Beverages",
@@ -148,8 +137,7 @@ const shelves: Shelf[] = [
                 price: 520,
                 unit: "1 L",
                 image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035595/milk.jpg",
-                badge: "Daily Essential",
-            },
+                badge: "Daily Essential"},
             {
                 id: 8,
                 name: "Premium Coffee",
@@ -158,18 +146,15 @@ const shelves: Shelf[] = [
                 oldPrice: 1950,
                 unit: "250 G",
                 image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035594/coffee.jpg",
-                badge: "15% OFF",
-            },
+                badge: "15% OFF"},
             {
                 id: 9,
                 name: "Natural Orange Juice",
                 category: "Beverages",
                 price: 780,
                 unit: "1 L",
-                image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035594/orange-juice.jpg",
-            },
-        ],
-    },
+                image: "https://res.cloudinary.com/cr0hscl2/image/upload/v1790035594/orange-juice.jpg"},
+        ]},
 ];
 
 const shopSteps = [
@@ -177,59 +162,48 @@ const shopSteps = [
         id: "search",
         number: "01",
         title: "Search",
-        description: "Find what you need using natural search.",
-    },
+        description: "Find what you need using natural search."},
     {
         id: "discover",
         number: "02",
         title: "Discover",
-        description: "Explore products, categories and intelligent recommendations.",
-    },
+        description: "Explore products, categories and intelligent recommendations."},
     {
         id: "compare",
         number: "03",
         title: "Compare",
-        description: "Compare brands, prices, discounts and availability.",
-    },
+        description: "Compare brands, prices, discounts and availability."},
     {
         id: "cart",
         number: "04",
         title: "Cart",
-        description: "Build your basket with quick interactions.",
-    },
+        description: "Build your basket with quick interactions."},
     {
         id: "checkout",
         number: "05",
         title: "Checkout",
-        description: "Review delivery, rewards and secure payment.",
-    },
+        description: "Review delivery, rewards and secure payment."},
 ];
 
 const aiSteps = [
     {
         title: "Understand",
-        description: "Understands the customer's natural-language request.",
-    },
+        description: "Understands the customer's natural-language request."},
     {
         title: "Search",
-        description: "Searches VeloCart products and categories.",
-    },
+        description: "Searches VeloCart products and categories."},
     {
         title: "Check",
-        description: "Checks availability, price and relevant promotions.",
-    },
+        description: "Checks availability, price and relevant promotions."},
     {
         title: "Compare",
-        description: "Evaluates products and suitable alternatives.",
-    },
+        description: "Evaluates products and suitable alternatives."},
     {
         title: "Recommend",
-        description: "Creates a personalized shopping recommendation.",
-    },
+        description: "Creates a personalized shopping recommendation."},
     {
         title: "Confirm",
-        description: "Lets the customer review and confirm before adding.",
-    },
+        description: "Lets the customer review and confirm before adding."},
 ];
 
 const recognitions = [
@@ -238,22 +212,19 @@ const recognitions = [
     issuer: "Microsoft",
     year: "2026",
     description:
-        "International technology competition recognizing innovative student-built solutions with potential to create meaningful real-world impact.",
-    },
+        "International technology competition recognizing innovative student-built solutions with potential to create meaningful real-world impact."},
     {
     title: "AWS Student / Cloud Recognition",
     issuer: "Amazon Web Services",
     year: "2026",
     description:
-        "Recognition associated with demonstrating cloud technology skills and building innovative applications using AWS services.",
-    },
+        "Recognition associated with demonstrating cloud technology skills and building innovative applications using AWS services."},
     {
     title: "Google Solution Challenge",
     issuer: "Google Developer Student Clubs",
     year: "2026",
     description:
-        "International student innovation challenge focused on building technology solutions that address real-world problems using Google technologies.",
-    },
+        "International student innovation challenge focused on building technology solutions that address real-world problems using Google technologies."},
 ];
 
 // ==========================================================
@@ -264,40 +235,29 @@ const staggerContainer = {
     hidden: {},
     show: {
         transition: {
-            staggerChildren: 0.12,
-        },
-    },
-};
+            staggerChildren: 0.12}}};
 
 const fadeUp = {
     hidden: {
         opacity: 0,
-        y: 34,
-    },
+        y: 34},
     show: {
         opacity: 1,
         y: 0,
         transition: {
             duration: 0.7,
-            ease: [0.22, 1, 0.36, 1] as any,
-        },
-    },
-};
+            ease: [0.22, 1, 0.36, 1] as any}}};
 
 const fadeScale = {
     hidden: {
         opacity: 0,
-        scale: 0.94,
-    },
+        scale: 0.94},
     show: {
         opacity: 1,
         scale: 1,
         transition: {
             duration: 0.75,
-            ease: [0.22, 1, 0.36, 1] as any,
-        },
-    },
-};
+            ease: [0.22, 1, 0.36, 1] as any}}};
 
 // ==========================================================
 // COMPONENT
@@ -352,8 +312,7 @@ export default function LandingPage() {
     const [countdown, setCountdown] = useState({
         hours: 2,
         minutes: 14,
-        seconds: 36,
-    });
+        seconds: 36});
 
     // ------------------------------------------------------
     // NAVIGATION SCROLL
@@ -459,8 +418,7 @@ export default function LandingPage() {
 
     const scrollToSection = (id: string) => {
         document.getElementById(id)?.scrollIntoView({
-            behavior: "smooth",
-        });
+            behavior: "smooth"});
 
         setMobileMenuOpen(false);
     };
@@ -500,8 +458,7 @@ export default function LandingPage() {
                         onClick={() =>
                             window.scrollTo({
                                 top: 0,
-                                behavior: "smooth",
-                            })
+                                behavior: "smooth"})
                         }
                         className="group flex items-center gap-2"
                         aria-label="VeloCart Home"
@@ -606,16 +563,13 @@ export default function LandingPage() {
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                y: -10,
-                            }}
+                                y: -10}}
                             animate={{
                                 opacity: 1,
-                                y: 0,
-                            }}
+                                y: 0}}
                             exit={{
                                 opacity: 0,
-                                y: -10,
-                            }}
+                                y: -10}}
                             className="mx-auto mt-3 max-w-7xl rounded-2xl border border-white/10 bg-[#0A0A0A]/95 p-4 shadow-2xl backdrop-blur-2xl lg:hidden"
                         >
                             <div className="space-y-1">
@@ -662,8 +616,7 @@ export default function LandingPage() {
                 {/* Video */}
                 <motion.div
                     style={{
-                        scale: heroScale,
-                    }}
+                        scale: heroScale}}
                     className="absolute inset-0 z-0"
                 >
                     <video
@@ -693,8 +646,7 @@ export default function LandingPage() {
                 <motion.div
                     style={{
                         y: yHero,
-                        opacity: opacityHero,
-                    }}
+                        opacity: opacityHero}}
                     className="relative z-20 mx-auto w-full max-w-6xl text-center"
                 >
                     <motion.div
@@ -788,17 +740,14 @@ export default function LandingPage() {
                     animate={{
                         opacity: 1,
                         x: 0,
-                        y: prefersReducedMotion ? 0 : [0, -12, 0],
-                    }}
+                        y: prefersReducedMotion ? 0 : [0, -12, 0]}}
                     transition={{
                         opacity: { duration: 0.8, delay: 1.2 },
                         x: { duration: 0.8, delay: 1.2 },
                         y: {
                             duration: 6,
                             repeat: Infinity,
-                            ease: "easeInOut",
-                        },
-                    }}
+                            ease: "easeInOut"}}}
                     className="absolute left-[5%] top-[29%] z-30 hidden w-64 -rotate-6 rounded-2xl border border-white/10 bg-[#121212]/75 p-4 shadow-2xl backdrop-blur-2xl xl:block"
                 >
                     <div className="flex items-center gap-3">
@@ -830,17 +779,14 @@ export default function LandingPage() {
                     animate={{
                         opacity: 1,
                         x: 0,
-                        y: prefersReducedMotion ? 0 : [0, 14, 0],
-                    }}
+                        y: prefersReducedMotion ? 0 : [0, 14, 0]}}
                     transition={{
                         opacity: { duration: 0.8, delay: 1.4 },
                         x: { duration: 0.8, delay: 1.4 },
                         y: {
                             duration: 7,
                             repeat: Infinity,
-                            ease: "easeInOut",
-                        },
-                    }}
+                            ease: "easeInOut"}}}
                     className="absolute right-[5%] bottom-[25%] z-30 hidden w-72 rotate-3 rounded-2xl border border-blue-400/15 bg-[#101216]/75 p-4 shadow-2xl backdrop-blur-2xl xl:block"
                 >
                     <div className="flex items-center gap-3">
@@ -985,8 +931,7 @@ export default function LandingPage() {
                             whileInView="show"
                             viewport={{
                                 once: true,
-                                amount: 0.15,
-                            }}
+                                amount: 0.15}}
                             variants={fadeScale}
                             className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#101010] p-4 shadow-2xl sm:p-6"
                         >
@@ -1043,16 +988,13 @@ export default function LandingPage() {
                                                 layout
                                                 initial={{
                                                     opacity: 0,
-                                                    y: 20,
-                                                }}
+                                                    y: 20}}
                                                 animate={{
                                                     opacity: 1,
-                                                    y: 0,
-                                                }}
+                                                    y: 0}}
                                                 transition={{
                                                     delay:
-                                                        index * 0.08,
-                                                }}
+                                                        index * 0.08}}
                                                 whileHover={
                                                     prefersReducedMotion
                                                         ? {}
@@ -1060,13 +1002,11 @@ export default function LandingPage() {
                                                               y: -8,
                                                               rotateX: -3,
                                                               rotateY: 3,
-                                                              scale: 1.02,
-                                                          }
+                                                              scale: 1.02}
                                                 }
                                                 className="group relative overflow-hidden rounded-2xl border border-white/8 bg-[#121212] p-4"
                                                 style={{
-                                                    perspective: 1000,
-                                                }}
+                                                    perspective: 1000}}
                                             >
                                                 {product.badge && (
                                                     <div className="absolute left-3 top-3 z-20 rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/10 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-[#D4AF37]">
@@ -1182,18 +1122,14 @@ export default function LandingPage() {
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                x: 30,
-                            }}
+                                x: 30}}
                             whileInView={{
                                 opacity: 1,
-                                x: 0,
-                            }}
+                                x: 0}}
                             viewport={{
-                                once: true,
-                            }}
+                                once: true}}
                             transition={{
-                                duration: 0.7,
-                            }}
+                                duration: 0.7}}
                             className="rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 sm:p-7"
                         >
                             <div className="mb-10">
@@ -1308,8 +1244,7 @@ export default function LandingPage() {
                             whileInView="show"
                             viewport={{
                                 once: true,
-                                amount: 0.2,
-                            }}
+                                amount: 0.2}}
                             variants={staggerContainer}
                         >
                             <motion.div
@@ -1367,18 +1302,14 @@ export default function LandingPage() {
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                x: 45,
-                            }}
+                                x: 45}}
                             whileInView={{
                                 opacity: 1,
-                                x: 0,
-                            }}
+                                x: 0}}
                             viewport={{
-                                once: true,
-                            }}
+                                once: true}}
                             transition={{
-                                duration: 0.8,
-                            }}
+                                duration: 0.8}}
                             className="relative"
                         >
                             <div className="absolute inset-0 rounded-[3rem] bg-blue-500/10 blur-[100px]" />
@@ -1587,25 +1518,20 @@ export default function LandingPage() {
                                 key={deal.title}
                                 initial={{
                                     opacity: 0,
-                                    y: 25,
-                                }}
+                                    y: 25}}
                                 whileInView={{
                                     opacity: 1,
-                                    y: 0,
-                                }}
+                                    y: 0}}
                                 viewport={{
                                     once: true,
-                                    amount: 0.2,
-                                }}
+                                    amount: 0.2}}
                                 transition={{
-                                    delay: index * 0.1,
-                                }}
+                                    delay: index * 0.1}}
                                 whileHover={
                                     prefersReducedMotion
                                         ? {}
                                         : {
-                                              y: -8,
-                                          }
+                                              y: -8}
                                 }
                                 className="group relative overflow-hidden rounded-[2rem] border border-white/8 bg-[#101010]"
                             >
@@ -1702,8 +1628,7 @@ export default function LandingPage() {
                             initial="hidden"
                             whileInView="show"
                             viewport={{
-                                once: true,
-                            }}
+                                once: true}}
                             variants={staggerContainer}
                         >
                             <motion.div
@@ -1762,32 +1687,26 @@ export default function LandingPage() {
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                y: 30,
-                            }}
+                                y: 30}}
                             whileInView={{
                                 opacity: 1,
-                                y: 0,
-                            }}
+                                y: 0}}
                             viewport={{
-                                once: true,
-                            }}
+                                once: true}}
                             transition={{
-                                duration: 0.8,
-                            }}
+                                duration: 0.8}}
                         >
                             <div
                                 className="group mx-auto max-w-2xl"
                                 style={{
-                                    perspective: 1500,
-                                }}
+                                    perspective: 1500}}
                             >
                                 <motion.div
                                     animate={
                                         prefersReducedMotion
                                             ? {
                                                   rotateY: 0,
-                                                  rotateX: 0,
-                                              }
+                                                  rotateX: 0}
                                             : {
                                                   rotateY: [
                                                       -3,
@@ -1798,19 +1717,16 @@ export default function LandingPage() {
                                                       1,
                                                       -2,
                                                       1,
-                                                  ],
-                                              }
+                                                  ]}
                                     }
                                     transition={{
                                         duration: 9,
                                         repeat: Infinity,
-                                        ease: "easeInOut",
-                                    }}
+                                        ease: "easeInOut"}}
                                     className="relative aspect-[1.65/1] overflow-hidden rounded-[2rem] border border-white/12 bg-gradient-to-br from-[#262626] via-[#171717] to-[#070707] p-7 shadow-[0_35px_80px_rgba(0,0,0,0.65)] sm:p-9"
                                     style={{
                                         transformStyle:
-                                            "preserve-3d",
-                                    }}
+                                            "preserve-3d"}}
                                 >
                                     <div className="absolute left-[-30%] top-[-120%] h-[300%] w-[35%] rotate-[24deg] bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-1000 group-hover:left-[110%]" />
 
@@ -1842,18 +1758,14 @@ export default function LandingPage() {
                                             <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
                                                 <motion.div
                                                     initial={{
-                                                        width: "0%",
-                                                    }}
+                                                        width: "0%"}}
                                                     whileInView={{
-                                                        width: "72%",
-                                                    }}
+                                                        width: "72%"}}
                                                     viewport={{
-                                                        once: true,
-                                                    }}
+                                                        once: true}}
                                                     transition={{
                                                         duration: 1.2,
-                                                        delay: 0.2,
-                                                    }}
+                                                        delay: 0.2}}
                                                     className="h-full rounded-full bg-[#D4AF37]"
                                                 />
                                             </div>
@@ -1946,45 +1858,36 @@ export default function LandingPage() {
                             {
                                 icon: <LockKeyhole />,
                                 title: "JWT Accounts",
-                                desc: "Protected authentication workflows.",
-                            },
+                                desc: "Protected authentication workflows."},
                             {
                                 icon: <BadgeCheck />,
                                 title: "Email Verification",
-                                desc: "Verified customer identity flow.",
-                            },
+                                desc: "Verified customer identity flow."},
                             {
                                 icon: <CreditCard />,
                                 title: "Secure Payments",
-                                desc: "Protected online payment experience.",
-                            },
+                                desc: "Protected online payment experience."},
                             {
                                 icon: <Package />,
                                 title: "Order Protection",
-                                desc: "Controlled order lifecycle states.",
-                            },
+                                desc: "Controlled order lifecycle states."},
                             {
                                 icon: <ShieldCheck />,
                                 title: "Multiple Options",
-                                desc: "Flexible payment choices.",
-                            },
+                                desc: "Flexible payment choices."},
                         ].map((item, index) => (
                             <motion.div
                                 key={item.title}
                                 initial={{
                                     opacity: 0,
-                                    y: 20,
-                                }}
+                                    y: 20}}
                                 whileInView={{
                                     opacity: 1,
-                                    y: 0,
-                                }}
+                                    y: 0}}
                                 viewport={{
-                                    once: true,
-                                }}
+                                    once: true}}
                                 transition={{
-                                    delay: index * 0.08,
-                                }}
+                                    delay: index * 0.08}}
                                 className="rounded-2xl border border-white/8 bg-white/[0.02] p-5 transition hover:-translate-y-1 hover:bg-white/[0.04]"
                             >
                                 <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-[#D4AF37]/10 text-[#D4AF37]">
@@ -2016,18 +1919,14 @@ export default function LandingPage() {
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                x: -35,
-                            }}
+                                x: -35}}
                             whileInView={{
                                 opacity: 1,
-                                x: 0,
-                            }}
+                                x: 0}}
                             viewport={{
-                                once: true,
-                            }}
+                                once: true}}
                             transition={{
-                                duration: 0.8,
-                            }}
+                                duration: 0.8}}
                             className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-2xl"
                         >
                             <video
@@ -2065,18 +1964,14 @@ export default function LandingPage() {
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                x: 35,
-                            }}
+                                x: 35}}
                             whileInView={{
                                 opacity: 1,
-                                x: 0,
-                            }}
+                                x: 0}}
                             viewport={{
-                                once: true,
-                            }}
+                                once: true}}
                             transition={{
-                                duration: 0.8,
-                            }}
+                                duration: 0.8}}
                         >
                             <div className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-[#D4AF37]">
                                 <Truck size={15} />
@@ -2172,18 +2067,14 @@ export default function LandingPage() {
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                y: 50,
-                            }}
+                                y: 50}}
                             whileInView={{
                                 opacity: 1,
-                                y: 0,
-                            }}
+                                y: 0}}
                             viewport={{
-                                once: true,
-                            }}
+                                once: true}}
                             transition={{
-                                duration: 0.8,
-                            }}
+                                duration: 0.8}}
                             className="relative z-10 hidden w-[70%] max-w-3xl rounded-[2rem] border border-white/10 bg-[#111] p-3 shadow-2xl md:block"
                         >
                             <div className="overflow-hidden rounded-[1.4rem] border border-white/6 bg-[#080808]">
@@ -2228,19 +2119,15 @@ export default function LandingPage() {
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                x: 40,
-                            }}
+                                x: 40}}
                             whileInView={{
                                 opacity: 1,
-                                x: 0,
-                            }}
+                                x: 0}}
                             viewport={{
-                                once: true,
-                            }}
+                                once: true}}
                             transition={{
                                 duration: 0.8,
-                                delay: 0.15,
-                            }}
+                                delay: 0.15}}
                             className="absolute right-[5%] z-30 w-40 rotate-6 rounded-[2rem] border border-white/10 bg-[#141414] p-2 shadow-[0_35px_80px_rgba(0,0,0,0.7)] sm:w-52 lg:right-[11%]"
                         >
                             <div className="overflow-hidden rounded-[1.6rem] bg-[#080808]">
@@ -2275,19 +2162,15 @@ export default function LandingPage() {
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                x: -40,
-                            }}
+                                x: -40}}
                             whileInView={{
                                 opacity: 1,
-                                x: 0,
-                            }}
+                                x: 0}}
                             viewport={{
-                                once: true,
-                            }}
+                                once: true}}
                             transition={{
                                 duration: 0.8,
-                                delay: 0.25,
-                            }}
+                                delay: 0.25}}
                             className="absolute bottom-0 left-[5%] z-20 hidden w-48 -rotate-6 rounded-[2rem] border border-white/10 bg-[#141414] p-2 shadow-[0_35px_80px_rgba(0,0,0,0.7)] sm:block"
                         >
                             <div className="overflow-hidden rounded-[1.6rem] bg-[#080808]">
@@ -2360,13 +2243,11 @@ export default function LandingPage() {
                                         : {
                                               y: -10,
                                               rotateX: -4,
-                                              rotateY: 4,
-                                          }
+                                              rotateY: 4}
                                 }
                                 className="group relative rounded-[2rem] border border-white/8 bg-[#111] p-4 transition-shadow hover:shadow-[0_25px_60px_rgba(0,0,0,0.35)]"
                                 style={{
-                                    perspective: 1000,
-                                }}
+                                    perspective: 1000}}
                             >
                                 <div className="absolute right-4 top-4 z-10">
                                     <button
@@ -2497,50 +2378,43 @@ export default function LandingPage() {
                                     desc: "Intelligent shopping assistance.",
                                     icon: <Sparkles size={17} />,
                                     className:
-                                        "left-0 top-[10%]",
-                                },
+                                        "left-0 top-[10%]"},
                                 {
                                     title: "Fast Shopping",
                                     desc: "Reduce search and selection effort.",
                                     icon: <Zap size={17} />,
                                     className:
-                                        "right-0 top-[10%]",
-                                },
+                                        "right-0 top-[10%]"},
                                 {
                                     title: "Personalized",
                                     desc: "Relevant recommendations and offers.",
                                     icon: <User size={17} />,
                                     className:
-                                        "left-[4%] bottom-[12%]",
-                                },
+                                        "left-[4%] bottom-[12%]"},
                                 {
                                     title: "Secure",
                                     desc: "Protected account and payment workflows.",
                                     icon: <ShieldCheck size={17} />,
                                     className:
-                                        "right-[4%] bottom-[12%]",
-                                },
+                                        "right-[4%] bottom-[12%]"},
                                 {
                                     title: "Rewards",
                                     desc: "Points, tiers and benefits.",
                                     icon: <Star size={17} />,
                                     className:
-                                        "left-1/2 top-0 -translate-x-1/2",
-                                },
+                                        "left-1/2 top-0 -translate-x-1/2"},
                                 {
                                     title: "Smart Delivery",
                                     desc: "Clear order and delivery progress.",
                                     icon: <Truck size={17} />,
                                     className:
-                                        "bottom-0 left-1/2 -translate-x-1/2",
-                                },
+                                        "bottom-0 left-1/2 -translate-x-1/2"},
                             ].map((item) => (
                                 <motion.div
                                     key={item.title}
                                     whileHover={{
                                         y: -6,
-                                        scale: 1.02,
-                                    }}
+                                        scale: 1.02}}
                                     className={`absolute w-56 rounded-2xl border border-white/8 bg-[#101010]/90 p-4 backdrop-blur-xl ${item.className}`}
                                 >
                                     <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-[#D4AF37]/10 text-[#D4AF37]">
@@ -2653,18 +2527,14 @@ export default function LandingPage() {
                                 key={`${recognition.title}-${index}`}
                                 initial={{
                                     opacity: 0,
-                                    y: 25,
-                                }}
+                                    y: 25}}
                                 whileInView={{
                                     opacity: 1,
-                                    y: 0,
-                                }}
+                                    y: 0}}
                                 viewport={{
-                                    once: true,
-                                }}
+                                    once: true}}
                                 transition={{
-                                    delay: index * 0.1,
-                                }}
+                                    delay: index * 0.1}}
                                 className="group rounded-[2rem] border border-white/8 bg-[#111] p-6 transition hover:-translate-y-2"
                             >
                                 <div className="flex items-start justify-between">
@@ -2742,22 +2612,17 @@ export default function LandingPage() {
                                     key={String(label)}
                                     initial={{
                                         opacity: 0,
-                                        scale: 0.92,
-                                    }}
+                                        scale: 0.92}}
                                     whileInView={{
                                         opacity: 1,
-                                        scale: 1,
-                                    }}
+                                        scale: 1}}
                                     viewport={{
-                                        once: true,
-                                    }}
+                                        once: true}}
                                     transition={{
-                                        delay: index * 0.06,
-                                    }}
+                                        delay: index * 0.06}}
                                     whileHover={{
                                         y: -6,
-                                        scale: 1.02,
-                                    }}
+                                        scale: 1.02}}
                                     className="rounded-2xl border border-white/8 bg-[#101010]/85 p-5 backdrop-blur-xl"
                                 >
                                     <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-[#D4AF37]/10 text-[#D4AF37]">
@@ -3016,12 +2881,14 @@ export default function LandingPage() {
                             </h4>
 
                             <div className="mt-5 space-y-3 text-sm text-gray-600">
-                                <button className="block transition hover:text-[#D4AF37]">
-                                    Help Center
-                                </button>
+                                <div className="mb-4">
+                                    <span className="block font-bold text-gray-400 mb-1">Technical Support</span>
+                                    <a href="tel:+94339999999" className="block transition hover:text-[#D4AF37]">+94 33 999 9999</a>
+                                    <a href="mailto:support@velocart.com" className="block transition hover:text-[#D4AF37]">support@velocart.com</a>
+                                </div>
 
                                 <button className="block transition hover:text-[#D4AF37]">
-                                    Contact
+                                    Help Center
                                 </button>
 
                                 <button className="block transition hover:text-[#D4AF37]">
@@ -3087,18 +2954,15 @@ export default function LandingPage() {
                         initial={{
                             opacity: 0,
                             y: 20,
-                            scale: 0.96,
-                        }}
+                            scale: 0.96}}
                         animate={{
                             opacity: 1,
                             y: 0,
-                            scale: 1,
-                        }}
+                            scale: 1}}
                         exit={{
                             opacity: 0,
                             y: 20,
-                            scale: 0.96,
-                        }}
+                            scale: 0.96}}
                         className="fixed bottom-6 left-1/2 z-[200] -translate-x-1/2 rounded-2xl border border-[#D4AF37]/20 bg-[#101010]/95 px-5 py-4 shadow-2xl backdrop-blur-xl"
                     >
                         <div className="flex items-center gap-3 text-sm">
@@ -3122,14 +2986,11 @@ export default function LandingPage() {
                 {selectedProduct && (
                     <motion.div
                         initial={{
-                            opacity: 0,
-                        }}
+                            opacity: 0}}
                         animate={{
-                            opacity: 1,
-                        }}
+                            opacity: 1}}
                         exit={{
-                            opacity: 0,
-                        }}
+                            opacity: 0}}
                         className="fixed inset-0 z-[180] flex items-center justify-center bg-black/75 p-4 backdrop-blur-md"
                         onClick={() => setSelectedProduct(null)}
                     >
@@ -3137,18 +2998,15 @@ export default function LandingPage() {
                             initial={{
                                 opacity: 0,
                                 y: 25,
-                                scale: 0.96,
-                            }}
+                                scale: 0.96}}
                             animate={{
                                 opacity: 1,
                                 y: 0,
-                                scale: 1,
-                            }}
+                                scale: 1}}
                             exit={{
                                 opacity: 0,
                                 y: 25,
-                                scale: 0.96,
-                            }}
+                                scale: 0.96}}
                             onClick={(event) =>
                                 event.stopPropagation()
                             }
@@ -3253,30 +3111,24 @@ export default function LandingPage() {
                 {showFilm && (
                     <motion.div
                         initial={{
-                            opacity: 0,
-                        }}
+                            opacity: 0}}
                         animate={{
-                            opacity: 1,
-                        }}
+                            opacity: 1}}
                         exit={{
-                            opacity: 0,
-                        }}
+                            opacity: 0}}
                         className="fixed inset-0 z-[190] flex items-center justify-center bg-black/85 p-4 backdrop-blur-xl"
                         onClick={() => setShowFilm(false)}
                     >
                         <motion.div
                             initial={{
                                 opacity: 0,
-                                scale: 0.96,
-                            }}
+                                scale: 0.96}}
                             animate={{
                                 opacity: 1,
-                                scale: 1,
-                            }}
+                                scale: 1}}
                             exit={{
                                 opacity: 0,
-                                scale: 0.96,
-                            }}
+                                scale: 0.96}}
                             onClick={(event) =>
                                 event.stopPropagation()
                             }

@@ -1,7 +1,7 @@
 // loyaltyApi.ts
 
 // Adjust the base URL and auth header logic to match your existing api setup (like authApi.ts)
-const API_BASE_URL = 'http://localhost:5176/api/loyalty';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5176') + '/api/loyalty';
 
 export interface LoyaltyDashboardData {
     customerName: string;
