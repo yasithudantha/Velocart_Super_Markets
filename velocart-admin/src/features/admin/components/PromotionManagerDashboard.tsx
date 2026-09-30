@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Megaphone,Percent,BarChart3,Plus,Trash2,X,Loader2,CheckCircle2,AlertCircle,Calendar,Power,Users,Star,DollarSign,Activity,ArrowLeft,Tag,ChevronDown,Edit2,Gift,Settings,Truck,ShieldCheck } from 'lucide-react';
+import { 
+    Megaphone, Percent, BarChart3, Plus, Trash2, X, Loader2, 
+    CheckCircle2, AlertCircle, Calendar, Power, Users, Star, DollarSign, Activity, ArrowLeft, Tag, ChevronDown, Edit2, Gift, Settings, Truck, ShieldCheck
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { 
     getPromotions, createPromotion, updatePromotion, updatePromotionStatus, deletePromotion, assignPromotionToCustomer,
