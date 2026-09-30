@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5176/api';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5176') + '/api';
 const getAuthHeaders = () => ({ headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
 
 export default function AdminCatalog() {
