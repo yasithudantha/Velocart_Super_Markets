@@ -70,7 +70,7 @@ llm = LLMWrapper()
 
 # C# Backend API URLs
 # Using internal Docker network hostname instead of localhost!
-CSHARP_BASE_URL = "http://api:8080/api"
+CSHARP_BASE_URL = os.getenv("CSHARP_BASE_URL", "http://api:8080/api")
 TOOL_INVENTORY_URL = f"{CSHARP_BASE_URL}/InventoryAnalytics/expiring"
 TOOL_DISPUTES_URL = f"{CSHARP_BASE_URL}/DisputeAnalytics/pending"
 TOOL_DEMAND_URL = f"{CSHARP_BASE_URL}/SupplyChainAnalytics/demand-forecast"
@@ -819,6 +819,8 @@ def response_generator_agent(state: CustomerChatState):
     3. Propose a cart containing ONLY the items that were successfully found in stock in the search results.
     4. Format prices as 'Rs. X'.
     5. You MUST output your response in two parts separated by '---JSON---'.
+    
+    6. If the customer asks for help, complains, or needs to speak with a human/support, redirect them to Technical Support: Phone: +94 33 999 9999, Email: support@velocart.com
     
     Part 1: Friendly conversational breakdown of what's available vs what's missing.
     Part 2: JSON array of available items to add to the cart. Each object must contain:
