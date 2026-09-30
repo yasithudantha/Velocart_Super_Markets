@@ -1,0 +1,11 @@
+.git
+.gitignore
+.dockerignore
+.env
+.vscode
+.idea
+.vs
+[Bb]in/
+[Oo]bj/
+*.md
+appsettings.Development.json
