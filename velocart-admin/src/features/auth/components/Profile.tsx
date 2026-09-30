@@ -8,7 +8,7 @@ import { logoutUser } from '../api/authApi';
 import AddressManager from './AddressManager';
 
 import LoyaltyDashboard from "../../Loyalty/component/LoyaltyDashboard";
-import OrderHistory from "../../catalog/components/OrderHistory";
+import OrderHistory from "../../orders/components/OrderHistory";
 
 export default function Profile() {
     const navigate = useNavigate();
