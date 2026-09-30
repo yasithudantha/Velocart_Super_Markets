@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { User, Mail, Phone, ShieldCheck, LogOut, Edit2, Save, X, Loader2, Bell, Lock, AlertTriangle, Award, Package, Check, CheckCircle2 } from 'lucide-react';
+import { User, Mail, Phone, ShieldCheck, LogOut, Edit2, Save, X, Loader2, Bell, Lock, AlertTriangle, Award, Package } from 'lucide-react';
 import { getUserProfile, updateUserProfile, changePassword, requestEmailChange, deleteAccount, getMyNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '../api/userApi';
 import { logoutUser } from '../api/authApi';
 import AddressManager from './AddressManager';

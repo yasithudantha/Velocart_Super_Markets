@@ -6,9 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserApiService {
   static String get baseUrl {
-    if (kIsWeb) return 'http://localhost:5176/api';
-    if (Platform.isAndroid) return 'http://10.0.2.2:5176/api';
-    return 'http://localhost:5176/api';
+    if (kIsWeb) return 'https://velocart.up.railway.app/api';
+    if (Platform.isAndroid) return 'https://velocart.up.railway.app/api';
+    return 'https://velocart.up.railway.app/api';
   }
 
   static Future<Map<String, String>> _getAuthHeaders() async {

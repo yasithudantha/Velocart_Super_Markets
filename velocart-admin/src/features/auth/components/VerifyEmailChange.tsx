@@ -20,7 +20,7 @@ export default function VerifyEmailChange() {
         const verify = async () => {
             try {
                 // Call the C# endpoint we verified earlier!
-                const result = await axios.get(`http://localhost:5176/api/User/verify-email-change?token=${token}`);
+                const result = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5176'}/api/User/verify-email-change?token=${token}`);
                 setStatus('success');
                 setMessage(result.data.message);
                 

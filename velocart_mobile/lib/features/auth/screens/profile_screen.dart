@@ -428,6 +428,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
 
+                  // Support Section
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(color: surfaceDark, borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white10)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.headset_mic_rounded, color: primaryGold, size: 18),
+                            const SizedBox(width: 8),
+                            const Text("Technical Support", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        const Text("If you have any issues, please contact Technical Support:", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Icon(Icons.phone, color: Colors.white54, size: 16),
+                            const SizedBox(width: 8),
+                            const Text("+94 33 999 9999", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.email, color: Colors.white54, size: 16),
+                            const SizedBox(width: 8),
+                            const Text("support@velocart.com", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
                   // Danger Zone (Delete Account) - Available to all users
                   Container(
                     padding: const EdgeInsets.all(16),
